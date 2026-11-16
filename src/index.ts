@@ -1,3 +1,11 @@
+export {
+  AdminHeader,
+  AdminHeaderAccount,
+  type AdminHeaderAccountProps,
+  AdminHeaderActions,
+  AdminHeaderStudioLink,
+  AdminHeaderTitle,
+} from "./components/admin-header";
 export { AdminShell, type AdminShellProps } from "./components/admin-shell";
 export {
   AlertDialog,

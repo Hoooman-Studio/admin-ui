@@ -9,7 +9,16 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { AdminShell, MenuItem, NavItem, NavSection } from "../../src";
+import {
+  AdminHeader,
+  AdminHeaderAccount,
+  AdminHeaderStudioLink,
+  AdminHeaderTitle,
+  AdminShell,
+  MenuItem,
+  NavItem,
+  NavSection,
+} from "../../src";
 import { BasicsPage } from "./pages/basics";
 import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
@@ -49,20 +58,22 @@ function App() {
   return (
     <AdminShell
       accent="hsl(20 100% 50%)"
-      account={{ name: "Lena Fischer", email: "lena@portaeuropa.com" }}
-      accountMenu={
-        <>
-          <MenuItem>
-            <UserIcon />
-            Profile
-          </MenuItem>
-          <MenuItem>
-            <LogOutIcon />
-            Sign out
-          </MenuItem>
-        </>
+      header={
+        <AdminHeader>
+          <AdminHeaderAccount email="lena@portaeuropa.com" name="Lena Fischer">
+            <MenuItem>
+              <UserIcon />
+              Profile
+            </MenuItem>
+            <MenuItem>
+              <LogOutIcon />
+              Sign out
+            </MenuItem>
+          </AdminHeaderAccount>
+          <AdminHeaderTitle>Porta Europa</AdminHeaderTitle>
+          <AdminHeaderStudioLink />
+        </AdminHeader>
       }
-      name="Porta Europa"
       nav={
         <>
           <NavItem
