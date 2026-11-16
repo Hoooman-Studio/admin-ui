@@ -17,7 +17,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function BasicsPage() {
   return (
-    <main className="mx-auto flex max-w-xl flex-col gap-6 p-10">
+    <div className="mx-auto flex max-w-xl flex-col gap-6 p-10">
       <div className="flex flex-wrap gap-2">
         <Button>Primary</Button>
         <Button variant="accent">Accent</Button>
@@ -62,7 +62,7 @@ function BasicsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </main>
+    </div>
   );
 }
 

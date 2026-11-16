@@ -164,7 +164,7 @@ function FormsPage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-10 px-4 py-10 sm:px-10">
+    <div className="mx-auto flex max-w-2xl flex-col gap-10 px-4 py-10 sm:px-10">
       <ProjectsToolbar />
 
       <form
@@ -471,7 +471,7 @@ function FormsPage() {
           ) : null}
         </div>
       </form>
-    </main>
+    </div>
   );
 }
 

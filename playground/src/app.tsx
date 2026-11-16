@@ -1,16 +1,37 @@
+import {
+  BoxIcon,
+  BuildingIcon,
+  LayersIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  TableIcon,
+  TextCursorInputIcon,
+  UserIcon,
+} from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "../../src";
+import {
+  AdminShell,
+  Button,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuTrigger,
+  NavItem,
+  NavSection,
+} from "../../src";
 import { BasicsPage } from "./pages/basics";
 import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
-import { LayoutPage } from "./pages/layout";
+import { ListingPage, ListingsPage, OverviewPage } from "./pages/layout";
 import { OverlaysPage } from "./pages/overlays";
 
 const pages = {
+  overview: OverviewPage,
+  listings: ListingsPage,
+  listing: ListingPage,
   basics: BasicsPage,
   forms: FormsPage,
   overlays: OverlaysPage,
-  layout: LayoutPage,
   data: DataPage,
 };
 
@@ -18,7 +39,7 @@ type PageName = keyof typeof pages;
 
 function readPage(): PageName {
   const name = window.location.hash.replace("#/", "");
-  return name in pages ? (name as PageName) : "basics";
+  return name in pages ? (name as PageName) : "overview";
 }
 
 function subscribe(onChange: () => void) {
@@ -26,38 +47,76 @@ function subscribe(onChange: () => void) {
   return () => window.removeEventListener("hashchange", onChange);
 }
 
-function toggleTheme() {
-  const root = document.documentElement;
-  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
-}
-
 function App() {
   const page = useSyncExternalStore(subscribe, readPage);
   const Page = pages[page];
+  const item = (name: PageName) => ({
+    active: name === page,
+    href: `#/${name}`,
+  });
+
   return (
-    <div className="min-h-dvh">
-      <nav className="border-alpha/10 flex flex-wrap items-center gap-1 border-b px-4 py-2">
-        {Object.keys(pages).map((name) => (
-          <a
-            aria-current={name === page ? "page" : undefined}
-            className="hover:bg-alpha/5 rounded-lg px-2 py-1 text-sm text-gray-600 aria-[current=page]:text-gray-950"
-            href={`#/${name}`}
-            key={name}
-          >
-            {name}
-          </a>
-        ))}
-        <Button
-          className="ml-auto"
-          onClick={toggleTheme}
-          size="sm"
-          variant="ghost"
-        >
-          Toggle theme
-        </Button>
-      </nav>
+    <AdminShell
+      accent="hsl(20 100% 50%)"
+      name="Porta Europa"
+      nav={
+        <>
+          <NavItem
+            {...item("overview")}
+            icon={<LayoutDashboardIcon />}
+            label="Overview"
+          />
+          <NavItem
+            {...item("listings")}
+            active={page === "listings" || page === "listing"}
+            count={128}
+            icon={<BuildingIcon />}
+            label="Listings"
+          />
+          <NavSection title="Components">
+            <NavItem {...item("basics")} icon={<BoxIcon />} label="Basics" />
+            <NavItem
+              {...item("forms")}
+              icon={<TextCursorInputIcon />}
+              label="Forms"
+            />
+            <NavItem
+              {...item("overlays")}
+              icon={<LayersIcon />}
+              label="Overlays"
+            />
+            <NavItem {...item("data")} icon={<TableIcon />} label="Data" />
+          </NavSection>
+        </>
+      }
+      user={<UserMenu />}
+    >
       <Page />
-    </div>
+    </AdminShell>
+  );
+}
+
+function UserMenu() {
+  return (
+    <Menu>
+      <MenuTrigger
+        render={
+          <Button aria-label="Account" rounded size="icon" variant="subtle">
+            <span className="text-xs font-semibold">CL</span>
+          </Button>
+        }
+      />
+      <MenuContent align="end">
+        <MenuItem>
+          <UserIcon />
+          Profile
+        </MenuItem>
+        <MenuItem>
+          <LogOutIcon />
+          Sign out
+        </MenuItem>
+      </MenuContent>
+    </Menu>
   );
 }
 

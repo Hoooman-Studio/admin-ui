@@ -190,6 +190,7 @@ export {
 export { Tabs, TabsList, TabsPanel, TabsTab } from "./components/tabs";
 export { TagInput, type TagInputProps } from "./components/tag-input";
 export { Textarea } from "./components/textarea";
+export { ThemeToggle } from "./components/theme-toggle";
 export { Toaster, type ToasterProps, toast } from "./components/toast";
 export {
   Tooltip,

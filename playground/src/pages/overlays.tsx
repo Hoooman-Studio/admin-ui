@@ -10,7 +10,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { ConfirmDialog, confirm } from "../../../src/components/alert-dialog";
+import { confirm } from "../../../src/components/alert-dialog";
 import { Avatar } from "../../../src/components/avatar";
 import { Badge, type BadgeProps } from "../../../src/components/badge";
 import { Banner } from "../../../src/components/banner";
@@ -61,7 +61,7 @@ import {
   TabsPanel,
   TabsTab,
 } from "../../../src/components/tabs";
-import { Toaster, toast } from "../../../src/components/toast";
+import { toast } from "../../../src/components/toast";
 import {
   Tooltip,
   TooltipContent,
@@ -568,14 +568,12 @@ function SmallThingsSection() {
 
 function OverlaysPage() {
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-10 p-6 sm:p-10">
+    <div className="mx-auto flex max-w-2xl flex-col gap-10 p-6 sm:p-10">
       <ListingsSection />
       <ToastsSection />
       <BannersSection />
       <SmallThingsSection />
-      <Toaster />
-      <ConfirmDialog />
-    </main>
+    </div>
   );
 }
 

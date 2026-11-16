@@ -1,20 +1,11 @@
 import {
-  BuildingIcon,
   CalendarIcon,
   EuroIcon,
-  FileTextIcon,
-  LayoutDashboardIcon,
-  LogOutIcon,
   MapPinIcon,
   PlusIcon,
   SearchIcon,
-  SettingsIcon,
-  TagIcon,
   UserIcon,
-  UsersIcon,
 } from "lucide-react";
-import { useState } from "react";
-import { AdminShell } from "../../../src/components/admin-shell";
 import { Badge } from "../../../src/components/badge";
 import { Button } from "../../../src/components/button";
 import {
@@ -30,13 +21,6 @@ import {
 } from "../../../src/components/description-list";
 import { Input, InputGroup } from "../../../src/components/input";
 import {
-  Menu,
-  MenuContent,
-  MenuItem,
-  MenuTrigger,
-} from "../../../src/components/menu";
-import { NavItem, NavSection } from "../../../src/components/nav";
-import {
   DetailLayout,
   PageBody,
   PageHeader,
@@ -44,8 +28,6 @@ import {
   PageToolbar,
 } from "../../../src/components/page";
 import { StatCard, StatGrid } from "../../../src/components/stat";
-
-type Screen = "overview" | "listings" | "listing";
 
 const listings = [
   {
@@ -99,88 +81,20 @@ const enquiries = [
   },
 ] as const;
 
-function LayoutPage() {
-  const [screen, setScreen] = useState<Screen>("overview");
+const go = (page: string) => () => {
+  window.location.hash = `#/${page}`;
+};
 
-  return (
-    <AdminShell
-      accent="hsl(20 100% 50%)"
-      className="h-[calc(100dvh-2.8125rem)]"
-      name="Porta Europa"
-      nav={
-        <>
-          <NavItem
-            active={screen === "overview"}
-            href="#/layout"
-            icon={<LayoutDashboardIcon />}
-            label="Overview"
-            onClick={() => setScreen("overview")}
-          />
-          <NavItem
-            active={screen !== "overview"}
-            count={128}
-            href="#/layout"
-            icon={<BuildingIcon />}
-            label="Listings"
-            onClick={() => setScreen("listings")}
-          />
-          <NavItem
-            count={42}
-            href="#/layout"
-            icon={<UsersIcon />}
-            label="Clients"
-          />
-          <NavSection title="Blog">
-            <NavItem
-              count={<Badge tone="accent">3 drafts</Badge>}
-              href="#/layout"
-              icon={<FileTextIcon />}
-              label="Posts"
-            />
-            <NavItem href="#/layout" icon={<TagIcon />} label="Categories" />
-          </NavSection>
-          <NavSection title="Account">
-            <NavItem href="#/layout" icon={<SettingsIcon />} label="Settings" />
-          </NavSection>
-        </>
-      }
-      user={<UserMenu />}
-    >
-      {screen === "overview" ? (
-        <Overview onOpenListing={() => setScreen("listing")} />
-      ) : null}
-      {screen === "listings" ? (
-        <Listings onOpenListing={() => setScreen("listing")} />
-      ) : null}
-      {screen === "listing" ? (
-        <ListingDetail onBack={() => setScreen("listings")} />
-      ) : null}
-    </AdminShell>
-  );
+function OverviewPage() {
+  return <Overview onOpenListing={go("listing")} />;
 }
 
-function UserMenu() {
-  return (
-    <Menu>
-      <MenuTrigger
-        render={
-          <Button aria-label="Account" rounded size="icon" variant="subtle">
-            <span className="text-xs font-semibold">CL</span>
-          </Button>
-        }
-      />
-      <MenuContent align="end">
-        <MenuItem>
-          <UserIcon />
-          Profile
-        </MenuItem>
-        <MenuItem>
-          <LogOutIcon />
-          Sign out
-        </MenuItem>
-      </MenuContent>
-    </Menu>
-  );
+function ListingsPage() {
+  return <Listings onOpenListing={go("listing")} />;
+}
+
+function ListingPage() {
+  return <ListingDetail onBack={go("listings")} />;
 }
 
 function Overview({ onOpenListing }: { onOpenListing: () => void }) {
@@ -412,4 +326,4 @@ function ListingDetail({ onBack }: { onBack: () => void }) {
   );
 }
 
-export { LayoutPage };
+export { ListingPage, ListingsPage, OverviewPage };

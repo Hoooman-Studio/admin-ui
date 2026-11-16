@@ -15,6 +15,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./drawer";
+import { ThemeToggle } from "./theme-toggle";
 import { Toaster } from "./toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
@@ -78,7 +79,7 @@ const titleClass =
 /**
  * The admin's frame: a header bar, a nav rail that collapses to icons (the
  * choice is kept in localStorage) and the scrolling page. On phones the rail
- * is a drawer opened from the header. It mounts the Toaster and ConfirmDialog,
+ * is a drawer opened from the header, which also holds a ThemeToggle. It mounts the Toaster and ConfirmDialog,
  * so `toast()` and `confirm()` work anywhere inside.
  */
 function AdminShell({
@@ -109,11 +110,10 @@ function AdminShell({
           <RailToggle collapsed={collapsed} />
           <span className={titleClass}>{name}</span>
         </div>
-        {user ? (
-          <div className="border-alpha/10 flex shrink-0 items-center gap-3 border-l px-4 sm:px-6">
-            {user}
-          </div>
-        ) : null}
+        <div className="border-alpha/10 flex shrink-0 items-center gap-2 border-l px-4 sm:px-6">
+          <ThemeToggle />
+          {user}
+        </div>
       </header>
       <div className="flex min-h-0 flex-1">
         <aside

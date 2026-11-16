@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 import { useState } from "react";
-import { ConfirmDialog, confirm } from "../../../src/components/alert-dialog";
+import { confirm } from "../../../src/components/alert-dialog";
 import { Avatar } from "../../../src/components/avatar";
 import { Badge } from "../../../src/components/badge";
 import { Button } from "../../../src/components/button";
@@ -50,7 +50,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "../../../src/components/select";
-import { Toaster, toast } from "../../../src/components/toast";
+import { toast } from "../../../src/components/toast";
 import { paginate } from "../../../src/lib/paging";
 import { type SortState, sortRows } from "../../../src/lib/sort-rows";
 
@@ -189,8 +189,6 @@ function DataPage() {
           <EnquiriesExample />
         </PageSection>
       </PageBody>
-      <ConfirmDialog />
-      <Toaster />
     </>
   );
 }
