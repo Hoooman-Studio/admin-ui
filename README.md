@@ -17,7 +17,7 @@ Needs React 19 and Tailwind CSS v4. In your global stylesheet:
 import { Button, FormField, Input } from "@hooman-studio/admin-ui";
 ```
 
-Set the client's brand colour with `--accent` on `:root`. Dark mode is `data-theme="dark"` on `<html>`; `AdminShell` has a `ThemeToggle` in its header that sets it and remembers the choice.
+Set the client's brand colour with `--accent` on `:root`. Dark mode is `data-theme="dark"` on `<html>`; `AdminShell` sets it from the System / Light / Dark choice in its account menu.
 
 ## Develop
 

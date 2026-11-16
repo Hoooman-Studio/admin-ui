@@ -12,6 +12,6 @@ description: Run the admin-ui playground and check components in a real browser 
 5. Check each changed component:
    - Take screenshots at desktop (1280×900) and phone (390×844) sizes and look at them.
    - Use it with the keyboard (Tab, arrows, Enter, Escape) and check focus lands where it should.
-   - Check dark mode with the theme toggle in the shell header.
+   - Check dark mode from the account menu (the avatar at the top left).
    - `agent-browser errors` shows console errors. There should be none.
 6. Close the browser session and stop the dev server when done.

@@ -9,16 +9,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import {
-  AdminShell,
-  Button,
-  Menu,
-  MenuContent,
-  MenuItem,
-  MenuTrigger,
-  NavItem,
-  NavSection,
-} from "../../src";
+import { AdminShell, MenuItem, NavItem, NavSection } from "../../src";
 import { BasicsPage } from "./pages/basics";
 import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
@@ -58,6 +49,19 @@ function App() {
   return (
     <AdminShell
       accent="hsl(20 100% 50%)"
+      account={{ name: "Lena Fischer", email: "lena@portaeuropa.com" }}
+      accountMenu={
+        <>
+          <MenuItem>
+            <UserIcon />
+            Profile
+          </MenuItem>
+          <MenuItem>
+            <LogOutIcon />
+            Sign out
+          </MenuItem>
+        </>
+      }
       name="Porta Europa"
       nav={
         <>
@@ -89,34 +93,9 @@ function App() {
           </NavSection>
         </>
       }
-      user={<UserMenu />}
     >
       <Page />
     </AdminShell>
-  );
-}
-
-function UserMenu() {
-  return (
-    <Menu>
-      <MenuTrigger
-        render={
-          <Button aria-label="Account" rounded size="icon" variant="subtle">
-            <span className="text-xs font-semibold">CL</span>
-          </Button>
-        }
-      />
-      <MenuContent align="end">
-        <MenuItem>
-          <UserIcon />
-          Profile
-        </MenuItem>
-        <MenuItem>
-          <LogOutIcon />
-          Sign out
-        </MenuItem>
-      </MenuContent>
-    </Menu>
   );
 }
 
