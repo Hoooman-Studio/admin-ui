@@ -32,6 +32,26 @@ Needs React 19 and Tailwind CSS v4. In your global stylesheet:
 </AdminShell>
 ```
 
+### Forms
+
+`@hooman-studio/admin-ui/form` (needs `@tanstack/react-form`) gives `useAdminForm`: TanStack Form with our fields, typed from a Standard Schema like Zod. `onSubmit` can return `{ ok: true, message? }` or `{ ok: false, message?, fieldErrors? }`.
+
+```tsx
+const form = useAdminForm({
+  defaultValues: listing,
+  validators: { onSubmit: listingSchema },
+  onSubmit: ({ value }) => updateListing(listingSchema.parse(value)),
+});
+
+<AdminForm form={form}>
+  <form.AppField name="title">{(f) => <f.TextField label="Title" />}</form.AppField>
+  <form.FormError />
+  <form.SubmitButton>Save</form.SubmitButton>
+</AdminForm>
+```
+
+`FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
+
 Set the client's brand colour with `--accent` on `:root`. Dark mode is `data-theme="dark"` on `<html>`; `AdminShell` sets it from the System / Light / Dark choice in `AdminHeaderAccount`'s menu.
 
 ## Develop

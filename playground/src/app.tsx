@@ -1,6 +1,7 @@
 import {
   BoxIcon,
   BuildingIcon,
+  FileCheckIcon,
   LayersIcon,
   LayoutDashboardIcon,
   LogOutIcon,
@@ -24,6 +25,7 @@ import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
 import { ListingPage, ListingsPage, OverviewPage } from "./pages/layout";
 import { OverlaysPage } from "./pages/overlays";
+import { TypedFormsPage } from "./pages/typed-forms";
 
 const pages = {
   overview: OverviewPage,
@@ -31,6 +33,7 @@ const pages = {
   listing: ListingPage,
   basics: BasicsPage,
   forms: FormsPage,
+  "typed-forms": TypedFormsPage,
   overlays: OverlaysPage,
   data: DataPage,
 };
@@ -94,6 +97,11 @@ function App() {
               {...item("forms")}
               icon={<TextCursorInputIcon />}
               label="Forms"
+            />
+            <NavItem
+              {...item("typed-forms")}
+              icon={<FileCheckIcon />}
+              label="Typed forms"
             />
             <NavItem
               {...item("overlays")}
