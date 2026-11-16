@@ -6,11 +6,8 @@ const sizes = {
   lg: { dot: "size-3", gap: "gap-2" },
 };
 
-const delays = [
-  "[animation-delay:0ms]",
-  "[animation-delay:250ms]",
-  "[animation-delay:500ms]",
-];
+// Inline, because the `animation` shorthand in `animate-loader-dot` would reset a delay class.
+const delays = ["0ms", "250ms", "500ms"];
 
 interface LoaderProps {
   className?: string;
@@ -31,10 +28,10 @@ function Loader({ size = "md", label = "Loading", className }: LoaderProps) {
         <span
           className={cn(
             "motion-safe:animate-loader-dot bg-gray-950 opacity-10",
-            sizes[size].dot,
-            delay
+            sizes[size].dot
           )}
           key={delay}
+          style={{ animationDelay: delay }}
         />
       ))}
     </span>
