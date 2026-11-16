@@ -52,8 +52,9 @@ function NavSection({
         <span className="bg-alpha/10 h-px flex-1" />
         <ChevronDownIcon className="ease-fluid size-4 shrink-0 transition-transform duration-250 group-data-open:rotate-180" />
       </CollapsibleTrigger>
-      <CollapsiblePanel className="ease-fluid flex h-(--collapsible-panel-height) flex-col gap-0.5 overflow-hidden transition-[height] duration-250 data-ending-style:h-0 data-starting-style:h-0">
-        {children}
+      {/* The panel only clips: as a flex column its rows would shrink while its height animates. */}
+      <CollapsiblePanel className="ease-fluid h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-250 data-ending-style:h-0 data-starting-style:h-0">
+        <div className="flex flex-col gap-0.5">{children}</div>
       </CollapsiblePanel>
     </Collapsible>
   );
