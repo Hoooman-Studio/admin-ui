@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { cn } from "../lib/cn";
+import { ConfirmDialog } from "./alert-dialog";
 import { Button } from "./button";
 import {
   Drawer,
@@ -14,6 +15,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./drawer";
+import { Toaster } from "./toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 interface RailState {
@@ -76,7 +78,8 @@ const titleClass =
 /**
  * The admin's frame: a header bar, a nav rail that collapses to icons (the
  * choice is kept in localStorage) and the scrolling page. On phones the rail
- * is a drawer opened from the header.
+ * is a drawer opened from the header. It mounts the Toaster and ConfirmDialog,
+ * so `toast()` and `confirm()` work anywhere inside.
  */
 function AdminShell({
   name,
@@ -136,6 +139,8 @@ function AdminShell({
           {children}
         </main>
       </div>
+      <Toaster />
+      <ConfirmDialog />
     </div>
   );
 }
