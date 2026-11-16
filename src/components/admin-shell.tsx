@@ -189,9 +189,8 @@ function AccountMenu({
       >
         {account ? (
           <Avatar
-            className="size-9 sm:size-12"
+            className="sm:size-9"
             name={account.name}
-            size="lg"
             src={account.image}
           />
         ) : (
