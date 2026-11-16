@@ -10,9 +10,8 @@ import {
 import { XIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { Button } from "./button";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 
 /** Small touch screens get a bottom sheet; everything else a centered dialog. */
 function Dialog(props: React.ComponentProps<typeof DialogPart>) {

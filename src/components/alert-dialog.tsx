@@ -10,9 +10,8 @@ import {
 } from "@ui-sdk/react/alert-dialog";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { Button } from "./button";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 
 const backdropClass =
   "fixed inset-0 bg-black/40 transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0";

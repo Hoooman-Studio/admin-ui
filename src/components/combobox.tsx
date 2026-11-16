@@ -13,14 +13,13 @@ import {
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import {
   controlBoxClass,
   listCheckClass,
   listItemClass,
   listPopupClass,
 } from "./select";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 
 type ComboboxInputProps = WithClass<
   React.ComponentProps<typeof ComboboxInputPart>

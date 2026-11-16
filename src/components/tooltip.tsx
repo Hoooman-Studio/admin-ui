@@ -6,8 +6,7 @@ import {
 } from "@ui-sdk/react/tooltip";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
+import type { WithClass } from "../lib/types";
 
 /**
  * The hint. To explain why a button is disabled, keep the Button hoverable and

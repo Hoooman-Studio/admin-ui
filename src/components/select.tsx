@@ -12,9 +12,9 @@ import {
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { boxClass, inFieldBox } from "./input";
 
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {
   children?: React.ReactNode;
 };

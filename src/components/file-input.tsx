@@ -10,9 +10,8 @@ import {
 import { FileIcon, UploadIcon, XIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { buttonVariants } from "./button";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 
 /** Holds the chosen files. Put a FileInputDropzone and a FileInputList inside. */
 function FileInput({

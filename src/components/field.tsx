@@ -9,8 +9,7 @@ import {
 } from "@ui-sdk/react/field";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
+import type { WithClass } from "../lib/types";
 
 function Field({
   className,

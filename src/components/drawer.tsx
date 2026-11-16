@@ -10,9 +10,8 @@ import {
 import { XIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { Button } from "./button";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 
 /** A side sheet. Opens from the right by default; pass `side="left"` for mobile navigation. */
 function Drawer({

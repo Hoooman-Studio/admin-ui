@@ -17,8 +17,7 @@ import {
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
+import type { WithClass } from "../lib/types";
 
 /** Parts that add their own indicator or chevron take plain children, not a render function. */
 type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {

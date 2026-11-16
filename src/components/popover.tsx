@@ -8,9 +8,8 @@ import {
 } from "@ui-sdk/react/popover";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { popupClass } from "./menu";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
 
 /** Small touch screens get a bottom sheet; everything else a panel beside the trigger. */
 function Popover(props: React.ComponentProps<typeof PopoverPart>) {
