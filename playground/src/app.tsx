@@ -34,6 +34,7 @@ import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
 import { ListingPage, ListingsPage, OverviewPage } from "./pages/layout";
 import { OverlaysPage } from "./pages/overlays";
+import { SitePage } from "./pages/site";
 import { TypedFormsPage } from "./pages/typed-forms";
 
 /** One list for the nav and the command palette. */
@@ -65,9 +66,9 @@ const components: PageName[] = [
   "data",
 ];
 
-function readPage(): PageName | "listing" {
+function readPage(): PageName | "listing" | "site" {
   const name = window.location.hash.replace("#/", "");
-  if (name === "listing") {
+  if (name === "listing" || name === "site") {
     return name;
   }
   return name in pages ? (name as PageName) : "overview";
@@ -84,6 +85,9 @@ function go(name: string) {
 
 function App() {
   const page = useSyncExternalStore(subscribe, readPage);
+  if (page === "site") {
+    return <SitePage />;
+  }
   const Page = page === "listing" ? ListingPage : pages[page].Page;
   const navItem = (name: PageName) => (
     <NavItem
@@ -145,7 +149,7 @@ function App() {
               </CommandGroup>
             </CommandPalette>
           </AdminHeaderActions>
-          <AdminHeaderStudioLink />
+          <AdminHeaderStudioLink href="#/site" />
         </AdminHeader>
       }
       nav={

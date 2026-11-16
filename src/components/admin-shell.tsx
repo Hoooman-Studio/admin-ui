@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../lib/cn";
+import { AdminScope } from "./admin-scope";
 import { ConfirmDialog } from "./alert-dialog";
-import { useApplyTheme } from "./theme";
 import { Toaster } from "./toast";
 
 interface RailState {
@@ -57,7 +57,7 @@ const useCollapsed = () =>
   React.useSyncExternalStore(subscribeCollapsed, readCollapsed, () => false);
 
 interface AdminShellProps {
-  /** The client's brand colour, any CSS colour. Sets `--accent` for everything inside. */
+  /** The client's brand colour, any CSS colour. Sets `--au-accent` for everything inside. */
   accent?: string;
   /** The page: a PageHeader, PageToolbar and PageBody. */
   children: React.ReactNode;
@@ -71,7 +71,7 @@ interface AdminShellProps {
 /**
  * The admin's frame: the header you compose, a nav rail that collapses to
  * icons (the choice is kept in localStorage) and the scrolling page. On phones
- * the rail is a drawer opened from AdminHeaderTitle. It applies the theme and
+ * the rail is a drawer opened from AdminHeaderTitle. It is an AdminScope, so the admin's styles apply inside it only. It
  * mounts the Toaster and ConfirmDialog, so `toast()` and `confirm()` work
  * anywhere inside.
  */
@@ -83,22 +83,21 @@ function AdminShell({
   className,
 }: AdminShellProps) {
   const collapsed = useCollapsed();
-  useApplyTheme();
-  const accentStyle = accent
-    ? ({ "--accent": accent } as React.CSSProperties)
-    : undefined;
 
   return (
-    <div
-      className={cn("flex h-dvh flex-col bg-gray-50 text-gray-950", className)}
-      style={accentStyle}
+    <AdminScope
+      accent={accent}
+      className={cn(
+        "au:flex au:h-dvh au:flex-col au:bg-gray-50 au:text-gray-950",
+        className
+      )}
     >
       <ShellContext value={{ collapsed, nav }}>{header}</ShellContext>
-      <div className="flex min-h-0 flex-1">
+      <div className="au:flex au:min-h-0 au:flex-1">
         <aside
           className={cn(
-            "border-alpha/10 ease-fluid hidden shrink-0 flex-col overflow-hidden border-r transition-[width] duration-250 md:flex",
-            collapsed ? "w-[4.8125rem]" : "w-72 lg:w-96"
+            "au:border-alpha/10 au:ease-fluid au:hidden au:shrink-0 au:flex-col au:overflow-hidden au:border-r au:transition-[width] au:duration-250 au:md:flex",
+            collapsed ? "au:w-[4.8125rem]" : "au:w-72 au:lg:w-96"
           )}
           data-collapsed={collapsed ? "" : undefined}
         >
@@ -106,21 +105,21 @@ function AdminShell({
             <nav
               aria-label="Main"
               className={cn(
-                "scrollbar-hidden ease-fluid flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto py-3 transition-[padding] duration-250",
-                collapsed ? "px-4" : "px-3"
+                "au:scrollbar-hidden au:ease-fluid au:flex au:min-h-0 au:flex-1 au:flex-col au:gap-0.5 au:overflow-y-auto au:py-3 au:transition-[padding] au:duration-250",
+                collapsed ? "au:px-4" : "au:px-3"
               )}
             >
               {nav}
             </nav>
           </RailContext>
         </aside>
-        <main className="@container/page-content isolate flex min-w-0 flex-1 flex-col overflow-y-auto">
+        <main className="au:@container/page-content au:isolate au:flex au:min-w-0 au:flex-1 au:flex-col au:overflow-y-auto">
           {children}
         </main>
       </div>
       <Toaster />
       <ConfirmDialog />
-    </div>
+    </AdminScope>
   );
 }
 

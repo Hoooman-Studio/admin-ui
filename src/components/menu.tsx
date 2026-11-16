@@ -26,10 +26,10 @@ type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {
 
 /** The floating surface shared by menus and popovers, and the bottom sheet they become on small touch screens. */
 const popupClass =
-  "origin-(--transform-origin) rounded-2xl border border-alpha/10 bg-gray-50 text-gray-950 shadow-dropdown outline-none transition-[opacity,scale] duration-100 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none data-[presentation=sheet]:w-full data-[presentation=sheet]:max-w-none data-[presentation=sheet]:scale-100 data-[presentation=sheet]:rounded-t-3xl data-[presentation=sheet]:rounded-b-none data-[presentation=sheet]:border-x-0 data-[presentation=sheet]:border-b-0 data-[presentation=sheet]:opacity-100";
+  "au:origin-(--transform-origin) au:rounded-2xl au:border au:border-alpha/10 au:bg-gray-50 au:text-gray-950 au:shadow-dropdown au:outline-none au:transition-[opacity,scale] au:duration-100 au:ease-out au:data-ending-style:scale-95 au:data-ending-style:opacity-0 au:data-starting-style:scale-95 au:data-starting-style:opacity-0 au:motion-reduce:transition-none au:data-[presentation=sheet]:w-full au:data-[presentation=sheet]:max-w-none au:data-[presentation=sheet]:scale-100 au:data-[presentation=sheet]:rounded-t-3xl au:data-[presentation=sheet]:rounded-b-none au:data-[presentation=sheet]:border-x-0 au:data-[presentation=sheet]:border-b-0 au:data-[presentation=sheet]:opacity-100";
 
 const itemClass =
-  "relative flex h-8 cursor-default items-center gap-2 rounded-lg px-2 text-sm font-medium outline-none select-none data-disabled:opacity-40 data-highlighted:bg-alpha/5 data-pending:cursor-progress data-pending:opacity-60 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-gray-600 pointer-coarse:h-11";
+  "au:relative au:flex au:h-8 au:cursor-default au:items-center au:gap-2 au:rounded-lg au:px-2 au:text-sm au:font-medium au:outline-none au:select-none au:data-disabled:opacity-40 au:data-highlighted:bg-alpha/5 au:data-pending:cursor-progress au:data-pending:opacity-60 au:[&_svg]:size-4 au:[&_svg]:shrink-0 au:[&_svg]:text-gray-600 au:pointer-coarse:h-11";
 
 /** Small touch screens get a bottom sheet; everything else a dropdown. */
 function Menu(props: React.ComponentProps<typeof MenuPart>) {
@@ -45,7 +45,7 @@ function MenuContent({
     <MenuContentPart
       className={cn(
         popupClass,
-        "flex max-h-(--available-height) min-w-48 flex-col overflow-y-auto p-1.5 data-[presentation=sheet]:p-3 data-[presentation=sheet]:pb-[calc(0.75rem+env(safe-area-inset-bottom))]",
+        "au:flex au:max-h-(--available-height) au:min-w-48 au:flex-col au:overflow-y-auto au:p-1.5 au:data-[presentation=sheet]:p-3 au:data-[presentation=sheet]:pb-[calc(0.75rem+env(safe-area-inset-bottom))]",
         className
       )}
       sideOffset={sideOffset}
@@ -63,7 +63,7 @@ function MenuItem({
     <MenuItemPart
       className={cn(
         itemClass,
-        "data-destructive:text-red-500 data-destructive:data-highlighted:bg-red-500/10 data-destructive:[&_svg]:text-red-500",
+        "au:data-destructive:text-red-500 au:data-destructive:data-highlighted:bg-red-500/10 au:data-destructive:[&_svg]:text-red-500",
         className
       )}
       {...props}
@@ -79,7 +79,7 @@ function MenuCheckboxItem({
   return (
     <MenuCheckboxItemPart className={cn(itemClass, className)} {...props}>
       {children}
-      <MenuItemIndicator className="ml-auto">
+      <MenuItemIndicator className="au:ml-auto">
         <CheckIcon />
       </MenuItemIndicator>
     </MenuCheckboxItemPart>
@@ -94,7 +94,7 @@ function MenuRadioItem({
   return (
     <MenuRadioItemPart className={cn(itemClass, className)} {...props}>
       {children}
-      <MenuItemIndicator className="ml-auto">
+      <MenuItemIndicator className="au:ml-auto">
         <CheckIcon />
       </MenuItemIndicator>
     </MenuRadioItemPart>
@@ -107,7 +107,10 @@ function MenuGroupLabel({
 }: WithClass<React.ComponentProps<typeof MenuGroupLabelPart>>) {
   return (
     <MenuGroupLabelPart
-      className={cn("px-2 py-1.5 text-xs font-medium text-gray-500", className)}
+      className={cn(
+        "au:px-2 au:py-1.5 au:text-xs au:font-medium au:text-gray-500",
+        className
+      )}
       {...props}
     />
   );
@@ -119,7 +122,7 @@ function MenuSeparator({
 }: WithClass<React.ComponentProps<typeof MenuSeparatorPart>>) {
   return (
     <MenuSeparatorPart
-      className={cn("bg-alpha/5 -mx-1.5 my-1.5 h-px", className)}
+      className={cn("au:bg-alpha/5 au:-mx-1.5 au:my-1.5 au:h-px", className)}
       {...props}
     />
   );
@@ -132,11 +135,11 @@ function MenuSubTrigger({
 }: WithNodeChildren<React.ComponentProps<typeof MenuSubTriggerPart>>) {
   return (
     <MenuSubTriggerPart
-      className={cn(itemClass, "data-open:bg-alpha/5", className)}
+      className={cn(itemClass, "au:data-open:bg-alpha/5", className)}
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto" />
+      <ChevronRightIcon className="au:ml-auto" />
     </MenuSubTriggerPart>
   );
 }
@@ -149,7 +152,7 @@ function MenuSubContent({
     <MenuSubContentPart
       className={cn(
         popupClass,
-        "flex max-h-(--available-height) min-w-48 flex-col overflow-y-auto p-1.5 data-[presentation=sheet]:p-3 data-[presentation=sheet]:pb-[calc(0.75rem+env(safe-area-inset-bottom))]",
+        "au:flex au:max-h-(--available-height) au:min-w-48 au:flex-col au:overflow-y-auto au:p-1.5 au:data-[presentation=sheet]:p-3 au:data-[presentation=sheet]:pb-[calc(0.75rem+env(safe-area-inset-bottom))]",
         className
       )}
       {...props}

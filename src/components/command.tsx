@@ -19,7 +19,7 @@ import { Button } from "./button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./dialog";
 
 const keysClass =
-  "ms-auto flex shrink-0 gap-0.5 font-sans text-gray-500 text-xs tracking-widest";
+  "au:ms-auto au:flex au:shrink-0 au:gap-0.5 au:font-sans au:text-gray-500 au:text-xs au:tracking-widest";
 
 /** A search field over a list of commands. On its own, or in a CommandPalette. */
 function Command({
@@ -28,7 +28,7 @@ function Command({
 }: WithClass<React.ComponentProps<typeof CommandPart>>) {
   return (
     <CommandPart
-      className={cn("flex min-h-0 flex-col", className)}
+      className={cn("au:flex au:min-h-0 au:flex-col", className)}
       {...props}
     />
   );
@@ -39,11 +39,11 @@ function CommandInput({
   ...props
 }: WithClass<React.ComponentProps<typeof CommandInputPart>>) {
   return (
-    <div className="border-alpha/10 flex h-14 shrink-0 items-center gap-3 border-b px-4 text-gray-500">
-      <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
+    <div className="au:border-alpha/10 au:flex au:h-14 au:shrink-0 au:items-center au:gap-3 au:border-b au:px-4 au:text-gray-500">
+      <SearchIcon aria-hidden="true" className="au:size-4 au:shrink-0" />
       <CommandInputPart
         className={cn(
-          "h-full min-w-0 flex-1 bg-transparent text-base text-gray-950 outline-none placeholder:text-gray-500",
+          "au:h-full au:min-w-0 au:flex-1 au:bg-transparent au:text-base au:text-gray-950 au:outline-none au:placeholder:text-gray-500",
           className
         )}
         {...props}
@@ -59,7 +59,7 @@ function CommandList({
   return (
     <CommandListPart
       className={cn(
-        "max-h-[min(24rem,60dvh)] scroll-py-2 overflow-y-auto p-2",
+        "au:max-h-[min(24rem,60dvh)] au:scroll-py-2 au:overflow-y-auto au:p-2",
         className
       )}
       {...props}
@@ -74,7 +74,7 @@ function CommandEmpty({
   return (
     <CommandEmptyPart
       className={cn(
-        "px-4 py-10 text-center text-sm text-gray-500 not-data-empty:hidden",
+        "au:px-4 au:py-10 au:text-center au:text-sm au:text-gray-500 au:not-data-empty:hidden",
         className
       )}
       {...props}
@@ -88,7 +88,7 @@ function CommandGroup({
 }: WithClass<React.ComponentProps<typeof CommandGroupPart>>) {
   return (
     <CommandGroupPart
-      className={cn("flex flex-col gap-0.5", className)}
+      className={cn("au:flex au:flex-col au:gap-0.5", className)}
       {...props}
     />
   );
@@ -101,7 +101,7 @@ function CommandGroupLabel({
   return (
     <CommandGroupLabelPart
       className={cn(
-        "px-2 pt-2 pb-1 text-xs font-medium text-gray-500",
+        "au:px-2 au:pt-2 au:pb-1 au:text-xs au:font-medium au:text-gray-500",
         className
       )}
       {...props}
@@ -116,7 +116,7 @@ function CommandItem({
   return (
     <CommandItemPart
       className={cn(
-        "data-highlighted:bg-alpha/5 [&_mark]:text-accent flex min-h-10 cursor-default items-center gap-3 rounded-xl px-2.5 text-sm font-medium text-gray-950 outline-none select-none data-disabled:opacity-40 data-pending:cursor-progress [&_mark]:bg-transparent",
+        "au:data-highlighted:bg-alpha/5 au:[&_mark]:text-accent au:flex au:min-h-10 au:cursor-default au:items-center au:gap-3 au:rounded-xl au:px-2.5 au:text-sm au:font-medium au:text-gray-950 au:outline-none au:select-none au:data-disabled:opacity-40 au:data-pending:cursor-progress au:[&_mark]:bg-transparent",
         className
       )}
       {...props}
@@ -131,7 +131,7 @@ function CommandItemIcon({
   return (
     <CommandItemIconPart
       className={cn(
-        "flex size-4 shrink-0 items-center justify-center text-gray-600 [&_svg]:size-4",
+        "au:flex au:size-4 au:shrink-0 au:items-center au:justify-center au:text-gray-600 au:[&_svg]:size-4",
         className
       )}
       {...props}
@@ -155,7 +155,7 @@ function CommandSeparator({
 }: WithClass<React.ComponentProps<typeof CommandSeparatorPart>>) {
   return (
     <CommandSeparatorPart
-      className={cn("bg-alpha/10 -mx-2 my-2 h-px", className)}
+      className={cn("au:bg-alpha/10 au:-mx-2 au:my-2 au:h-px", className)}
       {...props}
     />
   );
@@ -188,7 +188,7 @@ function CommandPalette({
         render={
           trigger ?? (
             <Button
-              className="w-9 justify-start px-0 text-gray-500 sm:w-56 sm:px-3 [&_svg]:mx-auto sm:[&_svg]:mx-0"
+              className="au:w-9 au:justify-start au:px-0 au:text-gray-500 au:sm:w-56 au:sm:px-3 au:[&_svg]:mx-auto au:sm:[&_svg]:mx-0"
               variant="outline"
             />
           )
@@ -198,15 +198,15 @@ function CommandPalette({
         {trigger ? null : (
           <>
             <SearchIcon />
-            <span className="sr-only sm:not-sr-only sm:font-normal">
+            <span className="au:sr-only au:sm:not-sr-only au:sm:font-normal">
               Search…
             </span>
-            <DialogShortcut className={cn(keysClass, "hidden sm:flex")} />
+            <DialogShortcut className={cn(keysClass, "au:hidden au:sm:flex")} />
           </>
         )}
       </DialogTrigger>
-      <DialogContent className="top-[12dvh] bottom-auto" size="md">
-        <DialogTitle className="sr-only">{title}</DialogTitle>
+      <DialogContent className="au:top-[12dvh] au:bottom-auto" size="md">
+        <DialogTitle className="au:sr-only">{title}</DialogTitle>
         <Command loop onAction={close}>
           <CommandInput aria-label={title} placeholder={placeholder} />
           <CommandEmpty>{emptyText}</CommandEmpty>

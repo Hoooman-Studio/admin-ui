@@ -14,13 +14,13 @@ import { pageBounds } from "../lib/paging";
 import { Button, buttonVariants } from "./button";
 
 const barClass =
-  "@container/pagination flex min-h-14 items-center justify-between gap-4 px-4 sm:px-6";
+  "au:@container/pagination au:flex au:min-h-14 au:items-center au:justify-between au:gap-4 au:px-4 au:sm:px-6";
 
-const summaryClass = "tabular text-sm font-medium text-gray-500";
+const summaryClass = "au:tabular au:text-sm au:font-medium au:text-gray-500";
 
 const stepClass = cn(
   buttonVariants({ variant: "ghost", size: "icon" }),
-  "data-disabled:cursor-default data-disabled:bg-transparent"
+  "au:data-disabled:cursor-default au:data-disabled:bg-transparent"
 );
 
 interface PaginationProps {
@@ -54,7 +54,7 @@ function Pagination({
         pageSize={pageSize}
         total={total}
       >
-        <PaginationList className="flex items-center gap-1">
+        <PaginationList className="au:flex au:items-center au:gap-1">
           {({ items }) => (
             <>
               <PaginationItem>
@@ -67,16 +67,16 @@ function Pagination({
               </PaginationItem>
               {items.map((item) => (
                 <PaginationItem
-                  className="hidden @md/pagination:block"
+                  className="au:hidden au:@md/pagination:block"
                   key={item}
                 >
                   {typeof item === "number" ? (
                     <PaginationLink
-                      className="tabular focus-visible:outline-accent hover:bg-alpha/5 data-current:bg-alpha/5 flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-medium text-gray-600 transition-colors duration-100 focus-visible:outline-2 focus-visible:outline-offset-2 data-current:text-gray-950"
+                      className="au:tabular au:focus-visible:outline-accent au:hover:bg-alpha/5 au:data-current:bg-alpha/5 au:flex au:h-8 au:min-w-8 au:items-center au:justify-center au:rounded-lg au:px-2 au:text-sm au:font-medium au:text-gray-600 au:transition-colors au:duration-100 au:focus-visible:outline-2 au:focus-visible:outline-offset-2 au:data-current:text-gray-950"
                       page={item}
                     />
                   ) : (
-                    <PaginationEllipsis className="flex h-8 min-w-8 items-center justify-center text-sm text-gray-500" />
+                    <PaginationEllipsis className="au:flex au:h-8 au:min-w-8 au:items-center au:justify-center au:text-sm au:text-gray-500" />
                   )}
                 </PaginationItem>
               ))}
@@ -115,7 +115,7 @@ function CursorPagination({
   return (
     <div className={cn(barClass, className)}>
       <p className={summaryClass}>{summary}</p>
-      <nav aria-label="Pagination" className="flex items-center gap-2">
+      <nav aria-label="Pagination" className="au:flex au:items-center au:gap-2">
         <Button
           disabled={!hasPrevious}
           focusableWhenDisabled

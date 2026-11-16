@@ -22,20 +22,20 @@ type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {
 /** A bordered control box like Input's, that turns borderless inside a FormField. */
 const controlBoxClass = cn(
   boxClass,
-  "flex h-8 w-full min-w-0 items-center gap-2 px-3 text-gray-950 data-disabled:cursor-not-allowed data-disabled:opacity-40",
+  "au:flex au:h-8 au:w-full au:min-w-0 au:items-center au:gap-2 au:px-3 au:text-gray-950 au:data-disabled:cursor-not-allowed au:data-disabled:opacity-40",
   inFieldBox
 );
 
 /** The floating list of a Select or Combobox. */
 const listPopupClass =
-  "flex max-h-[min(20rem,var(--available-height))] min-w-(--anchor-width) origin-(--transform-origin) flex-col overflow-y-auto rounded-2xl border border-alpha/5 bg-gray-50 p-1 text-gray-950 shadow-dropdown outline-none transition-[opacity,scale] duration-150 ease-fluid data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none";
+  "au:flex au:max-h-[min(20rem,var(--available-height))] au:min-w-(--anchor-width) au:origin-(--transform-origin) au:flex-col au:overflow-y-auto au:rounded-2xl au:border au:border-alpha/5 au:bg-gray-50 au:p-1 au:text-gray-950 au:shadow-dropdown au:outline-none au:transition-[opacity,scale] au:duration-150 au:ease-fluid au:data-ending-style:scale-95 au:data-ending-style:opacity-0 au:data-starting-style:scale-95 au:data-starting-style:opacity-0 au:motion-reduce:transition-none";
 
 /** One option in a list popup. The check sits at the end. */
 const listItemClass =
-  "relative flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg py-1.5 ps-2.5 pe-8 text-sm font-medium outline-none select-none data-disabled:opacity-40 data-highlighted:bg-alpha/5 [&_svg]:size-4 [&_svg]:shrink-0";
+  "au:relative au:flex au:min-h-8 au:w-full au:cursor-default au:items-center au:gap-2 au:rounded-lg au:py-1.5 au:ps-2.5 au:pe-8 au:text-sm au:font-medium au:outline-none au:select-none au:data-disabled:opacity-40 au:data-highlighted:bg-alpha/5 au:[&_svg]:size-4 au:[&_svg]:shrink-0";
 
 const listCheckClass =
-  "absolute end-2.5 flex items-center text-gray-950 [&_svg]:size-4";
+  "au:absolute au:end-2.5 au:flex au:items-center au:text-gray-950 au:[&_svg]:size-4";
 
 type SelectTriggerProps = WithNodeChildren<
   React.ComponentProps<typeof SelectTriggerPart>
@@ -47,7 +47,7 @@ function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
     <SelectTriggerPart
       className={cn(
         controlBoxClass,
-        "text-input justify-between text-start outline-none",
+        "au:text-input au:justify-between au:text-start au:outline-none",
         className
       )}
       {...props}
@@ -55,7 +55,7 @@ function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
       {children ?? <SelectValue />}
       <ChevronDownIcon
         aria-hidden="true"
-        className="size-4 shrink-0 text-gray-500"
+        className="au:size-4 au:shrink-0 au:text-gray-500"
       />
     </SelectTriggerPart>
   );
@@ -67,7 +67,7 @@ function SelectValue({
 }: WithClass<React.ComponentProps<typeof SelectValuePart>>) {
   return (
     <SelectValuePart
-      className={cn("truncate data-placeholder:text-gray-500", className)}
+      className={cn("au:truncate au:data-placeholder:text-gray-500", className)}
       {...props}
     />
   );
@@ -113,7 +113,10 @@ function SelectGroup({
   ...props
 }: WithClass<React.ComponentProps<typeof SelectGroupPart>>) {
   return (
-    <SelectGroupPart className={cn("flex flex-col", className)} {...props} />
+    <SelectGroupPart
+      className={cn("au:flex au:flex-col", className)}
+      {...props}
+    />
   );
 }
 
@@ -124,7 +127,7 @@ function SelectGroupLabel({
   return (
     <SelectGroupLabelPart
       className={cn(
-        "px-2.5 pt-2 pb-1 text-xs font-medium text-gray-500",
+        "au:px-2.5 au:pt-2 au:pb-1 au:text-xs au:font-medium au:text-gray-500",
         className
       )}
       {...props}
@@ -138,7 +141,10 @@ function SelectSeparator({
 }: WithClass<React.ComponentProps<typeof SelectSeparatorPart>>) {
   return (
     <SelectSeparatorPart
-      className={cn("bg-alpha/5 -mx-1 my-1 h-px shrink-0", className)}
+      className={cn(
+        "au:bg-alpha/5 au:-mx-1 au:my-1 au:h-px au:shrink-0",
+        className
+      )}
       {...props}
     />
   );

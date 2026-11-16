@@ -14,10 +14,10 @@ import type { WithClass } from "../lib/types";
 import { Button } from "./button";
 
 const backdropClass =
-  "fixed inset-0 bg-black/40 transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0";
+  "au:fixed au:inset-0 au:bg-black/40 au:transition-opacity au:duration-200 au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";
 
 const contentClass =
-  "fixed inset-0 m-auto flex h-fit max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-sm flex-col overflow-hidden rounded-3xl border border-alpha/10 bg-gray-50 p-0 text-center text-gray-950 shadow-floating outline-none transition-[opacity,scale,translate] duration-200 ease-fluid data-ending-style:translate-y-2 data-starting-style:translate-y-2 data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0";
+  "au:fixed au:inset-0 au:m-auto au:flex au:h-fit au:max-h-[calc(100dvh-2rem)] au:w-[calc(100%-2rem)] au:max-w-sm au:flex-col au:overflow-hidden au:rounded-3xl au:border au:border-alpha/10 au:bg-gray-50 au:p-0 au:text-center au:text-gray-950 au:shadow-floating au:outline-none au:transition-[opacity,scale,translate] au:duration-200 au:ease-fluid au:data-ending-style:translate-y-2 au:data-starting-style:translate-y-2 au:data-ending-style:scale-[0.98] au:data-starting-style:scale-[0.98] au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";
 
 /** The question, with its backdrop. Put an AlertDialogTitle, an AlertDialogDescription and an AlertDialogFooter inside. */
 function AlertDialogContent({
@@ -44,7 +44,10 @@ function AlertDialogTitle({
 }: WithClass<React.ComponentProps<typeof AlertDialogTitlePart>>) {
   return (
     <AlertDialogTitlePart
-      className={cn("px-5 pt-8 text-lg font-semibold text-gray-950", className)}
+      className={cn(
+        "au:px-5 au:pt-8 au:text-lg au:font-semibold au:text-gray-950",
+        className
+      )}
       {...props}
     />
   );
@@ -56,7 +59,10 @@ function AlertDialogDescription({
 }: WithClass<React.ComponentProps<typeof AlertDialogDescriptionPart>>) {
   return (
     <AlertDialogDescriptionPart
-      className={cn("px-5 pt-2 text-sm font-medium text-gray-600", className)}
+      className={cn(
+        "au:px-5 au:pt-2 au:text-sm au:font-medium au:text-gray-600",
+        className
+      )}
       {...props}
     />
   );
@@ -70,7 +76,7 @@ function AlertDialogFooter({
   return (
     <div
       className={cn(
-        "border-alpha/5 mt-8 flex gap-3 border-t p-5 *:flex-1",
+        "au:border-alpha/5 au:mt-8 au:flex au:gap-3 au:border-t au:p-5 au:*:flex-1",
         className
       )}
       {...props}

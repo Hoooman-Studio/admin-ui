@@ -1,0 +1,3 @@
+/* What a Tailwind v4 site does with @hooman-studio/admin-ui/tailwind.css: build the admin's CSS itself, so its admin pages can use `au:` classes. */
+@import "../../src/styles.css";
+@source "./pages";

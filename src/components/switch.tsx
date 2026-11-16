@@ -13,12 +13,12 @@ function Switch({ className, ...props }: SwitchProps) {
   return (
     <SwitchPart
       className={cn(
-        "group/switch bg-alpha/10 focus-visible:outline-accent inline-flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 data-checked:bg-gray-950 data-disabled:cursor-not-allowed data-disabled:opacity-40 data-invalid:ring-2 data-invalid:ring-red-500/70",
+        "au:group/switch au:bg-alpha/10 au:focus-visible:outline-accent au:inline-flex au:h-5 au:w-9 au:shrink-0 au:items-center au:rounded-full au:p-0.5 au:transition-colors au:duration-150 au:focus-visible:outline-2 au:focus-visible:outline-offset-2 au:data-checked:bg-gray-950 au:data-disabled:cursor-not-allowed au:data-disabled:opacity-40 au:data-invalid:ring-2 au:data-invalid:ring-red-500/70",
         className
       )}
       {...props}
     >
-      <SwitchThumb className="ease-fluid pointer-events-none block size-4 rounded-full bg-gray-50 shadow-sm transition-transform duration-150 data-checked:translate-x-4 rtl:data-checked:-translate-x-4" />
+      <SwitchThumb className="au:ease-fluid au:pointer-events-none au:block au:size-4 au:rounded-full au:bg-gray-50 au:shadow-sm au:transition-transform au:duration-150 au:data-checked:translate-x-4 au:rtl:data-checked:-translate-x-4" />
     </SwitchPart>
   );
 }

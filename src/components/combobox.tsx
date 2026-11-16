@@ -41,20 +41,20 @@ function ComboboxInput({
     <div
       className={cn(
         controlBoxClass,
-        "focus-within:border-accent/70 pe-1.5 has-data-disabled:cursor-not-allowed has-data-disabled:opacity-40",
+        "au:focus-within:border-accent/70 au:pe-1.5 au:has-data-disabled:cursor-not-allowed au:has-data-disabled:opacity-40",
         className
       )}
       data-slot="combobox-box"
     >
       <ComboboxInputPart
-        className="text-input h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-gray-500 disabled:cursor-not-allowed"
+        className="au:text-input au:h-full au:min-w-0 au:flex-1 au:bg-transparent au:outline-none au:placeholder:text-gray-500 au:disabled:cursor-not-allowed"
         {...props}
       />
       <ComboboxTrigger
         aria-label={triggerLabel}
-        className="hover:bg-alpha/5 flex size-6 shrink-0 items-center justify-center rounded-md text-gray-500 hover:text-gray-950 in-data-[slot=form-field-box]:size-5"
+        className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:in-data-[slot=form-field-box]:size-5"
       >
-        <ChevronDownIcon aria-hidden="true" className="size-4" />
+        <ChevronDownIcon aria-hidden="true" className="au:size-4" />
       </ComboboxTrigger>
     </div>
   );
@@ -96,7 +96,8 @@ function ComboboxItem<T = string>({
   );
 }
 
-const messageClass = "px-2.5 py-1.5 text-sm text-gray-500 empty:hidden";
+const messageClass =
+  "au:px-2.5 au:py-1.5 au:text-sm au:text-gray-500 au:empty:hidden";
 
 /** Shows while no option matches the search. */
 function ComboboxEmpty({

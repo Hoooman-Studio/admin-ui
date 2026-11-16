@@ -24,15 +24,15 @@ type ShownKey<Row> = {
 }[keyof Row & string];
 
 const hideBelowClass = {
-  sm: "hidden @xl/data-table:table-cell",
-  md: "hidden @3xl/data-table:table-cell",
-  lg: "hidden @5xl/data-table:table-cell",
+  sm: "au:hidden au:@xl/data-table:table-cell",
+  md: "au:hidden au:@3xl/data-table:table-cell",
+  lg: "au:hidden au:@5xl/data-table:table-cell",
 };
 
 const alignClass = {
-  start: "text-start",
-  center: "text-center",
-  end: "text-end",
+  start: "au:text-start",
+  center: "au:text-center",
+  end: "au:text-end",
 };
 
 interface ColumnOptions {
@@ -94,8 +94,8 @@ type DataTableProps<Row> = SelectionProps & {
   stickyTop?: string;
 };
 
-const edgeStart = "ps-4 @xl/data-table:ps-6";
-const edgeEnd = "pe-4 @xl/data-table:pe-6";
+const edgeStart = "au:ps-4 au:@xl/data-table:ps-6";
+const edgeEnd = "au:pe-4 au:@xl/data-table:pe-6";
 
 function nextSort(sort: SortState | null | undefined, key: string) {
   if (sort?.key !== key) {
@@ -134,9 +134,9 @@ function SortButton({
   return (
     <button
       className={cn(
-        "group/sort focus-visible:outline-accent -mx-1.5 inline-flex h-7 items-center gap-1 rounded-md px-1.5 transition-colors duration-100 outline-none hover:text-gray-950 focus-visible:outline-2 [&_svg]:size-3.5 [&_svg]:shrink-0",
-        direction && "text-gray-950",
-        align === "end" && "flex-row-reverse"
+        "au:group/sort au:focus-visible:outline-accent au:-mx-1.5 au:inline-flex au:h-7 au:items-center au:gap-1 au:rounded-md au:px-1.5 au:transition-colors au:duration-100 au:outline-none au:hover:text-gray-950 au:focus-visible:outline-2 au:[&_svg]:size-3.5 au:[&_svg]:shrink-0",
+        direction && "au:text-gray-950",
+        align === "end" && "au:flex-row-reverse"
       )}
       onClick={changeSort}
       type="button"
@@ -161,7 +161,7 @@ function SortIcon({
   return (
     <ArrowUpDownIcon
       aria-hidden="true"
-      className="opacity-0 transition-opacity group-hover/sort:opacity-100 group-focus-visible/sort:opacity-100"
+      className="au:opacity-0 au:transition-opacity au:group-hover/sort:opacity-100 au:group-focus-visible/sort:opacity-100"
     />
   );
 }
@@ -203,7 +203,7 @@ function DataTable<Row>({
     [onSelectedChange, selected, pageIds]
   );
   const thClass =
-    "sticky z-20 h-12 border-b border-alpha/10 bg-gray-50 px-3 text-sm font-medium whitespace-nowrap text-gray-500";
+    "au:sticky au:z-20 au:h-12 au:border-b au:border-alpha/10 au:bg-gray-50 au:px-3 au:text-sm au:font-medium au:whitespace-nowrap au:text-gray-500";
 
   let body: React.ReactNode;
   if (error) {
@@ -215,7 +215,7 @@ function DataTable<Row>({
   } else if (rows === undefined) {
     body = (
       <StateRow columnCount={columnCount}>
-        <div className="flex justify-center py-20">
+        <div className="au:flex au:justify-center au:py-20">
           <Loader />
         </div>
       </StateRow>
@@ -233,20 +233,20 @@ function DataTable<Row>({
       const actions = rowActions?.(row);
       return (
         <tr
-          className="group/row hover:bg-alpha/2 data-selected:bg-alpha/4 relative transition-colors duration-100"
+          className="au:group/row au:hover:bg-alpha/2 au:data-selected:bg-alpha/4 au:relative au:transition-colors au:duration-100"
           data-selected={selectedSet.has(id) ? "" : undefined}
           key={id}
         >
           {selectable ? (
             <td
               className={cn(
-                "border-alpha/5 relative z-10 w-px border-b pe-1",
+                "au:border-alpha/5 au:relative au:z-10 au:w-px au:border-b au:pe-1",
                 edgeStart
               )}
             >
               <Checkbox
                 aria-labelledby={`${baseId}-select ${nameId}`}
-                className="flex"
+                className="au:flex"
                 value={id}
               />
             </td>
@@ -259,21 +259,21 @@ function DataTable<Row>({
             return (
               <td
                 className={cn(
-                  "border-alpha/5 h-19 border-b px-3 text-sm font-medium whitespace-nowrap text-gray-600",
-                  !primary && "tabular",
+                  "au:border-alpha/5 au:h-19 au:border-b au:px-3 au:text-sm au:font-medium au:whitespace-nowrap au:text-gray-600",
+                  !primary && "au:tabular",
                   alignClass[column.align ?? "start"],
                   column.hideBelow && hideBelowClass[column.hideBelow],
                   primary && !selectable && edgeStart,
                   primary &&
                     !column.width &&
-                    "w-full max-w-0 text-base font-semibold text-gray-950",
+                    "au:w-full au:max-w-0 au:text-base au:font-semibold au:text-gray-950",
                   columnIndex === columns.length - 1 && !rowActions && edgeEnd
                 )}
                 key={column.key}
                 style={column.width ? { width: column.width } : undefined}
               >
                 {primary ? (
-                  <div className="truncate" id={nameId}>
+                  <div className="au:truncate" id={nameId}>
                     <RowLink link={rowLink?.(row)}>{content}</RowLink>
                   </div>
                 ) : (
@@ -285,7 +285,7 @@ function DataTable<Row>({
           {rowActions ? (
             <td
               className={cn(
-                "border-alpha/5 relative z-10 w-px border-b ps-1 text-end",
+                "au:border-alpha/5 au:relative au:z-10 au:w-px au:border-b au:ps-1 au:text-end",
                 edgeEnd
               )}
             >
@@ -316,18 +316,18 @@ function DataTable<Row>({
   const table = (
     <table
       aria-label={label}
-      className="w-full border-separate border-spacing-0"
+      className="au:w-full au:border-separate au:border-spacing-0"
     >
       <thead>
         <tr>
           {selectable ? (
             <th
-              className={cn(thClass, "w-px pe-1", edgeStart)}
+              className={cn(thClass, "au:w-px au:pe-1", edgeStart)}
               style={{ top: stickyTop }}
             >
               <Checkbox
                 aria-label="Select all rows"
-                className="flex"
+                className="au:flex"
                 disabled={pageIds.length === 0}
                 parent
               />
@@ -343,7 +343,7 @@ function DataTable<Row>({
                 alignClass[column.align ?? "start"],
                 column.hideBelow && hideBelowClass[column.hideBelow],
                 columnIndex === 0 && !selectable && edgeStart,
-                columnIndex === 0 && !column.width && "w-full",
+                columnIndex === 0 && !column.width && "au:w-full",
                 columnIndex === columns.length - 1 && !rowActions && edgeEnd
               )}
               key={column.key}
@@ -366,10 +366,10 @@ function DataTable<Row>({
           ))}
           {rowActions ? (
             <th
-              className={cn(thClass, "w-px", edgeEnd)}
+              className={cn(thClass, "au:w-px", edgeEnd)}
               style={{ top: stickyTop }}
             >
-              <span className="sr-only">Actions</span>
+              <span className="au:sr-only">Actions</span>
             </th>
           ) : null}
         </tr>
@@ -379,7 +379,9 @@ function DataTable<Row>({
   );
 
   return (
-    <div className={cn("@container/data-table isolate w-full", className)}>
+    <div
+      className={cn("au:@container/data-table au:isolate au:w-full", className)}
+    >
       <span hidden id={`${baseId}-select`}>
         Select
       </span>
@@ -419,7 +421,7 @@ function StateRow({
 }) {
   return (
     <tr>
-      <td className="border-alpha/5 border-b" colSpan={columnCount}>
+      <td className="au:border-alpha/5 au:border-b" colSpan={columnCount}>
         {children}
       </td>
     </tr>
@@ -440,9 +442,9 @@ function BulkBar({
     [onSelectedChange]
   );
   return (
-    <div className="pointer-events-none sticky bottom-4 z-30 flex justify-center px-4 py-3">
-      <div className="border-alpha/10 shadow-floating pointer-events-auto flex items-center gap-2 rounded-2xl border bg-gray-50 p-2 ps-4">
-        <span className="tabular me-2 text-sm font-medium whitespace-nowrap text-gray-950">
+    <div className="au:pointer-events-none au:sticky au:bottom-4 au:z-30 au:flex au:justify-center au:px-4 au:py-3">
+      <div className="au:border-alpha/10 au:shadow-floating au:pointer-events-auto au:flex au:items-center au:gap-2 au:rounded-2xl au:border au:bg-gray-50 au:p-2 au:ps-4">
+        <span className="au:tabular au:me-2 au:text-sm au:font-medium au:whitespace-nowrap au:text-gray-950">
           {count} selected
         </span>
         {children}

@@ -2,9 +2,9 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 
 const variants = {
-  default: "gap-6 p-6",
+  default: "au:gap-6 au:p-6",
   /** Rows split by hairlines, each padded: settings lists, recent items. */
-  list: "divide-alpha/10 gap-0 divide-y overflow-hidden *:px-6 *:py-4",
+  list: "au:gap-0 au:[&>*+*]:border-t au:[&>*+*]:border-alpha/10 au:overflow-hidden au:*:px-6 au:*:py-4",
 };
 
 type CardProps = React.ComponentProps<"section"> & {
@@ -15,7 +15,7 @@ function Card({ variant = "default", className, ...props }: CardProps) {
   return (
     <section
       className={cn(
-        "border-alpha/10 shadow-card flex min-w-0 flex-col rounded-3xl border bg-gray-50",
+        "au:border-alpha/10 au:shadow-card au:flex au:min-w-0 au:flex-col au:rounded-3xl au:border au:bg-gray-50",
         variants[variant],
         className
       )}
@@ -37,10 +37,15 @@ function CardHeader({
   ...props
 }: CardHeaderProps) {
   return (
-    <div className={cn("flex items-start gap-4", className)} {...props}>
-      <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+    <div
+      className={cn("au:flex au:items-start au:gap-4", className)}
+      {...props}
+    >
+      <div className="au:flex au:min-w-0 au:flex-1 au:flex-col">{children}</div>
       {actions ? (
-        <div className="flex shrink-0 items-center gap-3">{actions}</div>
+        <div className="au:flex au:shrink-0 au:items-center au:gap-3">
+          {actions}
+        </div>
       ) : null}
     </div>
   );
@@ -49,7 +54,10 @@ function CardHeader({
 function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
-      className={cn("text-lg leading-8 font-semibold text-gray-950", className)}
+      className={cn(
+        "au:text-lg au:leading-8 au:font-semibold au:text-gray-950",
+        className
+      )}
       {...props}
     />
   );
@@ -58,7 +66,10 @@ function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
 function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-base leading-6 font-medium text-gray-600", className)}
+      className={cn(
+        "au:text-base au:leading-6 au:font-medium au:text-gray-600",
+        className
+      )}
       {...props}
     />
   );
@@ -67,7 +78,10 @@ function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-wrap items-center justify-end gap-3", className)}
+      className={cn(
+        "au:flex au:flex-wrap au:items-center au:justify-end au:gap-3",
+        className
+      )}
       {...props}
     />
   );

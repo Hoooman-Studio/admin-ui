@@ -1,0 +1,53 @@
+/*
+ * The host website's own styles: its own Tailwind (no prefix, default theme)
+ * and the kind of global element styles real sites have. The admin must look
+ * the same with these present.
+ */
+@import "tailwindcss";
+@source "./";
+
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.8;
+  color: #3b2f1e;
+  background: #fdf6e3;
+}
+
+h1,
+h2,
+h3 {
+  margin: 1.5rem 0;
+  font-size: 2.5rem;
+  color: darkred;
+  text-transform: uppercase;
+}
+
+p {
+  margin-bottom: 1.25rem;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+
+button,
+input,
+select,
+textarea {
+  padding: 0.75rem 1.25rem;
+  background: #ffd;
+  border: 2px solid purple;
+  border-radius: 0;
+}
+
+ul {
+  padding-left: 2rem;
+  list-style: disc;
+}
+
+table {
+  border: 3px double black;
+}

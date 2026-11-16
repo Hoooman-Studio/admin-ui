@@ -17,7 +17,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function BasicsPage() {
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6 p-10">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 p-10">
       <div className="flex flex-wrap gap-2">
         <Button>Primary</Button>
         <Button variant="accent">Accent</Button>
@@ -39,9 +39,9 @@ function BasicsPage() {
         <FormField label="Notes" name="notes">
           <Textarea />
         </FormField>
-        <Button className="self-start" type="submit">
-          Save
-        </Button>
+        <div>
+          <Button type="submit">Save</Button>
+        </div>
       </form>
       <Dialog>
         <DialogTrigger render={<Button variant="outline" />}>

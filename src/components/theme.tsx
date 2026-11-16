@@ -40,19 +40,30 @@ function useTheme() {
   return { theme, setTheme };
 }
 
-/** Sets `data-theme` on `<html>` from the stored choice, following the system while it's "system". AdminShell calls it. */
-function useApplyTheme() {
-  const { theme } = useTheme();
-  React.useEffect(() => {
-    const query = matchMedia(darkQuery);
-    const apply = () => {
-      const dark = theme === "dark" || (theme === "system" && query.matches);
-      document.documentElement.dataset.theme = dark ? "dark" : "light";
-    };
-    apply();
-    query.addEventListener("change", apply);
-    return () => query.removeEventListener("change", apply);
-  }, [theme]);
+function subscribeSystem(listener: () => void) {
+  const query = matchMedia(darkQuery);
+  query.addEventListener("change", listener);
+  const unsubscribe = subscribe(listener);
+  return () => {
+    query.removeEventListener("change", listener);
+    unsubscribe();
+  };
+}
+
+function readResolved() {
+  const theme = readTheme();
+  const dark =
+    theme === "dark" || (theme === "system" && matchMedia(darkQuery).matches);
+  return dark ? "dark" : "light";
+}
+
+/** "light" or "dark": the stored choice, or the system's while it's "system". Undefined on the server. */
+function useResolvedTheme() {
+  return React.useSyncExternalStore(
+    subscribeSystem,
+    readResolved,
+    () => undefined
+  );
 }
 
 const options = [
@@ -83,4 +94,4 @@ function ThemeMenuItems() {
 }
 
 export type { Theme };
-export { ThemeMenuItems, useApplyTheme, useTheme };
+export { ThemeMenuItems, useResolvedTheme, useTheme };

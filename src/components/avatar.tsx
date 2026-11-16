@@ -6,9 +6,9 @@ import {
 import { cn } from "../lib/cn";
 
 const sizes = {
-  sm: "size-6 text-2xs",
-  md: "size-8 text-xs",
-  lg: "size-10 text-sm",
+  sm: "au:size-6 au:text-2xs",
+  md: "au:size-8 au:text-xs",
+  lg: "au:size-10 au:text-sm",
 };
 
 interface AvatarProps {
@@ -36,17 +36,21 @@ function Avatar({ name, src, size = "md", className }: AvatarProps) {
   return (
     <AvatarPart
       className={cn(
-        "border-alpha/10 relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border bg-gray-800 font-medium text-gray-50 select-none",
+        "au:border-alpha/10 au:relative au:inline-flex au:shrink-0 au:items-center au:justify-center au:overflow-hidden au:rounded-full au:border au:bg-gray-800 au:font-medium au:text-gray-50 au:select-none",
         sizes[size],
         className
       )}
     >
       {src ? (
-        <AvatarImage alt={name} className="size-full object-cover" src={src} />
+        <AvatarImage
+          alt={name}
+          className="au:size-full au:object-cover"
+          src={src}
+        />
       ) : null}
       <AvatarFallback>
         <span aria-hidden="true">{initials(name)}</span>
-        <span className="sr-only">{name}</span>
+        <span className="au:sr-only">{name}</span>
       </AvatarFallback>
     </AvatarPart>
   );

@@ -3,8 +3,8 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 
 const trends = {
-  up: { icon: ArrowUpRightIcon, className: "text-green-600" },
-  down: { icon: ArrowDownRightIcon, className: "text-red-500" },
+  up: { icon: ArrowUpRightIcon, className: "au:text-green-600" },
+  down: { icon: ArrowDownRightIcon, className: "au:text-red-500" },
 };
 
 type StatCardProps = React.ComponentProps<"div"> & {
@@ -32,33 +32,33 @@ function StatCard({
   return (
     <div
       className={cn(
-        "border-alpha/10 shadow-card flex min-w-0 flex-col gap-1 rounded-3xl border bg-gray-50 p-6",
+        "au:border-alpha/10 au:shadow-card au:flex au:min-w-0 au:flex-col au:gap-1 au:rounded-3xl au:border au:bg-gray-50 au:p-6",
         className
       )}
       {...props}
     >
-      <span className="truncate text-base font-medium text-gray-600">
+      <span className="au:truncate au:text-base au:font-medium au:text-gray-600">
         {label}
       </span>
-      <span className="tabular truncate text-3xl font-semibold tracking-[-0.02em] text-gray-950">
+      <span className="au:tabular au:truncate au:text-3xl au:font-semibold au:tracking-[-0.02em] au:text-gray-950">
         {value}
       </span>
       {change || hint ? (
-        <span className="mt-2 flex items-center gap-1.5 text-sm font-medium text-gray-500">
+        <span className="au:mt-2 au:flex au:items-center au:gap-1.5 au:text-sm au:font-medium au:text-gray-500">
           {change ? (
             <span
               className={cn(
-                "tabular flex items-center gap-0.5",
-                Trend?.className ?? "text-gray-600"
+                "au:tabular au:flex au:items-center au:gap-0.5",
+                Trend?.className ?? "au:text-gray-600"
               )}
             >
               {Trend ? (
-                <Trend.icon aria-hidden="true" className="size-4" />
+                <Trend.icon aria-hidden="true" className="au:size-4" />
               ) : null}
               {change}
             </span>
           ) : null}
-          {hint ? <span className="truncate">{hint}</span> : null}
+          {hint ? <span className="au:truncate">{hint}</span> : null}
         </span>
       ) : null}
     </div>
@@ -68,10 +68,10 @@ function StatCard({
 /** StatCards in a row of up to four, fewer on narrow pages. */
 function StatGrid({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className="@container/stat-grid">
+    <div className="au:@container/stat-grid">
       <div
         className={cn(
-          "grid grid-cols-1 gap-4 @md/stat-grid:grid-cols-2 @4xl/stat-grid:grid-cols-4",
+          "au:grid au:grid-cols-1 au:gap-4 au:@md/stat-grid:grid-cols-2 au:@4xl/stat-grid:grid-cols-4",
           className
         )}
         {...props}

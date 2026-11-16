@@ -20,6 +20,7 @@ import {
   DescriptionList,
 } from "../../../src/components/description-list";
 import { Input, InputGroup } from "../../../src/components/input";
+import { ListRow } from "../../../src/components/list-row";
 import {
   DetailLayout,
   PageBody,
@@ -86,23 +87,11 @@ const go = (page: string) => () => {
 };
 
 function OverviewPage() {
-  return <Overview onOpenListing={go("listing")} />;
-}
-
-function ListingsPage() {
-  return <Listings onOpenListing={go("listing")} />;
-}
-
-function ListingPage() {
-  return <ListingDetail onBack={go("listings")} />;
-}
-
-function Overview({ onOpenListing }: { onOpenListing: () => void }) {
   return (
     <>
       <PageHeader
         actions={
-          <Button onClick={onOpenListing} variant="accent">
+          <Button onClick={go("listing")} variant="accent">
             <PlusIcon />
             New listing
           </Button>
@@ -146,24 +135,13 @@ function Overview({ onOpenListing }: { onOpenListing: () => void }) {
         >
           <Card variant="list">
             {enquiries.map((enquiry) => (
-              <button
-                className="hover:bg-alpha/3 flex items-center gap-4 text-left"
+              <ListRow
                 key={enquiry.id}
-                onClick={onOpenListing}
-                type="button"
-              >
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-base font-medium text-gray-950">
-                    {enquiry.name}
-                  </span>
-                  <span className="truncate text-sm text-gray-600">
-                    {enquiry.listing}
-                  </span>
-                </span>
-                <span className="shrink-0 text-sm text-gray-500">
-                  {enquiry.when}
-                </span>
-              </button>
+                link={<a href="#/listing" />}
+                meta={enquiry.when}
+                subtitle={enquiry.listing}
+                title={enquiry.name}
+              />
             ))}
           </Card>
         </PageSection>
@@ -197,7 +175,7 @@ function Overview({ onOpenListing }: { onOpenListing: () => void }) {
   );
 }
 
-function Listings({ onOpenListing }: { onOpenListing: () => void }) {
+function ListingsPage() {
   return (
     <>
       <PageHeader
@@ -217,35 +195,30 @@ function Listings({ onOpenListing }: { onOpenListing: () => void }) {
           </Button>
         }
       >
-        <InputGroup className="w-full max-w-xs">
-          <SearchIcon />
-          <Input aria-label="Search listings" placeholder="Search listings" />
-        </InputGroup>
+        <div className="w-full max-w-xs">
+          <InputGroup>
+            <SearchIcon />
+            <Input aria-label="Search listings" placeholder="Search listings" />
+          </InputGroup>
+        </div>
       </PageToolbar>
       <PageBody>
         <Card variant="list">
           {listings.map((listing) => (
-            <button
-              className="hover:bg-alpha/3 flex items-center gap-4 text-left"
+            <ListRow
+              actions={
+                <Badge
+                  dot
+                  tone={listing.status === "Live" ? "success" : "neutral"}
+                >
+                  {listing.status}
+                </Badge>
+              }
               key={listing.id}
-              onClick={onOpenListing}
-              type="button"
-            >
-              <span className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-base font-medium text-gray-950">
-                  {listing.title}
-                </span>
-                <span className="truncate text-sm text-gray-600">
-                  {listing.city} · {listing.price}
-                </span>
-              </span>
-              <Badge
-                dot
-                tone={listing.status === "Live" ? "success" : "neutral"}
-              >
-                {listing.status}
-              </Badge>
-            </button>
+              link={<a href="#/listing" />}
+              subtitle={`${listing.city} · ${listing.price}`}
+              title={listing.title}
+            />
           ))}
         </Card>
       </PageBody>
@@ -253,19 +226,19 @@ function Listings({ onOpenListing }: { onOpenListing: () => void }) {
   );
 }
 
-function ListingDetail({ onBack }: { onBack: () => void }) {
+function ListingPage() {
   return (
     <>
       <PageHeader
         actions={
           <>
-            <Button className="hidden sm:inline-flex" variant="outline">
-              Preview
-            </Button>
+            <div className="hidden sm:block">
+              <Button variant="outline">Preview</Button>
+            </div>
             <Button variant="accent">Save</Button>
           </>
         }
-        back={<button onClick={onBack} type="button" />}
+        back={<a href="#/listings" />}
         backLabel="Back to listings"
         description="Berlin · Listing #1042"
         title="Sunny loft by the Spree"
@@ -303,11 +276,11 @@ function ListingDetail({ onBack }: { onBack: () => void }) {
             title="Description"
           >
             <Card>
-              <p className="text-base leading-6 text-gray-950">
+              <CardDescription>
                 A bright 68 m² loft on the fourth floor with a view over the
                 Spree. Open kitchen, one bedroom, a work corner by the window
                 and a shared roof terrace. Five minutes to the U-Bahn.
-              </p>
+              </CardDescription>
             </Card>
           </PageSection>
           <PageSection title="Facts">

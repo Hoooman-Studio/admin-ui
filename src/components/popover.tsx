@@ -25,7 +25,7 @@ function PopoverContent({
     <PopoverContentPart
       className={cn(
         popupClass,
-        "flex w-80 max-w-[calc(100vw-1rem)] flex-col gap-3 p-4 data-[presentation=sheet]:pb-[calc(1rem+env(safe-area-inset-bottom))]",
+        "au:flex au:w-80 au:max-w-[calc(100vw-1rem)] au:flex-col au:gap-3 au:p-4 au:data-[presentation=sheet]:pb-[calc(1rem+env(safe-area-inset-bottom))]",
         className
       )}
       sideOffset={sideOffset}
@@ -40,7 +40,10 @@ function PopoverTitle({
 }: WithClass<React.ComponentProps<typeof PopoverTitlePart>>) {
   return (
     <PopoverTitlePart
-      className={cn("text-base font-semibold text-gray-950", className)}
+      className={cn(
+        "au:text-base au:font-semibold au:text-gray-950",
+        className
+      )}
       {...props}
     />
   );
@@ -52,7 +55,7 @@ function PopoverDescription({
 }: WithClass<React.ComponentProps<typeof PopoverDescriptionPart>>) {
   return (
     <PopoverDescriptionPart
-      className={cn("-mt-2 text-sm text-gray-600", className)}
+      className={cn("au:-mt-2 au:text-sm au:text-gray-600", className)}
       {...props}
     />
   );

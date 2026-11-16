@@ -12,7 +12,7 @@ type RowLinkElement = React.ReactElement<{
  * stretched link, so they stay clickable.
  */
 const aboveRowLink =
-  "[&_:is(a,button,input,label,select,textarea,[role=button],[role=checkbox]):not([data-slot=row-link])]:relative [&_:is(a,button,input,label,select,textarea,[role=button],[role=checkbox]):not([data-slot=row-link])]:z-10";
+  "au:[&_:is(a,button,input,label,select,textarea,[role=button],[role=checkbox]):not([data-slot=row-link])]:relative au:[&_:is(a,button,input,label,select,textarea,[role=button],[role=checkbox]):not([data-slot=row-link])]:z-10";
 
 /**
  * Wraps `children` in the row's link. The link's `::after` covers the nearest
@@ -30,7 +30,7 @@ function RowLink({
   }
   return React.cloneElement(link, {
     className: cn(
-      "focus-visible:after:ring-accent outline-none after:absolute after:inset-0 after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-inset",
+      "au:focus-visible:after:ring-accent au:outline-none au:after:absolute au:after:inset-0 au:after:content-[''] au:focus-visible:after:ring-2 au:focus-visible:after:ring-inset",
       link.props.className
     ),
     "data-slot": "row-link",
@@ -40,7 +40,7 @@ function RowLink({
 
 /** A list of ListRows. */
 function List({ className, ...props }: React.ComponentProps<"ul">) {
-  return <ul className={cn("flex flex-col", className)} {...props} />;
+  return <ul className={cn("au:flex au:flex-col", className)} {...props} />;
 }
 
 type ListRowProps = Omit<React.ComponentProps<"li">, "title"> & {
@@ -70,30 +70,32 @@ function ListRow({
   return (
     <li
       className={cn(
-        "border-alpha/5 hover:bg-alpha/2 relative flex min-h-19 items-center gap-4 border-t px-4 py-3 transition-colors duration-100 sm:gap-5 sm:px-6",
+        "au:border-alpha/5 au:hover:bg-alpha/2 au:relative au:flex au:min-h-19 au:items-center au:gap-4 au:border-t au:px-4 au:py-3 au:transition-colors au:duration-100 au:sm:gap-5 au:sm:px-6",
         aboveRowLink,
         className
       )}
       {...props}
     >
-      {leading ? <div className="flex shrink-0">{leading}</div> : null}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-base font-semibold text-gray-950">
+      {leading ? <div className="au:flex au:shrink-0">{leading}</div> : null}
+      <div className="au:flex au:min-w-0 au:flex-1 au:flex-col">
+        <span className="au:truncate au:text-base au:font-semibold au:text-gray-950">
           <RowLink link={link}>{title}</RowLink>
         </span>
         {subtitle ? (
-          <span className="truncate text-sm font-medium text-gray-500">
+          <span className="au:truncate au:text-sm au:font-medium au:text-gray-500">
             {subtitle}
           </span>
         ) : null}
       </div>
       {meta ? (
-        <span className="tabular shrink-0 text-sm font-medium text-gray-500">
+        <span className="au:tabular au:shrink-0 au:text-sm au:font-medium au:text-gray-500">
           {meta}
         </span>
       ) : null}
       {actions ? (
-        <div className="flex shrink-0 items-center gap-2">{actions}</div>
+        <div className="au:flex au:shrink-0 au:items-center au:gap-2">
+          {actions}
+        </div>
       ) : null}
     </li>
   );

@@ -22,7 +22,7 @@ type NumberInputProps = Omit<
 };
 
 const stepClass =
-  "touch-target hover:bg-alpha/5 flex size-6 shrink-0 in-data-[slot=form-field-box]:size-5 items-center justify-center rounded-md text-gray-500 hover:text-gray-950 data-disabled:pointer-events-none data-disabled:opacity-40 [&_svg]:size-3.5";
+  "au:touch-target au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:in-data-[slot=form-field-box]:size-5 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:data-disabled:pointer-events-none au:data-disabled:opacity-40 au:[&_svg]:size-3.5";
 
 /**
  * A number field with − and + buttons. Arrow keys step it too, and `format`
@@ -36,15 +36,15 @@ function NumberInput({
   ...props
 }: NumberInputProps) {
   return (
-    <NumberInputPart className={cn("w-full", className)} {...props}>
+    <NumberInputPart className={cn("au:w-full", className)} {...props}>
       <NumberInputGroup
         className={cn(
           controlBoxClass,
-          "gap-1 pe-1 data-disabled:cursor-not-allowed"
+          "au:gap-1 au:pe-1 au:data-disabled:cursor-not-allowed"
         )}
       >
         <NumberInputControl
-          className="text-input tabular h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-gray-500 disabled:cursor-not-allowed"
+          className="au:text-input au:tabular au:h-full au:min-w-0 au:flex-1 au:bg-transparent au:outline-none au:placeholder:text-gray-500 au:disabled:cursor-not-allowed"
           placeholder={placeholder}
         />
         <NumberInputDecrement aria-label={decrementLabel} className={stepClass}>

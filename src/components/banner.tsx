@@ -9,20 +9,20 @@ import { cn } from "../lib/cn";
 
 const tones = {
   info: {
-    box: "border-blue-500/20 bg-blue-500/5",
-    icon: <InfoIcon className="text-blue-500" />,
+    box: "au:border-blue-500/20 au:bg-blue-500/5",
+    icon: <InfoIcon className="au:text-blue-500" />,
   },
   success: {
-    box: "border-green-500/20 bg-green-500/5",
-    icon: <CircleCheckIcon className="text-green-500" />,
+    box: "au:border-green-500/20 au:bg-green-500/5",
+    icon: <CircleCheckIcon className="au:text-green-500" />,
   },
   warning: {
-    box: "border-orange-500/20 bg-orange-500/5",
-    icon: <TriangleAlertIcon className="text-orange-500" />,
+    box: "au:border-orange-500/20 au:bg-orange-500/5",
+    icon: <TriangleAlertIcon className="au:text-orange-500" />,
   },
   danger: {
-    box: "border-red-500/20 bg-red-500/5",
-    icon: <OctagonXIcon className="text-red-500" />,
+    box: "au:border-red-500/20 au:bg-red-500/5",
+    icon: <OctagonXIcon className="au:text-red-500" />,
   },
 };
 
@@ -49,23 +49,25 @@ function Banner({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-xl border p-3 sm:flex-row sm:items-center [&_svg]:size-4 [&_svg]:shrink-0",
+        "au:flex au:flex-col au:gap-3 au:rounded-xl au:border au:p-3 au:sm:flex-row au:sm:items-center au:[&_svg]:size-4 au:[&_svg]:shrink-0",
         tones[tone].box,
         className
       )}
       role={tone === "danger" ? "alert" : "status"}
     >
-      <div className="flex min-w-0 flex-1 gap-3">
-        <span className="mt-0.5">{tones[tone].icon}</span>
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <p className="text-sm font-medium text-gray-950">{title}</p>
+      <div className="au:flex au:min-w-0 au:flex-1 au:gap-3">
+        <span className="au:mt-0.5">{tones[tone].icon}</span>
+        <div className="au:flex au:min-w-0 au:flex-col au:gap-0.5">
+          <p className="au:text-sm au:font-medium au:text-gray-950">{title}</p>
           {description ? (
-            <div className="text-sm text-gray-600">{description}</div>
+            <div className="au:text-sm au:text-gray-600">{description}</div>
           ) : null}
         </div>
       </div>
       {action ? (
-        <div className="flex shrink-0 gap-2 pl-7 sm:pl-0">{action}</div>
+        <div className="au:flex au:shrink-0 au:gap-2 au:pl-7 au:sm:pl-0">
+          {action}
+        </div>
       ) : null}
     </div>
   );

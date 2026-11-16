@@ -21,12 +21,13 @@ import { ThemeMenuItems } from "./theme";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 /** Each part is a cell; cells after the first get a hairline on their left. */
-const cellClass = "border-alpha/10 flex shrink-0 border-l first:border-l-0";
-const squareClass = "w-14 items-center justify-center sm:w-19";
+const cellClass =
+  "au:border-alpha/10 au:flex au:shrink-0 au:border-l au:first:border-l-0";
+const squareClass = "au:w-14 au:items-center au:justify-center au:sm:w-19";
 const titleClass =
-  "truncate py-1 text-2xl leading-none font-semibold tracking-[-0.02em] text-gray-950";
+  "au:truncate au:py-1 au:text-2xl au:leading-none au:font-semibold au:tracking-[-0.02em] au:text-gray-950";
 const focusClass =
-  "focus-visible:outline-accent focus-visible:outline-2 focus-visible:-outline-offset-2";
+  "au:focus-visible:outline-accent au:focus-visible:outline-2 au:focus-visible:-outline-offset-2";
 
 /**
  * The header bar of AdminShell. Compose it from its parts:
@@ -35,7 +36,10 @@ const focusClass =
 function AdminHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("border-alpha/10 flex h-19 shrink-0 border-b", className)}
+      className={cn(
+        "au:border-alpha/10 au:flex au:h-19 au:shrink-0 au:border-b",
+        className
+      )}
       {...props}
     />
   );
@@ -62,19 +66,21 @@ function AdminHeaderAccount({
         <MenuTrigger
           aria-label="Open account menu"
           className={cn(
-            "touch-target hover:bg-alpha/5 flex size-full items-center justify-center",
+            "au:touch-target au:hover:bg-alpha/5 au:flex au:size-full au:items-center au:justify-center",
             focusClass
           )}
         >
-          <Avatar className="sm:size-9" name={name} src={image} />
+          <Avatar className="au:sm:size-9" name={name} src={image} />
         </MenuTrigger>
-        <MenuContent align="start" className="min-w-60">
-          <div className="flex flex-col px-2 py-1.5">
-            <span className="truncate text-sm font-medium text-gray-950">
+        <MenuContent align="start" className="au:min-w-60">
+          <div className="au:flex au:flex-col au:px-2 au:py-1.5">
+            <span className="au:truncate au:text-sm au:font-medium au:text-gray-950">
               {name}
             </span>
             {email ? (
-              <span className="truncate text-xs text-gray-500">{email}</span>
+              <span className="au:truncate au:text-xs au:text-gray-500">
+                {email}
+              </span>
             ) : null}
           </div>
           <MenuSeparator />
@@ -98,7 +104,7 @@ function AdminHeaderTitle({ children }: { children: React.ReactNode }) {
     <div
       className={cn(
         cellClass,
-        "min-w-0 flex-1 items-center gap-4 px-4 sm:px-6"
+        "au:min-w-0 au:flex-1 au:items-center au:gap-4 au:px-4 au:sm:px-6"
       )}
     >
       <MobileNav nav={nav} title={children} />
@@ -115,7 +121,11 @@ function AdminHeaderActions({
 }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(cellClass, "items-center gap-2 px-3 sm:px-6", className)}
+      className={cn(
+        cellClass,
+        "au:items-center au:gap-2 au:px-3 au:sm:px-6",
+        className
+      )}
       {...props}
     />
   );
@@ -132,14 +142,14 @@ function AdminHeaderStudioLink({
       className={cn(
         cellClass,
         squareClass,
-        "hover:bg-alpha/5 text-gray-950 transition-colors duration-100",
+        "au:hover:bg-alpha/5 au:text-gray-950 au:transition-colors au:duration-100",
         focusClass
       )}
       href={href}
     >
       <svg
         aria-hidden="true"
-        className="size-14 sm:size-19"
+        className="au:size-14 au:sm:size-19"
         fill="none"
         viewBox="0 0 96 96"
       >
@@ -148,7 +158,7 @@ function AdminHeaderStudioLink({
           fill="currentColor"
         />
       </svg>
-      <span className="sr-only">Open Hooman Studio</span>
+      <span className="au:sr-only">Open Hooman Studio</span>
     </a>
   );
 }
@@ -161,7 +171,7 @@ function RailToggle({ collapsed }: { collapsed: boolean }) {
         render={
           <Button
             aria-label={label}
-            className="hidden md:inline-flex"
+            className="au:hidden au:md:inline-flex"
             onClick={toggleCollapsed}
             rounded
             size="icon"
@@ -191,7 +201,7 @@ function MobileNav({
         render={
           <Button
             aria-label="Open menu"
-            className="md:hidden"
+            className="au:md:hidden"
             rounded
             size="icon"
             variant="outline"
@@ -201,12 +211,12 @@ function MobileNav({
         }
       />
       <DrawerContent size="sm">
-        <DrawerHeader className="h-19 items-center px-6 py-0">
+        <DrawerHeader className="au:h-19 au:items-center au:px-6 au:py-0">
           <DrawerTitle className={titleClass}>{title}</DrawerTitle>
         </DrawerHeader>
-        <DrawerBody className="px-3 py-3">
+        <DrawerBody className="au:px-3 au:py-3">
           <RailContext value={{ collapsed: false, onNavigate: close }}>
-            <nav aria-label="Main" className="flex flex-col gap-0.5">
+            <nav aria-label="Main" className="au:flex au:flex-col au:gap-0.5">
               {nav}
             </nav>
           </RailContext>

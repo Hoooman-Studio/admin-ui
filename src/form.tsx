@@ -226,8 +226,8 @@ function RadioGroupField({
     (value: string | null) => value ?? ""
   );
   return (
-    <fieldset className="flex flex-col gap-3" disabled={disabled}>
-      <legend className="mb-3 px-1 text-sm font-medium text-gray-950">
+    <fieldset className="au:flex au:flex-col au:gap-3" disabled={disabled}>
+      <legend className="au:mb-3 au:px-1 au:text-sm au:font-medium au:text-gray-950">
         {label}
       </legend>
       <RadioGroup
@@ -246,7 +246,9 @@ function RadioGroupField({
         ))}
       </RadioGroup>
       {error ? (
-        <p className="px-1 text-sm font-medium text-red-500">{error}</p>
+        <p className="au:px-1 au:text-sm au:font-medium au:text-red-500">
+          {error}
+        </p>
       ) : null}
     </fieldset>
   );
@@ -406,7 +408,7 @@ function AdminForm({
   return (
     <form.AppForm>
       <form
-        className={className ?? "flex flex-col gap-4"}
+        className={className ?? "au:flex au:flex-col au:gap-4"}
         noValidate
         onSubmit={submit}
       >

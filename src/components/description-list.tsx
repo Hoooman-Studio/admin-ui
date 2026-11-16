@@ -6,7 +6,7 @@ function DescriptionList({ className, ...props }: React.ComponentProps<"dl">) {
   return (
     <dl
       className={cn(
-        "divide-alpha/5 @container/description-list flex flex-col divide-y",
+        "au:@container/description-list au:flex au:flex-col au:[&>*+*]:border-t au:[&>*+*]:border-alpha/5",
         className
       )}
       {...props}
@@ -30,16 +30,16 @@ function DescriptionItem({
   return (
     <div
       className={cn(
-        "flex min-h-14 items-center justify-between gap-4 py-3 @lg/description-list:justify-start",
+        "au:flex au:min-h-14 au:items-center au:justify-between au:gap-4 au:py-3 au:@lg/description-list:justify-start",
         className
       )}
       {...props}
     >
-      <dt className="flex shrink-0 items-center gap-3 text-sm font-medium text-gray-600 @lg/description-list:w-40 [&_svg]:size-4 [&_svg]:opacity-40">
+      <dt className="au:flex au:shrink-0 au:items-center au:gap-3 au:text-sm au:font-medium au:text-gray-600 au:@lg/description-list:w-40 au:[&_svg]:size-4 au:[&_svg]:opacity-40">
         {icon}
         {label}
       </dt>
-      <dd className="min-w-0 text-right text-sm font-medium text-gray-950 @lg/description-list:text-left">
+      <dd className="au:min-w-0 au:text-right au:text-sm au:font-medium au:text-gray-950 au:@lg/description-list:text-left">
         {children}
       </dd>
     </div>

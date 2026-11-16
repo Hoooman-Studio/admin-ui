@@ -6,6 +6,7 @@ export {
   AdminHeaderStudioLink,
   AdminHeaderTitle,
 } from "./components/admin-header";
+export { AdminScope, type AdminScopeProps } from "./components/admin-scope";
 export { AdminShell, type AdminShellProps } from "./components/admin-shell";
 export {
   AlertDialog,
@@ -220,6 +221,5 @@ export {
   TooltipShortcut,
   TooltipTrigger,
 } from "./components/tooltip";
-export { cn } from "./lib/cn";
 export { paginate } from "./lib/paging";
 export { type SortDirection, type SortState, sortRows } from "./lib/sort-rows";

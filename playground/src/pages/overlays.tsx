@@ -1,5 +1,7 @@
 import {
   ArchiveIcon,
+  BuildingIcon,
+  CalendarIcon,
   CopyIcon,
   EllipsisIcon,
   ExternalLinkIcon,
@@ -7,7 +9,9 @@ import {
   MenuIcon,
   PencilIcon,
   RefreshCwIcon,
+  SettingsIcon,
   TrashIcon,
+  UserIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { confirm } from "../../../src/components/alert-dialog";
@@ -15,6 +19,7 @@ import { Avatar } from "../../../src/components/avatar";
 import { Badge, type BadgeProps } from "../../../src/components/badge";
 import { Banner } from "../../../src/components/banner";
 import { Button } from "../../../src/components/button";
+import { Card } from "../../../src/components/card";
 import {
   Drawer,
   DrawerBody,
@@ -30,6 +35,7 @@ import { EmptyState } from "../../../src/components/empty-state";
 import { FormField } from "../../../src/components/field";
 import { Input } from "../../../src/components/input";
 import { Kbd } from "../../../src/components/kbd";
+import { List, ListRow } from "../../../src/components/list-row";
 import { Loader } from "../../../src/components/loader";
 import {
   Menu,
@@ -46,6 +52,8 @@ import {
   MenuSubTrigger,
   MenuTrigger,
 } from "../../../src/components/menu";
+import { NavItem } from "../../../src/components/nav";
+import { PageSection } from "../../../src/components/page";
 import {
   Popover,
   PopoverClose,
@@ -68,6 +76,13 @@ import {
   TooltipShortcut,
   TooltipTrigger,
 } from "../../../src/components/tooltip";
+
+const drawerNav = [
+  { label: "Listings", icon: <BuildingIcon /> },
+  { label: "Owners", icon: <UserIcon /> },
+  { label: "Bookings", icon: <CalendarIcon /> },
+  { label: "Settings", icon: <SettingsIcon /> },
+];
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -212,23 +227,28 @@ function ListingDrawer({
                 Billing
               </TabsTab>
             </TabsList>
-            <TabsPanel className="flex flex-col gap-4" value="details">
-              <FormField label="Title">
-                <Input defaultValue={listing?.title} />
-              </FormField>
-              <FormField label="Owner">
-                <Input defaultValue={listing?.owner} />
-              </FormField>
+            <TabsPanel value="details">
+              <div className="flex flex-col gap-4">
+                <FormField label="Title">
+                  <Input defaultValue={listing?.title} />
+                </FormField>
+                <FormField label="Owner">
+                  <Input defaultValue={listing?.owner} />
+                </FormField>
+              </div>
             </TabsPanel>
-            <TabsPanel className="flex flex-col gap-3" value="activity">
-              {["Created by Mira", "Photos updated", "Sent for review"].map(
-                (event) => (
-                  <div className="flex items-center gap-3 text-sm" key={event}>
-                    <Avatar name="Mira Jansen" size="sm" />
-                    {event}
-                  </div>
-                )
-              )}
+            <TabsPanel value="activity">
+              <List>
+                {["Created by Mira", "Photos updated", "Sent for review"].map(
+                  (event) => (
+                    <ListRow
+                      key={event}
+                      leading={<Avatar name="Mira Jansen" size="sm" />}
+                      title={event}
+                    />
+                  )
+                )}
+              </List>
             </TabsPanel>
           </Tabs>
         </DrawerBody>
@@ -279,9 +299,8 @@ function ListingsSection() {
   }
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">Listings</h2>
+    <PageSection
+      actions={
         <Menu>
           <MenuTrigger render={<Button size="sm" variant="outline" />}>
             <ListFilterIcon />
@@ -303,8 +322,10 @@ function ListingsSection() {
             </MenuGroup>
           </MenuContent>
         </Menu>
-      </div>
-      <div className="border-alpha/10 rounded-xl border">
+      }
+      title="Listings"
+    >
+      <Card variant="list">
         {listings.length === 0 ? (
           <EmptyState
             action={
@@ -317,56 +338,49 @@ function ListingsSection() {
           />
         ) : (
           listings.map((listing) => (
-            <div
-              className="border-alpha/5 flex h-14 items-center gap-3 border-b px-4 last:border-b-0"
+            <ListRow
+              actions={
+                <>
+                  <Badge dot tone={statuses[listing.status].tone}>
+                    {statuses[listing.status].label}
+                  </Badge>
+                  <RowActions
+                    listing={listing}
+                    onDelete={() => remove(listing)}
+                    onOpen={() => {
+                      setOpenId(listing.id);
+                      setDrawerOpen(true);
+                    }}
+                    onStatus={(status) => {
+                      setListings((list) =>
+                        list.map((item) =>
+                          item.id === listing.id ? { ...item, status } : item
+                        )
+                      );
+                      toast.info(`Status set to ${statuses[status].label}`);
+                    }}
+                  />
+                </>
+              }
               key={listing.id}
-            >
-              <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm font-medium">
-                  {listing.title}
-                </span>
-                {showOwner ? (
-                  <span className="truncate text-xs text-gray-600">
-                    {listing.owner}
-                  </span>
-                ) : null}
-              </div>
-              <Badge dot tone={statuses[listing.status].tone}>
-                {statuses[listing.status].label}
-              </Badge>
-              <RowActions
-                listing={listing}
-                onDelete={() => remove(listing)}
-                onOpen={() => {
-                  setOpenId(listing.id);
-                  setDrawerOpen(true);
-                }}
-                onStatus={(status) => {
-                  setListings((list) =>
-                    list.map((item) =>
-                      item.id === listing.id ? { ...item, status } : item
-                    )
-                  );
-                  toast.info(`Status set to ${statuses[status].label}`);
-                }}
-              />
-            </div>
+              subtitle={showOwner ? listing.owner : undefined}
+              title={listing.title}
+            />
           ))
         )}
-      </div>
+      </Card>
       <ListingDrawer
         listing={selected}
         onOpenChange={setDrawerOpen}
         open={drawerOpen}
       />
-    </section>
+    </PageSection>
   );
 }
 
 function ToastsSection() {
   return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Toasts</h2>
+    <PageSection title="Toasts">
       <div className="flex flex-wrap gap-2">
         <Button
           onClick={() =>
@@ -407,14 +421,13 @@ function ToastsSection() {
           Promise
         </Button>
       </div>
-    </section>
+    </PageSection>
   );
 }
 
 function BannersSection() {
   return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Result banners</h2>
+    <PageSection title="Result banners">
       <Banner
         description="All 15 listings are live on the site."
         title="Import finished"
@@ -445,15 +458,14 @@ function BannersSection() {
         description="Changes to prices go live tomorrow at 06:00."
         title="Scheduled"
       />
-    </section>
+    </PageSection>
   );
 }
 
 function SmallThingsSection() {
   const [hasTitle, setHasTitle] = useState(false);
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Tooltips, popovers and more</h2>
+    <PageSection title="Tooltips, popovers and more">
       <div className="flex flex-wrap items-center gap-2">
         <Tooltip shortcut="mod+s">
           <TooltipTrigger
@@ -520,16 +532,17 @@ function SmallThingsSection() {
             <DrawerHeader>
               <DrawerTitle>Porta admin</DrawerTitle>
             </DrawerHeader>
-            <DrawerBody className="gap-1 p-2">
-              {["Listings", "Owners", "Bookings", "Settings"].map((item) => (
-                <a
-                  className="hover:bg-alpha/5 rounded-lg px-3 py-2 text-sm font-medium"
-                  href="#/overlays"
-                  key={item}
-                >
-                  {item}
-                </a>
-              ))}
+            <DrawerBody>
+              <div className="flex flex-col gap-0.5">
+                {drawerNav.map((item) => (
+                  <NavItem
+                    href="#/overlays"
+                    icon={item.icon}
+                    key={item.label}
+                    label={item.label}
+                  />
+                ))}
+              </div>
             </DrawerBody>
           </DrawerContent>
         </Drawer>
@@ -537,17 +550,27 @@ function SmallThingsSection() {
       <Separator />
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex -space-x-2">
-          <Avatar name="Mira Jansen" src="https://i.pravatar.cc/80?img=5" />
-          <Avatar name="Tom de Vries" />
-          <Avatar name="Sanne Bakker" src="/broken.png" />
+          <div>
+            <Avatar name="Mira Jansen" src="https://i.pravatar.cc/80?img=5" />
+          </div>
+          <div>
+            <Avatar name="Tom de Vries" />
+          </div>
+          <div>
+            <Avatar name="Sanne Bakker" src="/broken.png" />
+          </div>
         </div>
         <Avatar name="Daan Smit" size="lg" />
-        <Separator className="h-6" decorative orientation="vertical" />
-        <span className="flex items-center gap-1 text-sm text-gray-600">
-          Search <Kbd>⌘</Kbd>
+        <div className="flex h-6">
+          <Separator decorative orientation="vertical" />
+        </div>
+        <div className="flex gap-1">
+          <Kbd>⌘</Kbd>
           <Kbd>K</Kbd>
-        </span>
-        <Separator className="h-6" decorative orientation="vertical" />
+        </div>
+        <div className="flex h-6">
+          <Separator decorative orientation="vertical" />
+        </div>
         <Loader />
         <Loader size="sm" />
         <Loader size="lg" />
@@ -562,13 +585,13 @@ function SmallThingsSection() {
           Info
         </Badge>
       </div>
-    </section>
+    </PageSection>
   );
 }
 
 function OverlaysPage() {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-10 p-6 sm:p-10">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 p-6 sm:p-10">
       <ListingsSection />
       <ToastsSection />
       <BannersSection />

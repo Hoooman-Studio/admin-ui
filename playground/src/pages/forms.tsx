@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Banner } from "../../../src/components/banner";
 import { Button } from "../../../src/components/button";
+import { Card } from "../../../src/components/card";
 import { CheckboxField, CheckboxGroup } from "../../../src/components/checkbox";
 import {
   Combobox,
@@ -24,7 +26,9 @@ import {
   FileInputList,
 } from "../../../src/components/file-input";
 import { Input } from "../../../src/components/input";
+import { ListRow } from "../../../src/components/list-row";
 import { NumberInput } from "../../../src/components/number-input";
+import { PageSection } from "../../../src/components/page";
 import { RadioField, RadioGroup } from "../../../src/components/radio";
 import {
   SegmentedControl,
@@ -117,23 +121,20 @@ function ProjectsToolbar() {
     (project) => filter === "all" || project.status === filter
   );
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Projects</h2>
-        <div className="flex items-center gap-2">
-          <SegmentedControl<ProjectFilter>
-            aria-label="Show projects"
-            onValueChange={(next) => next && setFilter(next)}
-            value={filter}
-          >
-            <SegmentedControlItem value="open">Open</SegmentedControlItem>
-            <SegmentedControlItem value="archived">
-              Archived
-            </SegmentedControlItem>
-            <SegmentedControlItem value="all">All</SegmentedControlItem>
-          </SegmentedControl>
+    <PageSection title="Projects">
+      <div className="flex flex-wrap items-center gap-3">
+        <SegmentedControl<ProjectFilter>
+          aria-label="Show projects"
+          onValueChange={(next) => next && setFilter(next)}
+          value={filter}
+        >
+          <SegmentedControlItem value="open">Open</SegmentedControlItem>
+          <SegmentedControlItem value="archived">Archived</SegmentedControlItem>
+          <SegmentedControlItem value="all">All</SegmentedControlItem>
+        </SegmentedControl>
+        <div className="w-44">
           <Select defaultValue="recent">
-            <SelectTrigger aria-label="Sort projects" className="w-44" />
+            <SelectTrigger aria-label="Sort projects" />
             <SelectContent>
               <SelectItem value="recent">Recently updated</SelectItem>
               <SelectItem value="name">Name</SelectItem>
@@ -142,17 +143,12 @@ function ProjectsToolbar() {
           </Select>
         </div>
       </div>
-      <ul className="border-alpha/10 rounded-xl border">
+      <Card variant="list">
         {shown.map((project) => (
-          <li
-            className="border-alpha/5 flex h-11 items-center border-b px-4 text-sm last:border-b-0"
-            key={project.id}
-          >
-            {project.name}
-          </li>
+          <ListRow key={project.id} title={project.name} />
         ))}
-      </ul>
-    </section>
+      </Card>
+    </PageSection>
   );
 }
 
@@ -164,7 +160,7 @@ function FormsPage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-10 px-4 py-10 sm:px-10">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-10 sm:px-10">
       <ProjectsToolbar />
 
       <form
@@ -179,15 +175,12 @@ function FormsPage() {
           );
         }}
       >
-        <header className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold">Edit client</h1>
-          <p className="text-sm text-gray-600">
-            Porta Europa. Changes show in the client's admin right away.
-          </p>
-        </header>
+        <PageSection
+          description="Porta Europa. Changes show in the client's admin right away."
+          title="Edit client"
+        />
 
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">General</h2>
+        <PageSection title="General">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField label="Name" name="name">
               <Input defaultValue="Porta Europa" required />
@@ -309,10 +302,9 @@ function FormsPage() {
           <FormField label="Internal notes" name="notes">
             <Textarea placeholder="Only the studio sees these." />
           </FormField>
-        </section>
+        </PageSection>
 
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Contract</h2>
+        <PageSection title="Contract">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField label="Monthly retainer" name="retainer">
               <NumberInput
@@ -340,9 +332,7 @@ function FormsPage() {
             </FormField>
           </div>
           <Field>
-            <FieldLabel className="text-sm text-gray-950">
-              Billing cycle
-            </FieldLabel>
+            <FieldLabel>Billing cycle</FieldLabel>
             <RadioGroup defaultValue="monthly" name="cycle">
               <RadioField
                 description="Invoice on the first of every month."
@@ -362,12 +352,11 @@ function FormsPage() {
               />
             </RadioGroup>
           </Field>
-        </section>
+        </PageSection>
 
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Admin features</h2>
+        <PageSection title="Admin features">
           <Field>
-            <FieldLabel className="text-sm text-gray-950">Modules</FieldLabel>
+            <FieldLabel>Modules</FieldLabel>
             <CheckboxGroup defaultValue={["blog"]} name="modules">
               <CheckboxField label="Blog" value="blog" />
               <CheckboxField
@@ -399,10 +388,9 @@ function FormsPage() {
               name="sso"
             />
           </div>
-        </section>
+        </PageSection>
 
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Brand</h2>
+        <PageSection title="Brand">
           <Field>
             <FieldLabel>Logo</FieldLabel>
             <FileInput accept="image/*" maxSize={2_000_000} name="logo">
@@ -422,10 +410,9 @@ function FormsPage() {
             </FileInput>
             <FieldDescription>Shared with the whole team.</FieldDescription>
           </Field>
-        </section>
+        </PageSection>
 
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Locked</h2>
+        <PageSection title="Locked">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField disabled label="Region" name="region">
               <Select defaultValue="eu">
@@ -448,7 +435,7 @@ function FormsPage() {
               </Combobox>
             </FormField>
           </div>
-        </section>
+        </PageSection>
 
         <CheckboxField
           error="Confirm before saving."
@@ -465,9 +452,9 @@ function FormsPage() {
             </Button>
           </div>
           {submitted ? (
-            <output className="text-xs break-all text-gray-600">
-              {submitted}
-            </output>
+            <div className="break-all">
+              <Banner description={submitted} title="Submitted" />
+            </div>
           ) : null}
         </div>
       </form>

@@ -30,17 +30,17 @@ type DatePickerProps = Omit<
 };
 
 const inputClass =
-  "text-input tabular h-full w-full min-w-0 flex-1 in-data-[slot=form-field-box]:h-5 bg-transparent outline-none placeholder:text-gray-500 disabled:cursor-not-allowed data-invalid:text-red-500";
+  "au:text-input au:tabular au:h-full au:w-full au:min-w-0 au:flex-1 au:in-data-[slot=form-field-box]:h-5 au:bg-transparent au:outline-none au:placeholder:text-gray-500 au:disabled:cursor-not-allowed au:data-invalid:text-red-500";
 
-const rangeInputClass = "w-auto flex-none field-sizing-content";
+const rangeInputClass = "au:w-auto au:flex-none au:field-sizing-content";
 
 const navClass = cn(
   buttonVariants({ variant: "ghost", size: "icon-sm" }),
-  "rtl:[&_svg]:-scale-x-100"
+  "au:rtl:[&_svg]:-scale-x-100"
 );
 
 const dayClass =
-  "tabular size-8 cursor-default rounded-lg text-center align-middle text-sm text-gray-950 outline-none hover:bg-alpha/5 focus-visible:ring-2 focus-visible:ring-accent data-outside:text-gray-500 data-today:bg-alpha/5 data-today:font-semibold data-disabled:pointer-events-none data-disabled:opacity-40 data-unavailable:line-through data-range-middle:rounded-none data-range-middle:bg-accent/10 data-preview:bg-accent/10 data-selected:bg-accent data-selected:text-accent-foreground data-selected:hover:bg-accent/90 data-range-middle:data-selected:bg-accent/10 data-range-middle:data-selected:text-gray-950";
+  "au:tabular au:size-8 au:cursor-default au:rounded-lg au:text-center au:align-middle au:text-sm au:text-gray-950 au:outline-none au:hover:bg-alpha/5 au:focus-visible:ring-2 au:focus-visible:ring-accent au:data-outside:text-gray-500 au:data-today:bg-alpha/5 au:data-today:font-semibold au:data-disabled:pointer-events-none au:data-disabled:opacity-40 au:data-unavailable:line-through au:data-range-middle:rounded-none au:data-range-middle:bg-accent/10 au:data-preview:bg-accent/10 au:data-selected:bg-accent au:data-selected:text-accent-foreground au:data-selected:hover:bg-accent/90 au:data-range-middle:data-selected:bg-accent/10 au:data-range-middle:data-selected:text-gray-950";
 
 /**
  * A date field: type a date in the page's language, or pick one from the
@@ -58,7 +58,7 @@ function DatePicker({
     <DatePickerPart
       className={cn(
         controlBoxClass,
-        "focus-within:border-accent/70 gap-1 pe-1 data-invalid:border-red-500/70",
+        "au:focus-within:border-accent/70 au:gap-1 au:pe-1 au:data-invalid:border-red-500/70",
         className
       )}
       mode={mode}
@@ -67,7 +67,7 @@ function DatePicker({
       {mode === "range" ? (
         <>
           <DatePickerInput className={cn(inputClass, rangeInputClass)} />
-          <span aria-hidden="true" className="text-sm text-gray-500">
+          <span aria-hidden="true" className="au:text-sm au:text-gray-500">
             –
           </span>
           <DatePickerInput
@@ -75,36 +75,36 @@ function DatePicker({
             className={cn(inputClass, rangeInputClass)}
             end
           />
-          <span className="flex-1" />
+          <span className="au:flex-1" />
         </>
       ) : (
         <DatePickerInput className={inputClass} />
       )}
       <DatePickerTrigger
         aria-label={triggerLabel}
-        className="hover:bg-alpha/5 flex size-6 shrink-0 items-center justify-center rounded-md text-gray-500 hover:text-gray-950 disabled:pointer-events-none in-data-[slot=form-field-box]:size-5"
+        className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:disabled:pointer-events-none au:in-data-[slot=form-field-box]:size-5"
       >
-        <CalendarIcon aria-hidden="true" className="size-4" />
+        <CalendarIcon aria-hidden="true" className="au:size-4" />
       </DatePickerTrigger>
       <DatePickerContent
-        className="border-alpha/5 shadow-dropdown ease-fluid flex origin-(--transform-origin) flex-col gap-2 rounded-2xl border bg-gray-50 p-3 text-gray-950 transition-[opacity,scale] duration-150 outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none"
+        className="au:border-alpha/5 au:shadow-dropdown au:ease-fluid au:flex au:origin-(--transform-origin) au:flex-col au:gap-2 au:rounded-2xl au:border au:bg-gray-50 au:p-3 au:text-gray-950 au:transition-[opacity,scale] au:duration-150 au:outline-none au:data-ending-style:scale-95 au:data-ending-style:opacity-0 au:data-starting-style:scale-95 au:data-starting-style:opacity-0 au:motion-reduce:transition-none"
         collisionPadding={8}
         sideOffset={4}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div className="au:flex au:items-center au:justify-between au:gap-2">
           <CalendarPrevious className={navClass}>
             <ChevronLeftIcon aria-hidden="true" />
           </CalendarPrevious>
-          <CalendarHeading className="text-sm font-semibold" />
+          <CalendarHeading className="au:text-sm au:font-semibold" />
           <CalendarNext className={navClass}>
             <ChevronRightIcon aria-hidden="true" />
           </CalendarNext>
         </div>
-        <CalendarGrid className="border-collapse">
+        <CalendarGrid className="au:border-collapse">
           <CalendarWeekdays>
             {(index) => (
               <CalendarWeekday
-                className="size-8 text-xs font-normal text-gray-500"
+                className="au:size-8 au:text-xs au:font-normal au:text-gray-500"
                 index={index}
               />
             )}

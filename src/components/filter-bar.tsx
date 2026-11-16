@@ -24,11 +24,11 @@ function SearchField({
   ...props
 }: SearchFieldProps) {
   return (
-    <InputGroup className={cn("w-full max-w-xs", className)}>
+    <InputGroup className={cn("au:w-full au:max-w-xs", className)}>
       <SearchIcon aria-hidden="true" />
       <Input
         aria-label={label ?? placeholder}
-        className="[&::-webkit-search-cancel-button]:appearance-none"
+        className="au:[&::-webkit-search-cancel-button]:appearance-none"
         placeholder={placeholder}
         type="search"
         {...props}
@@ -60,15 +60,15 @@ function FilterChip({
   return (
     <span
       className={cn(
-        "bg-alpha/5 inline-flex h-7 shrink-0 items-center gap-1 rounded-lg ps-2.5 pe-0.5 text-sm font-medium whitespace-nowrap text-gray-950",
+        "au:bg-alpha/5 au:inline-flex au:h-7 au:shrink-0 au:items-center au:gap-1 au:rounded-lg au:ps-2.5 au:pe-0.5 au:text-sm au:font-medium au:whitespace-nowrap au:text-gray-950",
         className
       )}
     >
-      <span className="text-gray-600">{label}:</span>
+      <span className="au:text-gray-600">{label}:</span>
       {value}
       <Button
         aria-label={removeLabel}
-        className="text-gray-600 hover:text-gray-950"
+        className="au:text-gray-600 au:hover:text-gray-950"
         onClick={onRemove}
         size="icon-xs"
         variant="ghost"
@@ -94,7 +94,7 @@ function FilterChips({
   return (
     <div
       className={cn(
-        "border-alpha/10 flex flex-wrap items-center gap-2 border-b px-4 py-3 sm:px-6",
+        "au:border-alpha/10 au:flex au:flex-wrap au:items-center au:gap-2 au:border-b au:px-4 au:py-3 au:sm:px-6",
         className
       )}
       {...props}
@@ -102,7 +102,7 @@ function FilterChips({
       {children}
       {onClear ? (
         <Button
-          className="text-gray-600"
+          className="au:text-gray-600"
           onClick={onClear}
           size="sm"
           variant="ghost"

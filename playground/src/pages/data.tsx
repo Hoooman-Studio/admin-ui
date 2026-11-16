@@ -11,6 +11,7 @@ import { confirm } from "../../../src/components/alert-dialog";
 import { Avatar } from "../../../src/components/avatar";
 import { Badge } from "../../../src/components/badge";
 import { Button } from "../../../src/components/button";
+import { Card } from "../../../src/components/card";
 import {
   DataTable,
   type DataTableColumn,
@@ -21,7 +22,7 @@ import {
   FilterChips,
   SearchField,
 } from "../../../src/components/filter-bar";
-import { List, ListRow } from "../../../src/components/list-row";
+import { ListRow } from "../../../src/components/list-row";
 import {
   Menu,
   MenuCheckboxItem,
@@ -161,8 +162,7 @@ function DataPage() {
   const [demo, setDemo] = useState<DemoState>("data");
   return (
     <>
-      <div className="border-alpha/10 flex items-center gap-3 border-b px-4 py-2 sm:px-6">
-        <span className="text-sm text-gray-500">Table state</span>
+      <PageToolbar>
         <SegmentedControl
           aria-label="Table state"
           onValueChange={(value) => setDemo(value as DemoState)}
@@ -173,7 +173,7 @@ function DataPage() {
           <SegmentedControlItem value="empty">Empty</SegmentedControlItem>
           <SegmentedControlItem value="error">Error</SegmentedControlItem>
         </SegmentedControl>
-      </div>
+      </PageToolbar>
       <ListingsScreen demo={demo} />
       <PageBody>
         <PageSection
@@ -322,10 +322,9 @@ function ListingsScreen({ demo }: { demo: DemoState }) {
           }}
           value={status}
         >
-          <SelectTrigger
-            aria-label="Status"
-            className="w-32 shrink-0 sm:w-36"
-          />
+          <div className="w-32 shrink-0 sm:w-36">
+            <SelectTrigger aria-label="Status" />
+          </div>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
             {Object.entries(statuses).map(([value, { label }]) => (
@@ -500,7 +499,7 @@ function PayoutsExample() {
   const cursor = cursors.at(-1) ?? null;
   const { rows, nextCursor } = fetchPayouts(cursor, 5);
   return (
-    <div className="border-alpha/10 overflow-hidden rounded-3xl border">
+    <div>
       <DataTable
         aria-label="Payouts"
         columns={payoutColumns}
@@ -541,7 +540,7 @@ const enquiries = [
 
 function EnquiriesExample() {
   return (
-    <List className="border-alpha/10 overflow-hidden rounded-3xl border [&>li:first-child]:border-t-0">
+    <Card variant="list">
       {enquiries.map((enquiry) => (
         <ListRow
           actions={
@@ -565,7 +564,7 @@ function EnquiriesExample() {
           title={enquiry.name}
         />
       ))}
-    </List>
+    </Card>
   );
 }
 

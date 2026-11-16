@@ -13,9 +13,9 @@ function Textarea({ className, ...props }: TextareaProps) {
     <TextareaPart
       className={cn(
         boxClass,
-        "text-input min-h-20 w-full resize-y px-3 py-1.5 text-gray-950 outline-none placeholder:text-gray-500 data-disabled:cursor-not-allowed data-disabled:opacity-40",
+        "au:text-input au:min-h-20 au:w-full au:resize-y au:px-3 au:py-1.5 au:text-gray-950 au:outline-none au:placeholder:text-gray-500 au:data-disabled:cursor-not-allowed au:data-disabled:opacity-40",
         inFieldBox,
-        "in-data-[slot=form-field-box]:min-h-16 in-data-[slot=form-field-box]:resize-none in-data-[slot=form-field-box]:py-0",
+        "au:in-data-[slot=form-field-box]:min-h-16 au:in-data-[slot=form-field-box]:resize-none au:in-data-[slot=form-field-box]:py-0",
         className
       )}
       {...props}

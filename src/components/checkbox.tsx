@@ -18,19 +18,19 @@ function Checkbox({ className, ...props }: CheckboxProps) {
   return (
     <CheckboxPart
       className={cn(
-        "border-alpha/10 bg-alpha/5 hover:bg-alpha/10 focus-visible:outline-accent data-checked:bg-accent data-checked:text-accent-foreground data-checked:hover:bg-accent/90 flex size-5 shrink-0 items-center justify-center rounded-md border text-gray-950 transition-colors duration-100 focus-visible:outline-2 focus-visible:outline-offset-2 aria-invalid:border-red-500/70 data-checked:border-transparent data-disabled:cursor-not-allowed data-disabled:opacity-40",
+        "au:border-alpha/10 au:bg-alpha/5 au:hover:bg-alpha/10 au:focus-visible:outline-accent au:data-checked:bg-accent au:data-checked:text-accent-foreground au:data-checked:hover:bg-accent/90 au:flex au:size-5 au:shrink-0 au:items-center au:justify-center au:rounded-md au:border au:text-gray-950 au:transition-colors au:duration-100 au:focus-visible:outline-2 au:focus-visible:outline-offset-2 au:aria-invalid:border-red-500/70 au:data-checked:border-transparent au:data-disabled:cursor-not-allowed au:data-disabled:opacity-40",
         className
       )}
       {...props}
     >
-      <CheckboxIndicator className="flex items-center justify-center [&_svg]:size-3.5 [&_svg]:stroke-3">
+      <CheckboxIndicator className="au:flex au:items-center au:justify-center au:[&_svg]:size-3.5 au:[&_svg]:stroke-3">
         <CheckIcon
           aria-hidden="true"
-          className="in-data-indeterminate:hidden"
+          className="au:in-data-indeterminate:hidden"
         />
         <MinusIcon
           aria-hidden="true"
-          className="hidden in-data-indeterminate:block"
+          className="au:hidden au:in-data-indeterminate:block"
         />
       </CheckboxIndicator>
     </CheckboxPart>
@@ -70,7 +70,7 @@ function CheckboxGroup<T extends string = string>({
 }) {
   return (
     <CheckboxGroupPart<T>
-      className={cn("flex flex-col gap-3", className)}
+      className={cn("au:flex au:flex-col au:gap-3", className)}
       {...props}
     />
   );

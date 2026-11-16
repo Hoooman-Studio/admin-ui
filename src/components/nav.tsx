@@ -33,8 +33,8 @@ function NavSection({
 
   if (collapsed) {
     return (
-      <div className={cn("flex flex-col gap-0.5", className)}>
-        <div className="bg-alpha/10 mx-auto my-3 h-px w-7 shrink-0" />
+      <div className={cn("au:flex au:flex-col au:gap-0.5", className)}>
+        <div className="au:bg-alpha/10 au:mx-auto au:my-3 au:h-px au:w-7 au:shrink-0" />
         {children}
       </div>
     );
@@ -42,19 +42,19 @@ function NavSection({
 
   return (
     <Collapsible
-      className={cn("flex flex-col", className)}
+      className={cn("au:flex au:flex-col", className)}
       defaultOpen={defaultOpen}
     >
-      <CollapsibleTrigger className="group focus-visible:outline-accent mx-3 mt-3 flex items-center gap-3 rounded-md py-1.5 text-gray-500 hover:text-gray-950 focus-visible:outline-2">
-        <span className="truncate py-0.5 text-sm leading-5 font-medium">
+      <CollapsibleTrigger className="au:group au:focus-visible:outline-accent au:mx-3 au:mt-3 au:flex au:items-center au:gap-3 au:rounded-md au:py-1.5 au:text-gray-500 au:hover:text-gray-950 au:focus-visible:outline-2">
+        <span className="au:truncate au:py-0.5 au:text-sm au:leading-5 au:font-medium">
           {title}
         </span>
-        <span className="bg-alpha/10 h-px flex-1" />
-        <ChevronDownIcon className="ease-fluid size-4 shrink-0 transition-transform duration-250 group-data-open:rotate-180" />
+        <span className="au:bg-alpha/10 au:h-px au:flex-1" />
+        <ChevronDownIcon className="au:ease-fluid au:size-4 au:shrink-0 au:transition-transform au:duration-250 au:group-data-open:rotate-180" />
       </CollapsibleTrigger>
       {/* The panel only clips: as a flex column its rows would shrink while its height animates. */}
-      <CollapsiblePanel className="ease-fluid h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-250 data-ending-style:h-0 data-starting-style:h-0">
-        <div className="flex flex-col gap-0.5">{children}</div>
+      <CollapsiblePanel className="au:ease-fluid au:h-(--collapsible-panel-height) au:overflow-hidden au:transition-[height] au:duration-250 au:data-ending-style:h-0 au:data-starting-style:h-0">
+        <div className="au:flex au:flex-col au:gap-0.5">{children}</div>
       </CollapsiblePanel>
     </Collapsible>
   );
@@ -94,25 +94,27 @@ function NavItem({
     "data-active": active ? "" : undefined,
     onClick: onNavigate,
     className: cn(
-      "touch-target ease-fluid hover:bg-alpha/3 focus-visible:outline-accent data-active:bg-alpha/5 flex w-full items-center gap-3 overflow-hidden rounded-xl py-2 text-left text-gray-600 transition-[background-color,color,padding] duration-250 hover:text-gray-950 focus-visible:outline-2 focus-visible:-outline-offset-2 data-active:text-gray-950",
-      collapsed ? "px-2" : "px-3",
+      "au:touch-target au:ease-fluid au:hover:bg-alpha/3 au:focus-visible:outline-accent au:data-active:bg-alpha/5 au:flex au:w-full au:items-center au:gap-3 au:overflow-hidden au:rounded-xl au:py-2 au:text-left au:text-gray-600 au:transition-[background-color,color,padding] au:duration-250 au:hover:text-gray-950 au:focus-visible:outline-2 au:focus-visible:-outline-offset-2 au:data-active:text-gray-950",
+      collapsed ? "au:px-2" : "au:px-3",
       className
     ),
     children: (
       <>
-        <span className="flex size-7 shrink-0 items-center justify-center [&_svg]:size-5">
+        <span className="au:flex au:size-7 au:shrink-0 au:items-center au:justify-center au:[&_svg]:size-5">
           {icon}
         </span>
         <span
           className={cn(
-            "ease-fluid min-w-0 truncate text-lg font-medium transition-[opacity,width,flex-grow] duration-250",
-            collapsed ? "w-0 flex-none opacity-0" : "flex-1 opacity-100"
+            "au:ease-fluid au:min-w-0 au:truncate au:text-lg au:font-medium au:transition-[opacity,width,flex-grow] au:duration-250",
+            collapsed
+              ? "au:w-0 au:flex-none au:opacity-0"
+              : "au:flex-1 au:opacity-100"
           )}
         >
           {label}
         </span>
         {count !== undefined && !collapsed ? (
-          <span className="tabular shrink-0 text-sm font-medium text-gray-500">
+          <span className="au:tabular au:shrink-0 au:text-sm au:font-medium au:text-gray-500">
             {count}
           </span>
         ) : null}

@@ -19,15 +19,17 @@ function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center px-6 py-20 text-center",
+        "au:flex au:flex-col au:items-center au:justify-center au:px-6 au:py-20 au:text-center",
         className
       )}
     >
-      <p className="text-base font-medium text-gray-950">{title}</p>
+      <p className="au:text-base au:font-medium au:text-gray-950">{title}</p>
       {description ? (
-        <p className="mt-1 max-w-sm text-sm text-gray-600">{description}</p>
+        <p className="au:mt-1 au:max-w-sm au:text-sm au:text-gray-600">
+          {description}
+        </p>
       ) : null}
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? <div className="au:mt-4">{action}</div> : null}
     </div>
   );
 }

@@ -14,7 +14,10 @@ function Tabs({
   ...props
 }: WithClass<React.ComponentProps<typeof TabsPart>>) {
   return (
-    <TabsPart className={cn("flex flex-col gap-4", className)} {...props} />
+    <TabsPart
+      className={cn("au:flex au:flex-col au:gap-4", className)}
+      {...props}
+    />
   );
 }
 
@@ -29,13 +32,13 @@ function TabsList({
   return (
     <TabsListPart
       className={cn(
-        "border-alpha/10 scrollbar-hidden relative flex gap-4 overflow-x-auto border-b",
+        "au:border-alpha/10 au:scrollbar-hidden au:relative au:flex au:gap-4 au:overflow-x-auto au:border-b",
         className
       )}
       {...props}
     >
       {children}
-      <TabsIndicator className="ease-fluid absolute bottom-0 left-(--active-tab-left) h-0.5 w-(--active-tab-width) bg-gray-950 transition-[left,width] duration-200 motion-reduce:transition-none" />
+      <TabsIndicator className="au:ease-fluid au:absolute au:bottom-0 au:left-(--active-tab-left) au:h-0.5 au:w-(--active-tab-width) au:bg-gray-950 au:transition-[left,width] au:duration-200 au:motion-reduce:transition-none" />
     </TabsListPart>
   );
 }
@@ -47,7 +50,7 @@ function TabsTab({
   return (
     <TabsTabPart
       className={cn(
-        "focus-visible:outline-accent inline-flex h-10 shrink-0 items-center gap-1.5 rounded-sm text-sm font-medium whitespace-nowrap text-gray-600 transition-colors duration-100 hover:text-gray-950 focus-visible:outline-2 focus-visible:-outline-offset-2 data-disabled:opacity-40 data-disabled:hover:text-gray-600 data-selected:text-gray-950 [&_svg]:size-4",
+        "au:focus-visible:outline-accent au:inline-flex au:h-10 au:shrink-0 au:items-center au:gap-1.5 au:rounded-sm au:text-sm au:font-medium au:whitespace-nowrap au:text-gray-600 au:transition-colors au:duration-100 au:hover:text-gray-950 au:focus-visible:outline-2 au:focus-visible:-outline-offset-2 au:data-disabled:opacity-40 au:data-disabled:hover:text-gray-600 au:data-selected:text-gray-950 au:[&_svg]:size-4",
         className
       )}
       {...props}
@@ -62,7 +65,7 @@ function TabsPanel({
   return (
     <TabsPanelPart
       className={cn(
-        "focus-visible:outline-accent rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2",
+        "au:focus-visible:outline-accent au:rounded-sm au:focus-visible:outline-2 au:focus-visible:outline-offset-2",
         className
       )}
       {...props}

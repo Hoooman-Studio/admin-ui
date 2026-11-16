@@ -20,7 +20,7 @@ function FileInput({
 }: WithClass<React.ComponentProps<typeof FileInputPart>>) {
   return (
     <FileInputPart
-      className={cn("flex w-full flex-col gap-2", className)}
+      className={cn("au:flex au:w-full au:flex-col au:gap-2", className)}
       {...props}
     />
   );
@@ -48,18 +48,23 @@ function FileInputDropzone({
   return (
     <FileInputDropzonePart
       className={cn(
-        "border-alpha/15 data-drag-accept:border-accent data-drag-accept:bg-accent/5 flex flex-col items-center gap-1 rounded-xl border border-dashed bg-gray-50 px-4 py-6 text-center transition-colors data-disabled:opacity-40 data-drag-reject:border-red-500/70 data-drag-reject:bg-red-500/5",
+        "au:border-alpha/15 au:data-drag-accept:border-accent au:data-drag-accept:bg-accent/5 au:flex au:flex-col au:items-center au:gap-1 au:rounded-xl au:border au:border-dashed au:bg-gray-50 au:px-4 au:py-6 au:text-center au:transition-colors au:data-disabled:opacity-40 au:data-drag-reject:border-red-500/70 au:data-drag-reject:bg-red-500/5",
         className
       )}
       {...props}
     >
-      <UploadIcon aria-hidden="true" className="mb-1 size-5 text-gray-500" />
-      <p className="text-sm font-medium text-gray-950">{title}</p>
-      {children ? <p className="text-sm text-gray-600">{children}</p> : null}
+      <UploadIcon
+        aria-hidden="true"
+        className="au:mb-1 au:size-5 au:text-gray-500"
+      />
+      <p className="au:text-sm au:font-medium au:text-gray-950">{title}</p>
+      {children ? (
+        <p className="au:text-sm au:text-gray-600">{children}</p>
+      ) : null}
       <FileInputTrigger
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
-          "mt-2 in-data-invalid:border-red-500/70"
+          "au:mt-2 au:in-data-invalid:border-red-500/70"
         )}
       >
         {browseLabel}
@@ -78,26 +83,26 @@ function FileInputList({
   return (
     <FileInputListPart
       className={cn(
-        "border-alpha/10 flex flex-col overflow-hidden rounded-xl border empty:hidden",
+        "au:border-alpha/10 au:flex au:flex-col au:overflow-hidden au:rounded-xl au:border au:empty:hidden",
         className
       )}
       {...props}
     >
-      <FileInputItem className="border-alpha/5 focus-visible:bg-alpha/5 flex h-11 items-center gap-3 border-b px-3 text-sm outline-none last:border-b-0">
+      <FileInputItem className="au:border-alpha/5 au:focus-visible:bg-alpha/5 au:flex au:h-11 au:items-center au:gap-3 au:border-b au:px-3 au:text-sm au:outline-none au:last:border-b-0">
         {({ file }) => (
           <>
             <FileIcon
               aria-hidden="true"
-              className="size-4 shrink-0 text-gray-500"
+              className="au:size-4 au:shrink-0 au:text-gray-500"
             />
-            <span className="min-w-0 flex-1 truncate font-medium text-gray-950">
+            <span className="au:min-w-0 au:flex-1 au:truncate au:font-medium au:text-gray-950">
               {file.name}
             </span>
-            <span className="tabular shrink-0 text-gray-500">
+            <span className="au:tabular au:shrink-0 au:text-gray-500">
               {formatFileSize(file.size)}
             </span>
-            <FileInputItemRemove className="hover:bg-alpha/5 flex size-6 shrink-0 items-center justify-center rounded-md text-gray-500 hover:text-gray-950">
-              <XIcon aria-hidden="true" className="size-4" />
+            <FileInputItemRemove className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950">
+              <XIcon aria-hidden="true" className="au:size-4" />
             </FileInputItemRemove>
           </>
         )}

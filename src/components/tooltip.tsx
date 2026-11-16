@@ -19,7 +19,7 @@ function TooltipContent({
   return (
     <TooltipContentPart
       className={cn(
-        "flex max-w-xs origin-(--transform-origin) items-center gap-2 rounded-lg bg-gray-950 px-2.5 py-1.5 text-xs font-medium text-gray-50 transition-[opacity,scale] duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-instant:transition-none data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none",
+        "au:flex au:max-w-xs au:origin-(--transform-origin) au:items-center au:gap-2 au:rounded-lg au:bg-gray-950 au:px-2.5 au:py-1.5 au:text-xs au:font-medium au:text-gray-50 au:transition-[opacity,scale] au:duration-150 au:ease-out au:data-ending-style:scale-95 au:data-ending-style:opacity-0 au:data-instant:transition-none au:data-starting-style:scale-95 au:data-starting-style:opacity-0 au:motion-reduce:transition-none",
         className
       )}
       {...props}
@@ -34,7 +34,7 @@ function TooltipShortcut({
 }: WithClass<React.ComponentProps<typeof TooltipShortcutPart>>) {
   return (
     <TooltipShortcutPart
-      className={cn("text-gray-500", className)}
+      className={cn("au:text-gray-500", className)}
       {...props}
     />
   );

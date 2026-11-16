@@ -12,7 +12,7 @@ function Separator({
   return (
     <SeparatorPart
       className={cn(
-        "bg-alpha/10 shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
+        "au:bg-alpha/10 au:shrink-0 au:data-[orientation=horizontal]:h-px au:data-[orientation=horizontal]:w-full au:data-[orientation=vertical]:w-px au:data-[orientation=vertical]:self-stretch",
         className
       )}
       {...props}

@@ -27,29 +27,29 @@ function ChoiceField({
   return (
     <Field
       className={cn(
-        "flex-row items-start gap-3",
-        controlSide === "end" && "justify-between",
+        "au:flex-row au:items-start au:gap-3",
+        controlSide === "end" && "au:justify-between",
         className
       )}
       disabled={disabled}
       invalid={error ? true : undefined}
     >
       {controlSide === "start" ? control : null}
-      <div className="flex min-w-0 flex-col gap-0.5 pt-px">
-        <FieldLabel className="px-0 text-sm font-medium text-gray-950 data-disabled:opacity-40 data-invalid:text-gray-950">
+      <div className="au:flex au:min-w-0 au:flex-col au:gap-0.5 au:pt-px">
+        <FieldLabel className="au:px-0 au:text-sm au:font-medium au:text-gray-950 au:data-disabled:opacity-40 au:data-invalid:text-gray-950">
           {label}
         </FieldLabel>
         {description ? (
-          <FieldDescription className="px-0 data-disabled:opacity-40">
+          <FieldDescription className="au:px-0 au:data-disabled:opacity-40">
             {description}
           </FieldDescription>
         ) : null}
         {error ? (
-          <FieldError className="px-0" match>
+          <FieldError className="au:px-0" match>
             {error}
           </FieldError>
         ) : (
-          <FieldError className="px-0" />
+          <FieldError className="au:px-0" />
         )}
       </div>
       {controlSide === "end" ? control : null}

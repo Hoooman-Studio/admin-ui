@@ -4,33 +4,36 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 
 const disabledLook =
-  "data-disabled:opacity-40 data-disabled:bg-alpha/5 data-disabled:text-gray-950 data-disabled:border-transparent";
+  "au:data-disabled:opacity-40 au:data-disabled:bg-alpha/5 au:data-disabled:text-gray-950 au:data-disabled:border-transparent";
 
 const buttonVariants = cva(
-  `focus-visible:outline-accent relative inline-flex shrink-0 items-center justify-center font-medium whitespace-nowrap transition-colors duration-100 select-none focus-visible:outline-2 focus-visible:outline-offset-2 data-pending:cursor-progress [&_svg]:pointer-events-none [&_svg]:shrink-0 ${disabledLook}`,
+  `au:focus-visible:outline-accent au:relative au:inline-flex au:shrink-0 au:items-center au:justify-center au:font-medium au:whitespace-nowrap au:transition-colors au:duration-100 au:select-none au:focus-visible:outline-2 au:focus-visible:outline-offset-2 au:data-pending:cursor-progress au:[&_svg]:pointer-events-none au:[&_svg]:shrink-0 ${disabledLook}`,
   {
     variants: {
       variant: {
-        primary: "bg-gray-950 text-gray-50 hover:bg-gray-900",
-        accent: "bg-accent text-accent-foreground hover:bg-accent/90",
-        subtle: "bg-alpha/5 hover:bg-alpha/10 text-gray-950",
+        primary: "au:bg-gray-950 au:text-gray-50 au:hover:bg-gray-900",
+        accent: "au:bg-accent au:text-accent-foreground au:hover:bg-accent/90",
+        subtle: "au:bg-alpha/5 au:hover:bg-alpha/10 au:text-gray-950",
         outline:
-          "border-alpha/10 hover:bg-alpha/5 border bg-gray-50 text-gray-950",
-        ghost: "hover:bg-alpha/5 bg-transparent text-gray-950",
-        danger: "bg-red-500 text-gray-50 hover:bg-red-600",
-        "danger-subtle": "bg-red-500/10 text-red-500 hover:bg-red-500/20",
+          "au:border-alpha/10 au:hover:bg-alpha/5 au:border au:bg-gray-50 au:text-gray-950",
+        ghost: "au:hover:bg-alpha/5 au:bg-transparent au:text-gray-950",
+        danger: "au:bg-red-500 au:text-gray-50 au:hover:bg-red-600",
+        "danger-subtle":
+          "au:bg-red-500/10 au:text-red-500 au:hover:bg-red-500/20",
       },
       size: {
-        xs: "h-6 gap-0.5 rounded-md px-1 text-sm [&_svg]:size-4",
-        sm: "h-7 gap-1 rounded-lg px-2 text-sm [&_svg]:size-4",
-        md: "h-8 gap-1 rounded-lg px-3 text-sm [&_svg]:size-4",
-        lg: "h-10 gap-2 rounded-[10px] px-4 text-base font-semibold [&_svg]:size-4",
-        "icon-xs": "touch-target size-6 rounded-md [&_svg]:size-3.5",
-        "icon-sm": "touch-target size-7 rounded-lg [&_svg]:size-3.5",
-        icon: "touch-target size-8 rounded-lg [&_svg]:size-4",
-        "icon-lg": "size-10 rounded-[10px] [&_svg]:size-4",
+        xs: "au:h-6 au:gap-0.5 au:rounded-md au:px-1 au:text-sm au:[&_svg]:size-4",
+        sm: "au:h-7 au:gap-1 au:rounded-lg au:px-2 au:text-sm au:[&_svg]:size-4",
+        md: "au:h-8 au:gap-1 au:rounded-lg au:px-3 au:text-sm au:[&_svg]:size-4",
+        lg: "au:h-10 au:gap-2 au:rounded-[10px] au:px-4 au:text-base au:font-semibold au:[&_svg]:size-4",
+        "icon-xs":
+          "au:touch-target au:size-6 au:rounded-md au:[&_svg]:size-3.5",
+        "icon-sm":
+          "au:touch-target au:size-7 au:rounded-lg au:[&_svg]:size-3.5",
+        icon: "au:touch-target au:size-8 au:rounded-lg au:[&_svg]:size-4",
+        "icon-lg": "au:size-10 au:rounded-[10px] au:[&_svg]:size-4",
       },
-      rounded: { true: "rounded-full", false: "" },
+      rounded: { true: "au:rounded-full", false: "" },
     },
     defaultVariants: { variant: "primary", size: "md", rounded: false },
   }

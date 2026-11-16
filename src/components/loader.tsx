@@ -1,9 +1,9 @@
 import { cn } from "../lib/cn";
 
 const sizes = {
-  sm: { dot: "size-1.5", gap: "gap-1" },
-  md: { dot: "size-2", gap: "gap-1" },
-  lg: { dot: "size-3", gap: "gap-2" },
+  sm: { dot: "au:size-1.5", gap: "au:gap-1" },
+  md: { dot: "au:size-2", gap: "au:gap-1" },
+  lg: { dot: "au:size-3", gap: "au:gap-2" },
 };
 
 // Inline, because the `animation` shorthand in `animate-loader-dot` would reset a delay class.
@@ -21,13 +21,17 @@ function Loader({ size = "md", label = "Loading", className }: LoaderProps) {
   return (
     <span
       aria-label={label}
-      className={cn("inline-flex items-center", sizes[size].gap, className)}
+      className={cn(
+        "au:inline-flex au:items-center",
+        sizes[size].gap,
+        className
+      )}
       role="status"
     >
       {delays.map((delay) => (
         <span
           className={cn(
-            "motion-safe:animate-loader-dot bg-gray-950 opacity-10",
+            "au:motion-safe:animate-loader-dot au:bg-gray-950 au:opacity-10",
             sizes[size].dot
           )}
           key={delay}

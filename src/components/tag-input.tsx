@@ -45,7 +45,7 @@ function TagInput({
       <ComboboxChips
         className={cn(
           controlBoxClass,
-          "h-auto min-h-8 flex-wrap gap-1 px-1.5 py-1 in-data-[slot=form-field-box]:py-0",
+          "au:h-auto au:min-h-8 au:flex-wrap au:gap-1 au:px-1.5 au:py-1 au:in-data-[slot=form-field-box]:py-0",
           className
         )}
       >
@@ -53,23 +53,23 @@ function TagInput({
           {(state) =>
             state.labels.map((label) => (
               <ComboboxChip
-                className="bg-alpha/5 focus-visible:outline-accent flex h-6 items-center gap-0.5 rounded-md ps-2 pe-0.5 text-sm font-medium text-gray-950 outline-none focus-visible:outline-2"
+                className="au:bg-alpha/5 au:focus-visible:outline-accent au:flex au:h-6 au:items-center au:gap-0.5 au:rounded-md au:ps-2 au:pe-0.5 au:text-sm au:font-medium au:text-gray-950 au:outline-none au:focus-visible:outline-2"
                 key={label}
                 value={label}
               >
                 {label}
                 <ComboboxChipRemove
                   aria-label={`Remove ${label}`}
-                  className="hover:bg-alpha/10 flex size-5 items-center justify-center rounded text-gray-500 hover:text-gray-950 data-disabled:hidden"
+                  className="au:hover:bg-alpha/10 au:flex au:size-5 au:items-center au:justify-center au:rounded au:text-gray-500 au:hover:text-gray-950 au:data-disabled:hidden"
                 >
-                  <XIcon aria-hidden="true" className="size-3.5" />
+                  <XIcon aria-hidden="true" className="au:size-3.5" />
                 </ComboboxChipRemove>
               </ComboboxChip>
             ))
           }
         </ComboboxValue>
         <ComboboxInput
-          className="text-input h-6 min-w-20 flex-1 bg-transparent px-1 outline-none placeholder:text-gray-500"
+          className="au:text-input au:h-6 au:min-w-20 au:flex-1 au:bg-transparent au:px-1 au:outline-none au:placeholder:text-gray-500"
           placeholder={placeholder}
         />
       </ComboboxChips>

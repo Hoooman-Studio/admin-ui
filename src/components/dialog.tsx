@@ -19,10 +19,10 @@ function Dialog(props: React.ComponentProps<typeof DialogPart>) {
 }
 
 const backdropClass =
-  "fixed inset-0 bg-black/40 transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0";
+  "au:fixed au:inset-0 au:bg-black/40 au:transition-opacity au:duration-200 au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";
 
 const contentClass =
-  "fixed inset-0 m-auto flex h-fit max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg flex-col overflow-hidden rounded-2xl border border-alpha/5 bg-gray-50 p-0 text-gray-950 shadow-floating outline-none transition-[opacity,scale,translate] duration-200 ease-fluid data-ending-style:translate-y-2 data-starting-style:translate-y-2 data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0 data-[presentation=sheet]:inset-x-0 data-[presentation=sheet]:top-auto data-[presentation=sheet]:bottom-0 data-[presentation=sheet]:w-full data-[presentation=sheet]:max-w-none data-[presentation=sheet]:rounded-t-3xl data-[presentation=sheet]:rounded-b-none data-[presentation=sheet]:pb-[env(safe-area-inset-bottom)]";
+  "au:fixed au:inset-0 au:m-auto au:flex au:h-fit au:max-h-[calc(100dvh-2rem)] au:w-[calc(100%-2rem)] au:max-w-lg au:flex-col au:overflow-hidden au:rounded-2xl au:border au:border-alpha/5 au:bg-gray-50 au:p-0 au:text-gray-950 au:shadow-floating au:outline-none au:transition-[opacity,scale,translate] au:duration-200 au:ease-fluid au:data-ending-style:translate-y-2 au:data-starting-style:translate-y-2 au:data-ending-style:scale-[0.98] au:data-starting-style:scale-[0.98] au:data-ending-style:opacity-0 au:data-starting-style:opacity-0 au:data-[presentation=sheet]:inset-x-0 au:data-[presentation=sheet]:top-auto au:data-[presentation=sheet]:bottom-0 au:data-[presentation=sheet]:w-full au:data-[presentation=sheet]:max-w-none au:data-[presentation=sheet]:rounded-t-3xl au:data-[presentation=sheet]:rounded-b-none au:data-[presentation=sheet]:pb-[env(safe-area-inset-bottom)]";
 
 type DialogContentProps = WithClass<
   React.ComponentProps<typeof DialogContentPart>
@@ -31,7 +31,7 @@ type DialogContentProps = WithClass<
   size?: "sm" | "md" | "lg";
 };
 
-const sizes = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-3xl" };
+const sizes = { sm: "au:max-w-sm", md: "au:max-w-lg", lg: "au:max-w-3xl" };
 
 /** The dialog's panel, with its backdrop. Put a DialogHeader, a DialogBody and a DialogFooter inside. */
 function DialogContent({
@@ -59,12 +59,12 @@ function DialogHeader({
   return (
     <div
       className={cn(
-        "flex items-start justify-between gap-6 p-4 pb-2",
+        "au:flex au:items-start au:justify-between au:gap-6 au:p-4 au:pb-2",
         className
       )}
       {...props}
     >
-      <div className="flex min-w-0 flex-col gap-1">{children}</div>
+      <div className="au:flex au:min-w-0 au:flex-col au:gap-1">{children}</div>
       {closeLabel === null ? null : (
         <DialogClosePart
           render={
@@ -84,7 +84,7 @@ function DialogTitle({
 }: WithClass<React.ComponentProps<typeof DialogTitlePart>>) {
   return (
     <DialogTitlePart
-      className={cn("text-lg font-semibold text-gray-950", className)}
+      className={cn("au:text-lg au:font-semibold au:text-gray-950", className)}
       {...props}
     />
   );
@@ -96,7 +96,7 @@ function DialogDescription({
 }: WithClass<React.ComponentProps<typeof DialogDescriptionPart>>) {
   return (
     <DialogDescriptionPart
-      className={cn("text-sm text-gray-600", className)}
+      className={cn("au:text-sm au:text-gray-600", className)}
       {...props}
     />
   );
@@ -106,7 +106,7 @@ function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-col gap-4 overflow-y-auto p-4",
+        "au:flex au:min-h-0 au:flex-col au:gap-4 au:overflow-y-auto au:p-4",
         className
       )}
       {...props}
@@ -118,7 +118,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "border-alpha/5 flex flex-col-reverse gap-2 border-t p-4 sm:flex-row sm:justify-end",
+        "au:border-alpha/5 au:flex au:flex-col-reverse au:gap-2 au:border-t au:p-4 au:sm:flex-row au:sm:justify-end",
         className
       )}
       {...props}
