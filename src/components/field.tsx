@@ -132,7 +132,7 @@ function FormField({
       name={name}
     >
       <div
-        className="group border-alpha/10 focus-within:border-accent/70 focus-within:ring-accent/10 hover:border-alpha/20 hover:focus-within:border-accent/70 flex flex-col gap-1 rounded-lg border bg-gray-50 p-1.5 transition-colors focus-within:ring-4 in-data-disabled:opacity-60 in-data-invalid:border-red-500/70"
+        className="group border-alpha/10 focus-within:border-accent/70 focus-within:ring-accent/10 hover:border-alpha/20 hover:focus-within:border-accent/70 flex flex-col gap-1 rounded-lg border bg-gray-50 p-1.5 transition-colors focus-within:ring-4 in-data-invalid:border-red-500/70"
         data-slot="form-field-box"
       >
         <FieldLabel>{label}</FieldLabel>

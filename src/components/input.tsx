@@ -11,8 +11,9 @@ import { cn } from "../lib/cn";
 const boxClass =
   "rounded-lg border border-alpha/10 bg-gray-50 transition-colors hover:border-alpha/20 focus-within:border-accent/70 focus-within:ring-4 focus-within:ring-accent/10 hover:focus-within:border-accent/70";
 
-const inField =
-  "in-data-[slot=form-field-box]:h-auto in-data-[slot=form-field-box]:rounded-none in-data-[slot=form-field-box]:border-0 in-data-[slot=form-field-box]:bg-transparent in-data-[slot=form-field-box]:px-1 in-data-[slot=form-field-box]:ring-0";
+/** Drops the box when the control sits in a FormField's card, which is the box there. */
+const inFieldBox =
+  "in-data-[slot=form-field-box]:h-auto in-data-[slot=form-field-box]:min-h-5 in-data-[slot=form-field-box]:rounded-none in-data-[slot=form-field-box]:border-0 in-data-[slot=form-field-box]:bg-transparent in-data-[slot=form-field-box]:px-1 in-data-[slot=form-field-box]:ring-0 in-data-[slot=form-field-box]:focus-within:ring-0";
 
 const inGroup =
   "in-data-[slot=input-group]:h-full in-data-[slot=input-group]:border-0 in-data-[slot=input-group]:bg-transparent in-data-[slot=input-group]:px-0 in-data-[slot=input-group]:ring-0";
@@ -27,7 +28,7 @@ function Input({ className, ...props }: InputProps) {
       className={cn(
         boxClass,
         "text-input h-8 w-full min-w-0 px-3 text-gray-950 outline-none placeholder:text-gray-500 data-disabled:cursor-not-allowed data-disabled:opacity-40",
-        inField,
+        inFieldBox,
         inGroup,
         className
       )}
@@ -48,7 +49,7 @@ function InputGroup({ className, ...props }: InputGroupProps) {
       className={cn(
         boxClass,
         "flex h-8 items-center gap-2 px-2.5 text-sm text-gray-500 [&_svg]:size-4 [&_svg]:shrink-0",
-        inField,
+        inFieldBox,
         className
       )}
       {...props}
@@ -75,4 +76,4 @@ function InputClear({ className, children, ...props }: InputClearProps) {
   );
 }
 
-export { boxClass, Input, InputClear, InputGroup };
+export { boxClass, Input, InputClear, InputGroup, inFieldBox };

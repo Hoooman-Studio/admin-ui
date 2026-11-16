@@ -123,12 +123,29 @@
   --color-red-50: var(--red-50);
   --color-red-500: var(--red-500);
   --color-red-600: var(--red-600);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
 
   --radius-5xl: 3rem;
 
   --ease-fluid: cubic-bezier(0.08, 0.82, 0.17, 1);
+
+  --animate-loader-dot: loader-dot 1s linear infinite;
+
+  @keyframes loader-dot {
+    0%,
+    40%,
+    100% {
+      opacity: 0.08;
+    }
+    20% {
+      opacity: 1;
+    }
+  }
+}
+
+/* Inline, so overriding --accent on any element (like AdminShell) reaches the utilities. */
+@theme inline {
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 }
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

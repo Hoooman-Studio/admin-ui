@@ -36,7 +36,7 @@ function App() {
   const Page = pages[page];
   return (
     <div className="min-h-dvh">
-      <nav className="border-alpha/10 flex items-center gap-1 border-b px-4 py-2">
+      <nav className="border-alpha/10 flex flex-wrap items-center gap-1 border-b px-4 py-2">
         {Object.keys(pages).map((name) => (
           <a
             aria-current={name === page ? "page" : undefined}
