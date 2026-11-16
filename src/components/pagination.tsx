@@ -1,0 +1,145 @@
+import {
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationList,
+  PaginationNext,
+  Pagination as PaginationPart,
+  PaginationPrevious,
+} from "@ui-sdk/react/pagination";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import type * as React from "react";
+import { cn } from "../lib/cn";
+import { pageBounds } from "../lib/paging";
+import { Button, buttonVariants } from "./button";
+
+const barClass =
+  "@container/pagination flex min-h-14 items-center justify-between gap-4 px-4 sm:px-6";
+
+const summaryClass = "tabular text-sm font-medium text-gray-500";
+
+const stepClass = cn(
+  buttonVariants({ variant: "ghost", size: "icon" }),
+  "data-disabled:cursor-default data-disabled:bg-transparent"
+);
+
+interface PaginationProps {
+  className?: string;
+  onPageChange: (page: number) => void;
+  /** The current page, from 1. A page past the end reads as the last page. */
+  page: number;
+  pageSize: number;
+  /** How many items there are in all, across pages. */
+  total: number;
+}
+
+/** Pages through a list with a known total: "21–40 of 128", page numbers, and Previous and Next. */
+function Pagination({
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  className,
+}: PaginationProps) {
+  const { first, last } = pageBounds(page, pageSize, total);
+  return (
+    <div className={cn(barClass, className)}>
+      <p className={summaryClass}>
+        {first}–{last} of {total}
+      </p>
+      <PaginationPart
+        aria-label="Pagination"
+        onPageChange={onPageChange}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+      >
+        <PaginationList className="flex items-center gap-1">
+          {({ items }) => (
+            <>
+              <PaginationItem>
+                <PaginationPrevious
+                  aria-label="Previous page"
+                  className={stepClass}
+                >
+                  <ChevronLeftIcon aria-hidden="true" />
+                </PaginationPrevious>
+              </PaginationItem>
+              {items.map((item) => (
+                <PaginationItem
+                  className="hidden @md/pagination:block"
+                  key={item}
+                >
+                  {typeof item === "number" ? (
+                    <PaginationLink
+                      className="tabular focus-visible:outline-accent hover:bg-alpha/5 data-current:bg-alpha/5 flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-medium text-gray-600 transition-colors duration-100 focus-visible:outline-2 focus-visible:outline-offset-2 data-current:text-gray-950"
+                      page={item}
+                    />
+                  ) : (
+                    <PaginationEllipsis className="flex h-8 min-w-8 items-center justify-center text-sm text-gray-500" />
+                  )}
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext aria-label="Next page" className={stepClass}>
+                  <ChevronRightIcon aria-hidden="true" />
+                </PaginationNext>
+              </PaginationItem>
+            </>
+          )}
+        </PaginationList>
+      </PaginationPart>
+    </div>
+  );
+}
+
+interface CursorPaginationProps {
+  className?: string;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  onNext: () => void;
+  onPrevious: () => void;
+  /** Shown at the left, like "20 per page". */
+  summary?: React.ReactNode;
+}
+
+/** Previous and Next for lists paged by cursor, which don't know their total (Convex, Stripe). */
+function CursorPagination({
+  hasPrevious,
+  hasNext,
+  onPrevious,
+  onNext,
+  summary,
+  className,
+}: CursorPaginationProps) {
+  return (
+    <div className={cn(barClass, className)}>
+      <p className={summaryClass}>{summary}</p>
+      <nav aria-label="Pagination" className="flex items-center gap-2">
+        <Button
+          disabled={!hasPrevious}
+          focusableWhenDisabled
+          onClick={onPrevious}
+          size="sm"
+          variant="outline"
+        >
+          <ChevronLeftIcon aria-hidden="true" />
+          Previous
+        </Button>
+        <Button
+          disabled={!hasNext}
+          focusableWhenDisabled
+          onClick={onNext}
+          size="sm"
+          variant="outline"
+        >
+          Next
+          <ChevronRightIcon aria-hidden="true" />
+        </Button>
+      </nav>
+    </div>
+  );
+}
+
+export type { CursorPaginationProps, PaginationProps };
+export { CursorPagination, Pagination };

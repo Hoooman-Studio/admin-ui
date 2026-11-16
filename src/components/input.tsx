@@ -16,7 +16,7 @@ const inFieldBox =
   "in-data-[slot=form-field-box]:h-auto in-data-[slot=form-field-box]:min-h-5 in-data-[slot=form-field-box]:rounded-none in-data-[slot=form-field-box]:border-0 in-data-[slot=form-field-box]:bg-transparent in-data-[slot=form-field-box]:px-1 in-data-[slot=form-field-box]:ring-0 in-data-[slot=form-field-box]:focus-within:ring-0";
 
 const inGroup =
-  "in-data-[slot=input-group]:h-full in-data-[slot=input-group]:border-0 in-data-[slot=input-group]:bg-transparent in-data-[slot=input-group]:px-0 in-data-[slot=input-group]:ring-0";
+  "in-data-[slot=input-group]:h-full in-data-[slot=input-group]:border-0 in-data-[slot=input-group]:bg-transparent in-data-[slot=input-group]:px-0 in-data-[slot=input-group]:ring-0 in-data-[slot=input-group]:focus-within:border-0 in-data-[slot=input-group]:focus-within:ring-0";
 
 type InputProps = Omit<React.ComponentProps<typeof InputPart>, "className"> & {
   className?: string;

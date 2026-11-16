@@ -79,12 +79,14 @@ function PageToolbar({
   return (
     <div
       className={cn(
-        "border-alpha/10 flex min-h-14 items-center gap-3 border-b bg-gray-50 px-4 sm:min-h-19 sm:px-6",
+        "border-alpha/10 flex min-h-14 flex-wrap items-center gap-3 border-b bg-gray-50 px-4 py-2 sm:min-h-19 sm:px-6",
         className
       )}
       {...props}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-3">{children}</div>
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+        {children}
+      </div>
       {actions ? (
         <div className="flex shrink-0 items-center gap-3">{actions}</div>
       ) : null}

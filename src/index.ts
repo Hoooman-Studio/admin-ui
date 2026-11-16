@@ -41,6 +41,11 @@ export {
   ComboboxStatus,
   useAsyncOptions,
 } from "./components/combobox";
+export {
+  DataTable,
+  type DataTableColumn,
+  type DataTableProps,
+} from "./components/data-table";
 export { DatePicker, type DatePickerProps } from "./components/date-picker";
 export {
   DescriptionItem,
@@ -86,8 +91,22 @@ export {
   FileInputDropzone,
   FileInputList,
 } from "./components/file-input";
+export {
+  FilterChip,
+  type FilterChipProps,
+  FilterChips,
+  type FilterChipsProps,
+  SearchField,
+  type SearchFieldProps,
+} from "./components/filter-bar";
 export { Input, InputClear, InputGroup } from "./components/input";
 export { Kbd } from "./components/kbd";
+export {
+  List,
+  ListRow,
+  type ListRowProps,
+  type RowLinkElement,
+} from "./components/list-row";
 export { Loader, type LoaderProps } from "./components/loader";
 export {
   Menu,
@@ -123,6 +142,12 @@ export {
   PageToolbar,
   type PageToolbarProps,
 } from "./components/page";
+export {
+  CursorPagination,
+  type CursorPaginationProps,
+  Pagination,
+  type PaginationProps,
+} from "./components/pagination";
 export {
   Popover,
   PopoverClose,
@@ -173,3 +198,5 @@ export {
   TooltipTrigger,
 } from "./components/tooltip";
 export { cn } from "./lib/cn";
+export { paginate } from "./lib/paging";
+export { type SortDirection, type SortState, sortRows } from "./lib/sort-rows";
