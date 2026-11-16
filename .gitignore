@@ -1,0 +1,6 @@
+.DS_Store
+.fallow
+*.log
+dist
+node_modules
+playground/dist

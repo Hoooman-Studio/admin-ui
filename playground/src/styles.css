@@ -1,0 +1,5 @@
+@layer ui-sdk;
+@import "tailwindcss";
+@import "../../styles/styles.css";
+@import "../../styles/fonts.css";
+@source "../../src";
