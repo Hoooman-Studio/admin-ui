@@ -4,8 +4,8 @@ export default defineConfig({
   entry: ["src/index.ts", "src/form.tsx"],
   format: "esm",
   dts: true,
-  // TanStack Form is a peer of ./form; keep its types (and form-core's) out of our bundle.
-  deps: { neverBundle: [/^@tanstack\//u] },
+  // TanStack Form and Zod are peers of ./form; keep them (and form-core's types) out of our bundle.
+  deps: { neverBundle: [/^@tanstack\//u, "zod"] },
   platform: "neutral",
   outputOptions: { banner: '"use client";' },
 });

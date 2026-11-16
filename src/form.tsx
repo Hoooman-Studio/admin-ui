@@ -31,6 +31,7 @@ import { SwitchField as Switch } from "./components/switch";
 import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
 import { toast } from "./components/toast";
+import { required } from "./lib/required";
 
 /**
  * What a submit returns. `ok: false` keeps the form as typed: `message` shows
@@ -471,6 +472,7 @@ export {
   AdminForm,
   extendForm,
   FormDialog,
+  required,
   useAdminForm,
   useFieldContext,
   useFormContext,

@@ -38,7 +38,7 @@ Needs React 19 and Tailwind CSS v4. In your global stylesheet:
 
 ### Forms
 
-`@hooman-studio/admin-ui/form` (needs `@tanstack/react-form`) gives `useAdminForm`: TanStack Form with our fields, typed from a Standard Schema like Zod. `onSubmit` can return `{ ok: true, message? }` or `{ ok: false, message?, fieldErrors? }`.
+`@hooman-studio/admin-ui/form` (needs `@tanstack/react-form` and `zod`) gives `useAdminForm`: TanStack Form with our fields, typed from a Standard Schema like Zod. `onSubmit` can return `{ ok: true, message? }` or `{ ok: false, message?, fieldErrors? }`.
 
 ```tsx
 const form = useAdminForm({
@@ -54,7 +54,7 @@ const form = useAdminForm({
 </AdminForm>
 ```
 
-`FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
+Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` so the parsed value isn't. `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
 
 Set the client's brand colour with `--accent` on `:root`. Dark mode is `data-theme="dark"` on `<html>`; `AdminShell` sets it from the System / Light / Dark choice in `AdminHeaderAccount`'s menu.
 

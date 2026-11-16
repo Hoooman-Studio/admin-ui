@@ -12,28 +12,18 @@ import {
   AdminForm,
   FormDialog,
   type FormResult,
+  required,
   useAdminForm,
 } from "../../../src/form";
-
-/** Empty (null) while editing, required on submit: the form holds `T | null`, the parsed value is `T`. */
-function filled<T extends z.ZodType>(schema: T, message: string) {
-  return schema.nullable().transform((value, ctx): z.output<T> => {
-    if (value === null) {
-      ctx.addIssue({ code: "custom", message });
-      return z.NEVER;
-    }
-    return value;
-  });
-}
 
 const listingSchema = z.object({
   title: z.string().min(3, "Use at least 3 characters."),
   status: z.enum(["draft", "live"], "Choose a status."),
-  rent: filled(
+  rent: required(
     z.number().int().positive("Rent must be above 0."),
     "Enter the rent."
   ),
-  availableFrom: filled(z.string(), "Choose a date."),
+  availableFrom: required(z.string(), "Choose a date."),
   tags: z.array(z.string()),
   billing: z.string(),
   featured: z.boolean(),
