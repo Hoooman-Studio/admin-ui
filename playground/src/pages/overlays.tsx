@@ -325,49 +325,51 @@ function ListingsSection() {
       }
       title="Listings"
     >
-      <Card variant="list">
-        {listings.length === 0 ? (
-          <EmptyState
-            action={
-              <Button onClick={() => setListings(initialListings)} size="sm">
-                Restore listings
-              </Button>
-            }
-            description="New listings from owners show up here for review."
-            title="No listings yet"
-          />
-        ) : (
-          listings.map((listing) => (
-            <ListRow
-              actions={
-                <>
-                  <Badge dot tone={statuses[listing.status].tone}>
-                    {statuses[listing.status].label}
-                  </Badge>
-                  <RowActions
-                    listing={listing}
-                    onDelete={() => remove(listing)}
-                    onOpen={() => {
-                      setOpenId(listing.id);
-                      setDrawerOpen(true);
-                    }}
-                    onStatus={(status) => {
-                      setListings((list) =>
-                        list.map((item) =>
-                          item.id === listing.id ? { ...item, status } : item
-                        )
-                      );
-                      toast.info(`Status set to ${statuses[status].label}`);
-                    }}
-                  />
-                </>
+      <Card variant="flush">
+        <List>
+          {listings.length === 0 ? (
+            <EmptyState
+              action={
+                <Button onClick={() => setListings(initialListings)} size="sm">
+                  Restore listings
+                </Button>
               }
-              key={listing.id}
-              subtitle={showOwner ? listing.owner : undefined}
-              title={listing.title}
+              description="New listings from owners show up here for review."
+              title="No listings yet"
             />
-          ))
-        )}
+          ) : (
+            listings.map((listing) => (
+              <ListRow
+                actions={
+                  <>
+                    <Badge dot tone={statuses[listing.status].tone}>
+                      {statuses[listing.status].label}
+                    </Badge>
+                    <RowActions
+                      listing={listing}
+                      onDelete={() => remove(listing)}
+                      onOpen={() => {
+                        setOpenId(listing.id);
+                        setDrawerOpen(true);
+                      }}
+                      onStatus={(status) => {
+                        setListings((list) =>
+                          list.map((item) =>
+                            item.id === listing.id ? { ...item, status } : item
+                          )
+                        );
+                        toast.info(`Status set to ${statuses[status].label}`);
+                      }}
+                    />
+                  </>
+                }
+                key={listing.id}
+                subtitle={showOwner ? listing.owner : undefined}
+                title={listing.title}
+              />
+            ))
+          )}
+        </List>
       </Card>
       <ListingDrawer
         listing={selected}

@@ -28,7 +28,7 @@ function PageHeader({
   return (
     <header
       className={cn(
-        "au:border-alpha/10 au:sticky au:top-0 au:z-10 au:flex au:h-19 au:shrink-0 au:items-center au:gap-4 au:border-b au:bg-gray-50 au:px-4 au:sm:px-6",
+        "au:border-alpha/10 au:sticky au:top-0 au:z-10 au:flex au:min-h-19 au:shrink-0 au:flex-wrap au:items-center au:gap-x-4 au:gap-y-2 au:border-b au:bg-gray-50 au:px-4 au:py-3 au:sm:px-6",
         className
       )}
       {...props}
@@ -45,7 +45,7 @@ function PageHeader({
           <ArrowLeftIcon />
         </Button>
       ) : null}
-      <div className="au:flex au:min-w-0 au:flex-1 au:flex-col">
+      <div className="au:flex au:min-w-48 au:flex-1 au:flex-col">
         <h1 className="au:truncate au:py-1 au:text-lg au:leading-none au:font-semibold au:tracking-[-0.02em] au:text-gray-950 au:sm:text-2xl au:sm:leading-none">
           {count === undefined ? null : (
             <span className="au:tabular au:text-gray-500">{count} </span>
@@ -59,7 +59,7 @@ function PageHeader({
         ) : null}
       </div>
       {actions ? (
-        <div className="au:flex au:shrink-0 au:items-center au:gap-3">
+        <div className="au:flex au:flex-wrap au:items-center au:gap-3">
           {actions}
         </div>
       ) : null}
@@ -141,8 +141,8 @@ function PageSection({
       className={cn("au:flex au:flex-col au:gap-4", className)}
       {...props}
     >
-      <div className="au:flex au:items-end au:gap-4">
-        <div className="au:flex au:min-w-0 au:flex-1 au:flex-col">
+      <div className="au:flex au:flex-wrap au:items-end au:gap-x-4 au:gap-y-3">
+        <div className="au:flex au:min-w-48 au:flex-1 au:flex-col">
           <h2 className="au:text-lg au:leading-8 au:font-semibold au:text-gray-950">
             {title}
           </h2>
@@ -153,7 +153,7 @@ function PageSection({
           ) : null}
         </div>
         {actions ? (
-          <div className="au:flex au:shrink-0 au:items-center au:gap-3">
+          <div className="au:flex au:flex-wrap au:items-center au:gap-3">
             {actions}
           </div>
         ) : null}

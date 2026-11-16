@@ -20,7 +20,7 @@ import {
   DescriptionList,
 } from "../../../src/components/description-list";
 import { Input, InputGroup } from "../../../src/components/input";
-import { ListRow } from "../../../src/components/list-row";
+import { List, ListRow } from "../../../src/components/list-row";
 import {
   DetailLayout,
   PageBody,
@@ -133,16 +133,18 @@ function OverviewPage() {
           description="People who asked about a listing this week."
           title="Recent enquiries"
         >
-          <Card variant="list">
-            {enquiries.map((enquiry) => (
-              <ListRow
-                key={enquiry.id}
-                link={<a href="#/listing" />}
-                meta={enquiry.when}
-                subtitle={enquiry.listing}
-                title={enquiry.name}
-              />
-            ))}
+          <Card variant="flush">
+            <List>
+              {enquiries.map((enquiry) => (
+                <ListRow
+                  key={enquiry.id}
+                  link={<a href="#/listing" />}
+                  meta={enquiry.when}
+                  subtitle={enquiry.listing}
+                  title={enquiry.name}
+                />
+              ))}
+            </List>
           </Card>
         </PageSection>
         <div className="grid gap-4 @3xl/page-content:grid-cols-2">
@@ -203,23 +205,25 @@ function ListingsPage() {
         </div>
       </PageToolbar>
       <PageBody>
-        <Card variant="list">
-          {listings.map((listing) => (
-            <ListRow
-              actions={
-                <Badge
-                  dot
-                  tone={listing.status === "Live" ? "success" : "neutral"}
-                >
-                  {listing.status}
-                </Badge>
-              }
-              key={listing.id}
-              link={<a href="#/listing" />}
-              subtitle={`${listing.city} · ${listing.price}`}
-              title={listing.title}
-            />
-          ))}
+        <Card variant="flush">
+          <List>
+            {listings.map((listing) => (
+              <ListRow
+                actions={
+                  <Badge
+                    dot
+                    tone={listing.status === "Live" ? "success" : "neutral"}
+                  >
+                    {listing.status}
+                  </Badge>
+                }
+                key={listing.id}
+                link={<a href="#/listing" />}
+                subtitle={`${listing.city} · ${listing.price}`}
+                title={listing.title}
+              />
+            ))}
+          </List>
         </Card>
       </PageBody>
     </>

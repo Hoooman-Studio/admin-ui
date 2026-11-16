@@ -5,6 +5,8 @@ const variants = {
   default: "au:gap-6 au:p-6",
   /** Rows split by hairlines, each padded: settings lists, recent items. */
   list: "au:gap-0 au:[&>*+*]:border-t au:[&>*+*]:border-alpha/10 au:overflow-hidden au:*:px-6 au:*:py-4",
+  /** No padding, for content that brings its own: a List of ListRows, a DataTable. */
+  flush: "au:gap-0 au:overflow-hidden",
 };
 
 type CardProps = React.ComponentProps<"section"> & {

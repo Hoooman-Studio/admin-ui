@@ -26,7 +26,7 @@ import {
   FileInputList,
 } from "../../../src/components/file-input";
 import { Input } from "../../../src/components/input";
-import { ListRow } from "../../../src/components/list-row";
+import { List, ListRow } from "../../../src/components/list-row";
 import { NumberInput } from "../../../src/components/number-input";
 import { PageSection } from "../../../src/components/page";
 import { RadioField, RadioGroup } from "../../../src/components/radio";
@@ -143,10 +143,12 @@ function ProjectsToolbar() {
           </Select>
         </div>
       </div>
-      <Card variant="list">
-        {shown.map((project) => (
-          <ListRow key={project.id} title={project.name} />
-        ))}
+      <Card variant="flush">
+        <List>
+          {shown.map((project) => (
+            <ListRow key={project.id} title={project.name} />
+          ))}
+        </List>
       </Card>
     </PageSection>
   );

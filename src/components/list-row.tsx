@@ -38,7 +38,7 @@ function RowLink({
   } as Partial<RowLinkElement["props"]>);
 }
 
-/** A list of ListRows. */
+/** A list of ListRows, with hairlines between them. Put it in a `Card variant="flush"` for a framed list. */
 function List({ className, ...props }: React.ComponentProps<"ul">) {
   return <ul className={cn("au:flex au:flex-col", className)} {...props} />;
 }
@@ -70,7 +70,7 @@ function ListRow({
   return (
     <li
       className={cn(
-        "au:border-alpha/5 au:hover:bg-alpha/2 au:relative au:flex au:min-h-19 au:items-center au:gap-4 au:border-t au:px-4 au:py-3 au:transition-colors au:duration-100 au:sm:gap-5 au:sm:px-6",
+        "au:border-alpha/5 au:hover:bg-alpha/2 au:relative au:flex au:min-h-19 au:items-center au:gap-4 au:not-first:border-t au:px-4 au:py-3 au:transition-colors au:duration-100 au:sm:gap-5 au:sm:px-6",
         aboveRowLink,
         className
       )}

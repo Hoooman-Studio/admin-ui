@@ -22,7 +22,7 @@ import {
   FilterChips,
   SearchField,
 } from "../../../src/components/filter-bar";
-import { ListRow } from "../../../src/components/list-row";
+import { List, ListRow } from "../../../src/components/list-row";
 import {
   Menu,
   MenuCheckboxItem,
@@ -540,30 +540,32 @@ const enquiries = [
 
 function EnquiriesExample() {
   return (
-    <Card variant="list">
-      {enquiries.map((enquiry) => (
-        <ListRow
-          actions={
-            <Button
-              onClick={() => toast(`Replied to ${enquiry.name}`)}
-              size="sm"
-              variant="outline"
-            >
-              Reply
-            </Button>
-          }
-          key={enquiry.id}
-          leading={<Avatar name={enquiry.name} size="lg" />}
-          link={
-            <DemoLink
-              onOpen={() => toast(`Opening ${enquiry.name}'s enquiry`)}
-            />
-          }
-          meta={enquiry.when}
-          subtitle={enquiry.listing}
-          title={enquiry.name}
-        />
-      ))}
+    <Card variant="flush">
+      <List>
+        {enquiries.map((enquiry) => (
+          <ListRow
+            actions={
+              <Button
+                onClick={() => toast(`Replied to ${enquiry.name}`)}
+                size="sm"
+                variant="outline"
+              >
+                Reply
+              </Button>
+            }
+            key={enquiry.id}
+            leading={<Avatar name={enquiry.name} size="lg" />}
+            link={
+              <DemoLink
+                onOpen={() => toast(`Opening ${enquiry.name}'s enquiry`)}
+              />
+            }
+            meta={enquiry.when}
+            subtitle={enquiry.listing}
+            title={enquiry.name}
+          />
+        ))}
+      </List>
     </Card>
   );
 }
