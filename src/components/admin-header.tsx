@@ -115,7 +115,7 @@ function AdminHeaderActions({
 }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(cellClass, "items-center gap-2 px-4 sm:px-6", className)}
+      className={cn(cellClass, "items-center gap-2 px-3 sm:px-6", className)}
       {...props}
     />
   );

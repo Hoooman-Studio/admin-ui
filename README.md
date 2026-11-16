@@ -32,6 +32,10 @@ Needs React 19 and Tailwind CSS v4. In your global stylesheet:
 </AdminShell>
 ```
 
+### Command palette
+
+`<CommandPalette>` opens with ⌘K / Ctrl+K, or its "Search…" button. Put it in `AdminHeaderActions` and fill it with `CommandGroup` and `CommandItem`s whose `onSelect` navigates or runs an action. Build the nav and the palette from one list of pages.
+
 ### Forms
 
 `@hooman-studio/admin-ui/form` (needs `@tanstack/react-form`) gives `useAdminForm`: TanStack Form with our fields, typed from a Standard Schema like Zod. `onSubmit` can return `{ ok: true, message? }` or `{ ok: false, message?, fieldErrors? }`.

@@ -50,6 +50,20 @@ export {
   useAsyncOptions,
 } from "./components/combobox";
 export {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandGroupLabel,
+  CommandInput,
+  CommandItem,
+  CommandItemIcon,
+  CommandList,
+  CommandPalette,
+  type CommandPaletteProps,
+  CommandSeparator,
+  CommandShortcut,
+} from "./components/command";
+export {
   DataTable,
   type DataTableColumn,
   type DataTableProps,
