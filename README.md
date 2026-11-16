@@ -6,6 +6,10 @@ It's made to live inside a client's existing website, like at `/admin`, in any R
 
 ## Use it
 
+With a coding agent, point it at [setup.md](https://raw.githubusercontent.com/Hoooman-Studio/admin-ui/main/setup.md): "Set up the admin panel following this guide."
+
+By hand:
+
 Import the CSS in your admin route only, so the rest of the site never downloads it:
 
 ```ts

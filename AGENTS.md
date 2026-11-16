@@ -7,6 +7,7 @@
 - `src/components/*.tsx`: one file per component family. Everything public is exported from `src/index.ts`.
 - `src/lib/`: shared helpers (`cn`) and pure logic.
 - `src/styles.css`: tokens, the scoped reset and fonts. Built with Tailwind into `dist/styles.css`, which apps import; they need no Tailwind.
+- `setup.md`: the one-time install guide that apps point their agent at. Keep it short: what code and types can't say (where to import the CSS, the AGENTS.md lines). Usage belongs in `README.md`, which ships in the package.
 - `playground/`: a Vite app posing as a client's website (`site.css`: its own Tailwind plus hostile global styles) with the admin inside. Not published.
 
 ## Rules
