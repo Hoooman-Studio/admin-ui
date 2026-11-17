@@ -15,10 +15,9 @@ function errorText(error: unknown): string | null {
 }
 
 /**
- * The message for the form as a whole. A form-level Standard Schema reports a
- * map of paths to issues, and a refused submit a map of field names to
- * messages. Errors without a path (like a `refine` across fields), and errors
- * for fields the form doesn't render (like `tags[0]`), would otherwise show
+ * The form-wide message in a form-level Standard Schema result: a map of paths
+ * to issues. Issues without a path (like a `refine` across fields) and issues
+ * for fields the form doesn't render (like `tags[0]`) would otherwise show
  * nowhere, so they belong to the form.
  */
 function formErrorText(
@@ -28,9 +27,9 @@ function formErrorText(
   if (!error || typeof error !== "object" || isIssue(error)) {
     return errorText(error);
   }
-  for (const [path, value] of Object.entries(error)) {
-    if (path === "" || !isRendered(path)) {
-      const text = errorText(Array.isArray(value) ? value[0] : value);
+  for (const [path, issues] of Object.entries(error)) {
+    if (Array.isArray(issues) && (path === "" || !isRendered(path))) {
+      const text = errorText(issues[0]);
       if (text) {
         return text;
       }
@@ -39,4 +38,14 @@ function formErrorText(
   return null;
 }
 
-export { errorText, formErrorText };
+/** A refused submit's error for a field the form doesn't render, which would otherwise show nowhere. */
+function hiddenFieldError(
+  fieldErrors: Record<string, string>,
+  isRendered: (name: string) => boolean
+): string | undefined {
+  return Object.entries(fieldErrors).find(
+    ([name, text]) => text && !isRendered(name)
+  )?.[1];
+}
+
+export { errorText, formErrorText, hiddenFieldError };

@@ -42,7 +42,7 @@ import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
 import { toast } from "./components/toast";
 import { cn } from "./lib/cn";
-import { errorText, formErrorText } from "./lib/form-errors";
+import { errorText, formErrorText, hiddenFieldError } from "./lib/form-errors";
 import type { FormResult } from "./lib/form-result";
 
 const failedMessage = "Something went wrong. Try again.";
@@ -358,8 +358,8 @@ function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
   // Without a message, an error for a field the form doesn't render, or the generic one.
   const message =
     result.message ||
-    formErrorText(fieldErrors, isRendered) ||
-    (Object.keys(fieldErrors).length > 0 ? undefined : failedMessage);
+    hiddenFieldError(fieldErrors, isRendered) ||
+    (Object.values(fieldErrors).some(Boolean) ? undefined : failedMessage);
   form.setErrorMap({ onServer: { form: message, fields: fieldErrors } });
 }
 
