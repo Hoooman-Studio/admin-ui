@@ -24,7 +24,7 @@ import {
   TextField,
   useAdminForm,
 } from "../../../src/form";
-import { required } from "../../../src/lib/required";
+import { required } from "../../../src/zod";
 
 const titleSchema = z.string().min(3, "Use at least 3 characters.");
 

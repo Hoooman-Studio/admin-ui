@@ -42,6 +42,7 @@ import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
 import { toast } from "./components/toast";
 import { cn } from "./lib/cn";
+import { errorText, formErrorText } from "./lib/form-errors";
 import type { FormResult } from "./lib/form-result";
 
 const failedMessage = "Something went wrong. Try again.";
@@ -57,30 +58,6 @@ interface BoundField<T> {
   handleChange: (value: T) => void;
   name: string;
   state: { value: T; meta: { errors: readonly unknown[] } };
-}
-
-/** An error from a validator or the server as text. Standard Schema validators report issues, not strings. */
-function errorText(error: unknown) {
-  if (typeof error === "string") {
-    return error;
-  }
-  if (error && typeof error === "object" && "message" in error) {
-    return String(error.message);
-  }
-  return null;
-}
-
-/**
- * A form-wide error as text. A Standard Schema on the form reports a map of
- * paths to issues; issues without a path (like a `refine` across fields)
- * belong to the form, the others show under their fields.
- */
-function formErrorText(error: unknown): string | null {
-  if (error && typeof error === "object" && !("message" in error)) {
-    const pathless = (error as Record<string, unknown>)[""];
-    return Array.isArray(pathless) ? errorText(pathless[0]) : null;
-  }
-  return errorText(error);
 }
 
 /**
@@ -264,19 +241,31 @@ function RadioGroupField<T extends string>({
     (value: T | null) => value ?? field.state.value
   );
   const errorId = React.useId();
+  const legendId = React.useId();
+  const descriptionId = React.useId();
+  const describedBy =
+    [description && descriptionId, error && errorId]
+      .filter(Boolean)
+      .join(" ") || undefined;
   return (
     <FieldSet
       className="au:gap-3"
       disabled={disabled}
       onBlur={field.handleBlur}
     >
-      <FieldLegend className="au:mb-0 au:px-1 au:text-sm au:font-medium">
+      <FieldLegend
+        className="au:mb-0 au:px-1 au:text-sm au:font-medium"
+        id={legendId}
+      >
         {label}
       </FieldLegend>
-      {description ? <FieldDescription>{description}</FieldDescription> : null}
+      {description ? (
+        <FieldDescription id={descriptionId}>{description}</FieldDescription>
+      ) : null}
       <RadioGroup<T>
-        aria-describedby={error ? errorId : undefined}
+        aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
+        aria-labelledby={legendId}
         name={field.name}
         onValueChange={onChange}
         value={field.state.value}
@@ -365,12 +354,11 @@ function TagsField({
 /** Shows a refused submit on the form: its message above the submit button, its field errors under the fields. */
 function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
   const fieldErrors = result.fieldErrors ?? {};
-  // Errors for fields this form doesn't render would otherwise show nowhere.
-  const unshown = Object.entries(fieldErrors)
-    .filter(([name]) => !form.fieldInfo[name]?.instance)
-    .map(([, text]) => text);
+  const isRendered = (path: string) => Boolean(form.fieldInfo[path]?.instance);
+  // Without a message, an error for a field the form doesn't render, or the generic one.
   const message =
-    [result.message, ...unshown].filter(Boolean).join(" ") ||
+    result.message ??
+    formErrorText(fieldErrors, isRendered) ??
     (Object.keys(fieldErrors).length > 0 ? undefined : failedMessage);
   form.setErrorMap({ onServer: { form: message, fields: fieldErrors } });
 }
@@ -569,9 +557,17 @@ function SubmitButton(
 /** The form-wide error: a refused submit's message, or a schema issue that names no field. */
 function FormError({ className }: { className?: string }) {
   const form = useFormContext();
-  const error = useStore(form.store, (state: AnyFormApi["state"]) =>
-    formErrorText(state.errorMap.onServer ?? state.errors.find(formErrorText))
-  );
+  const error = useStore(form.store, (state: AnyFormApi["state"]) => {
+    const isRendered = (path: string) =>
+      Boolean(form.fieldInfo[path]?.instance);
+    for (const value of [state.errorMap.onServer, ...state.errors]) {
+      const text = formErrorText(value, isRendered);
+      if (text) {
+        return text;
+      }
+    }
+    return null;
+  });
   if (!error) {
     return null;
   }
