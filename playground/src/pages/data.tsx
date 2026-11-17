@@ -51,6 +51,10 @@ import {
   SelectItem,
   SelectTrigger,
 } from "../../../src/components/select";
+import {
+  SortableList,
+  SortableListRow,
+} from "../../../src/components/sortable-list";
 import { toast } from "../../../src/components/toast";
 import { paginate, type SortState, sortRows } from "../../../src/utils";
 
@@ -186,6 +190,12 @@ function DataPage() {
           title="Recent enquiries"
         >
           <EnquiriesExample />
+        </PageSection>
+        <PageSection
+          description="SortableList: drag a grip, or focus it and press Space. Saving takes a second; moving the last FAQ fails."
+          title="FAQ order"
+        >
+          <FaqOrderExample />
         </PageSection>
       </PageBody>
     </>
@@ -565,6 +575,57 @@ function EnquiriesExample() {
           />
         ))}
       </List>
+    </Card>
+  );
+}
+
+const initialFaqs = [
+  { id: "faq-1", question: "How do I book a viewing?", views: 1240 },
+  { id: "faq-2", question: "Can I bring a pet?", views: 860 },
+  { id: "faq-3", question: "When is the deposit due?", views: 512 },
+  { id: "faq-4", question: "Is parking included?", views: 301 },
+  { id: "faq-5", question: "How do I cancel?", views: 97 },
+];
+
+type Faq = (typeof initialFaqs)[number];
+
+function FaqOrderExample() {
+  const [faqs, setFaqs] = useState(initialFaqs);
+  return (
+    <Card variant="flush">
+      <SortableList
+        aria-label="FAQ order"
+        getRowId={(faq: Faq) => faq.id}
+        onReorder={async (reordered, { row, previous }) => {
+          // Like a mutation: the list keeps the new order while it saves.
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          if (row.id === "faq-5") {
+            toast.error(`Couldn't move "${row.question}"`);
+            throw new Error("Save failed");
+          }
+          setFaqs(reordered);
+          toast(
+            `Moved "${row.question}" ${previous ? `after "${previous.question}"` : "to the top"}`
+          );
+        }}
+        rows={faqs}
+      >
+        {(faq) => (
+          <SortableListRow
+            actions={
+              <Button
+                onClick={() => toast(`Editing "${faq.question}"`)}
+                size="sm"
+                variant="outline"
+              >
+                Edit
+              </Button>
+            }
+            meta={`${faq.views} views`}
+            title={faq.question}
+          />
+        )}
+      </SortableList>
     </Card>
   );
 }
