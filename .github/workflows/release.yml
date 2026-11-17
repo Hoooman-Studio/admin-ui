@@ -20,7 +20,11 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+      # Staged publishing needs npm 11.15+; Node 24's bundled npm may be older.
+      - run: npm install -g npm@^11.15.0
       - run: bun install --frozen-lockfile
       - name: Tag matches package.json
         run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
-      - run: npm publish --provenance --access public
+      - run: bun run check
+      # Stages the release; a maintainer approves it on npm with 2FA before it goes live.
+      - run: npm stage publish --provenance --access public
