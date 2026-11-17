@@ -357,8 +357,8 @@ function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
   const isRendered = (path: string) => Boolean(form.fieldInfo[path]?.instance);
   // Without a message, an error for a field the form doesn't render, or the generic one.
   const message =
-    result.message ??
-    formErrorText(fieldErrors, isRendered) ??
+    result.message ||
+    formErrorText(fieldErrors, isRendered) ||
     (Object.keys(fieldErrors).length > 0 ? undefined : failedMessage);
   form.setErrorMap({ onServer: { form: message, fields: fieldErrors } });
 }
@@ -554,7 +554,7 @@ function SubmitButton(
   );
 }
 
-/** The form-wide error: a refused submit's message, or a schema issue that names no field. */
+/** The form-wide error: a refused submit's message, or a schema issue that names no field or a field the form doesn't render. */
 function FormError({ className }: { className?: string }) {
   const form = useFormContext();
   const error = useStore(form.store, (state: AnyFormApi["state"]) => {

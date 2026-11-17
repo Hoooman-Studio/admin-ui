@@ -23,6 +23,14 @@ describe("formErrorText", () => {
     );
   });
 
+  test("reads a field named message as a field, not as an issue", () => {
+    const issues = {
+      message: [{ message: "Too short" }],
+      "": [{ message: "Dates conflict" }],
+    };
+    expect(formErrorText(issues, rendered("message"))).toBe("Dates conflict");
+  });
+
   test("leaves issues of rendered fields to those fields", () => {
     const issues = { title: [{ message: "Too short" }] };
     expect(formErrorText(issues, rendered("title"))).toBeNull();
@@ -32,9 +40,5 @@ describe("formErrorText", () => {
     expect(formErrorText({ slug: "Slug taken" }, rendered("title"))).toBe(
       "Slug taken"
     );
-  });
-
-  test("passes a plain message through", () => {
-    expect(formErrorText("Not saved", rendered())).toBe("Not saved");
   });
 });

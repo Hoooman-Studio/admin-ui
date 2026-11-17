@@ -1,10 +1,15 @@
+/** A Standard Schema issue: an object with a string `message`. */
+function isIssue(error: object): error is { message: string } {
+  return "message" in error && typeof error.message === "string";
+}
+
 /** An error from a validator or the server as text. Standard Schema validators report issues, not strings. */
 function errorText(error: unknown): string | null {
   if (typeof error === "string") {
     return error;
   }
-  if (error && typeof error === "object" && "message" in error) {
-    return String(error.message);
+  if (error && typeof error === "object" && isIssue(error)) {
+    return error.message;
   }
   return null;
 }
@@ -20,7 +25,7 @@ function formErrorText(
   error: unknown,
   isRendered: (path: string) => boolean
 ): string | null {
-  if (!error || typeof error !== "object" || "message" in error) {
+  if (!error || typeof error !== "object" || isIssue(error)) {
     return errorText(error);
   }
   for (const [path, value] of Object.entries(error)) {
