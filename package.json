@@ -43,6 +43,7 @@
     "fallow": "fallow dead-code",
     "format": "biome check --write",
     "lint": "biome check",
+    "prepublishOnly": "bun run check",
     "test": "bun test --pass-with-no-tests",
     "typecheck": "tsc --noEmit"
   },
