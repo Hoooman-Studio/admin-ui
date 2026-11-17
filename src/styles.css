@@ -77,6 +77,7 @@
   --au-gray-950: hsl(60 6% 90%);
   --au-blue-50: hsl(215 60% 14%);
   --au-orange-100: hsl(20 50% 20%);
+  --au-red-50: hsl(0 60% 14%);
 }
 
 /* Colours follow the variables above, so dark mode and the accent can change them per element. */

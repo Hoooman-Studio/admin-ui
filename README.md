@@ -43,7 +43,7 @@ Render `AdminShell` as your admin route's whole page, without your site's header
 - **Next.js:** put the admin under its own layout (for example a route group whose layout has no site header) and render `AdminShell` from a `"use client"` component.
 - **TanStack Start / Vite:** render it from the admin route's component.
 - **Links:** pass your router's link to `render` on `NavItem`, `Button` and `PageHeader`'s `back`.
-- **Outside the shell:** wrap admin components in `<AdminScope>` to give them the admin's font, theme and accent on any other page.
+- **Outside the shell:** wrap admin components in `<AdminScope>` to give them the admin's font, theme and accent on any other page. Mount a `<Toaster />` (and `<ConfirmDialog />` if you use `confirm()`) inside it; `AdminShell` does that for you.
 - **Your own content inside the admin** (custom pages) keeps your site's classes and styles. Build it from our components where you can, so it matches.
 - **Overriding our styles:** your site's classes on our components lose to ours, because your site's CSS is on the admin page too and Tailwind v4 puts it in a cascade layer. Size components from a wrapper element, or use Tailwind's important modifier (`w-40!`).
 - **Brand colour:** `accent` on `AdminShell` (or `AdminScope`). **Theme:** System / Light / Dark in `AdminHeaderAccount`'s menu, applied to the admin only.

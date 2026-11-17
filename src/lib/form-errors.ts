@@ -43,9 +43,7 @@ function hiddenFieldError(
   fieldErrors: Record<string, string>,
   isRendered: (name: string) => boolean
 ): string | undefined {
-  return Object.entries(fieldErrors).find(
-    ([name, text]) => text && !isRendered(name)
-  )?.[1];
+  return Object.entries(fieldErrors).find(([name]) => !isRendered(name))?.[1];
 }
 
 export { errorText, formErrorText, hiddenFieldError };

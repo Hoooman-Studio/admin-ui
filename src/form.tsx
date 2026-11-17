@@ -353,13 +353,16 @@ function TagsField({
 
 /** Shows a refused submit on the form: its message above the submit button, its field errors under the fields. */
 function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
-  const fieldErrors = result.fieldErrors ?? {};
+  // An empty message would mark its field invalid without saying why.
+  const fieldErrors = Object.fromEntries(
+    Object.entries(result.fieldErrors ?? {}).filter(([, text]) => text)
+  );
   const isRendered = (path: string) => Boolean(form.fieldInfo[path]?.instance);
   // Without a message, an error for a field the form doesn't render, or the generic one.
   const message =
     result.message ||
     hiddenFieldError(fieldErrors, isRendered) ||
-    (Object.values(fieldErrors).some(Boolean) ? undefined : failedMessage);
+    (Object.keys(fieldErrors).length > 0 ? undefined : failedMessage);
   form.setErrorMap({ onServer: { form: message, fields: fieldErrors } });
 }
 
@@ -560,6 +563,7 @@ function FormError({ className }: { className?: string }) {
   const error = useStore(form.store, (state: AnyFormApi["state"]) => {
     const isRendered = (path: string) =>
       Boolean(form.fieldInfo[path]?.instance);
+    // `state.errors` includes the server's error too; listing it first gives it priority.
     for (const value of [state.errorMap.onServer, ...state.errors]) {
       const text = formErrorText(value, isRendered);
       if (text) {

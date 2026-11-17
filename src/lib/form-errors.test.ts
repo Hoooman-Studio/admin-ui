@@ -44,8 +44,4 @@ describe("hiddenFieldError (a refused submit's field → message map)", () => {
       "Slug taken"
     );
   });
-
-  test("ignores empty messages", () => {
-    expect(hiddenFieldError({ slug: "" }, rendered())).toBeUndefined();
-  });
 });
