@@ -68,7 +68,7 @@ const sortableList = definePrimitive({
       focus: "native",
       // Keys are handled on keydown; this is a screen reader's click in browse mode.
       press: ({ api, key, store }, event) => {
-        // sourceOf alone also calls a mouse click on the grip "virtual", since the drag handles its pointerdown.
+        // detail 0 rules out a mouse click (test tools can look "virtual"); sourceOf rules out a keyboard click.
         const virtual =
           sourceOf(event) === "virtual" &&
           event !== undefined &&
