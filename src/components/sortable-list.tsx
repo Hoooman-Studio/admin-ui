@@ -39,6 +39,7 @@ const sortableList = definePrimitive({
       slot: "item",
       key: "value",
       draft: "moving",
+      // `drop` calls `set` before it clears the draft, so the moved key is still there.
       set: (value, details) =>
         change("value", value, {
           ...details,
@@ -64,7 +65,17 @@ const sortableList = definePrimitive({
       props: { value: "string" },
       role: "button",
       focus: "native",
-      press: { none: "Space and Enter pick the row up on keydown." },
+      // Keys are handled on keydown; this is a screen reader's click (detail 0) in browse mode.
+      press: ({ api, key, store }, event) => {
+        if (!(event instanceof MouseEvent) || event.detail !== 0) {
+          return;
+        }
+        if (api.reorder.moving(store.get(), key)) {
+          api.reorder.drop(event);
+        } else {
+          api.reorder.grab(key);
+        }
+      },
       attrs: (state, { api, id, key }) => ({
         type: "button",
         "aria-pressed": String(api.reorder.moving(state, key)),
@@ -95,8 +106,6 @@ const parts = createParts(sortableList, {
 interface SortableMove<Row> {
   next: Row | null;
   previous: Row | null;
-  /** `drag` for a pointer, `move-key` for the keyboard. */
-  reason: ReorderReason;
   row: Row;
 }
 
@@ -130,38 +139,41 @@ function SortableList<Row>({
     () => new Map(rows.map((row) => [getRowId(row), row])),
     [rows, getRowId]
   );
-  // The dropped order, shown until `rows` catches up, so rows don't jump back while it saves.
+  const ids = JSON.stringify([...byId.keys()]);
+  // The dropped order, shown until the row ids change, so rows don't jump back while it saves.
   const [dropped, setDropped] = React.useState<{
-    rows: readonly Row[];
+    ids: string;
     order: string[];
   } | null>(null);
+  if (dropped && dropped.ids !== ids) {
+    setDropped(null);
+  }
   const value = React.useMemo(
-    () => (dropped?.rows === rows ? dropped.order : [...byId.keys()]),
-    [dropped, rows, byId]
+    () =>
+      dropped?.ids === ids ? dropped.order : (JSON.parse(ids) as string[]),
+    [dropped, ids]
   );
-  const rowOf = (id: string) => byId.get(id);
   const change = React.useCallback<
     NonNullable<SortableListOptions["onValueChange"]>
   >(
-    (order, { key, reason }) => {
+    (order, { key }) => {
       const reordered = order.flatMap((id) => byId.get(id) ?? []);
       const row = byId.get(key);
       if (!row) {
         return;
       }
       const index = order.indexOf(key);
-      const drop = { rows, order };
+      const drop = { ids, order };
       setDropped(drop);
       Promise.resolve(
         onReorder(reordered, {
           row,
           previous: reordered[index - 1] ?? null,
           next: reordered[index + 1] ?? null,
-          reason,
         })
       ).catch(() => setDropped((now) => (now === drop ? null : now)));
     },
-    [rows, byId, onReorder]
+    [ids, byId, onReorder]
   );
 
   return (
@@ -169,7 +181,7 @@ function SortableList<Row>({
       <parts.List className={cn("au:flex au:flex-col", className)} {...props}>
         {({ order }) =>
           order.map((id) => {
-            const row = rowOf(id);
+            const row = byId.get(id);
             return row ? (
               <RowIdContext.Provider key={id} value={id}>
                 {children(row)}

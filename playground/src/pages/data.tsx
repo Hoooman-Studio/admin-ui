@@ -587,15 +587,13 @@ const initialFaqs = [
   { id: "faq-5", question: "How do I cancel?", views: 97 },
 ];
 
-type Faq = (typeof initialFaqs)[number];
-
 function FaqOrderExample() {
   const [faqs, setFaqs] = useState(initialFaqs);
   return (
     <Card variant="flush">
       <SortableList
         aria-label="FAQ order"
-        getRowId={(faq: Faq) => faq.id}
+        getRowId={(faq) => faq.id}
         onReorder={async (reordered, { row, previous }) => {
           // Like a mutation: the list keeps the new order while it saves.
           await new Promise((resolve) => setTimeout(resolve, 1000));

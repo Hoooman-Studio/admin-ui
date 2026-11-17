@@ -74,7 +74,7 @@ Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`,
 
 ### Reorderable lists
 
-`SortableList` is for short lists people put in order (FAQs, team members, menu items): drag a grip, or focus it and use Space and the arrows. It hands you the new order and the moved row with its new neighbours; save it however you like. The list keeps showing the new order until `rows` changes, and goes back if the returned promise rejects.
+`SortableList` is for short lists people put in order (FAQs, team members, menu items): drag a grip, or focus it and use Space and the arrows. `onReorder` gets the new order, and as its second argument the moved row with its new neighbours (`{ row, previous, next }`) for a "move after" save. The list keeps showing the new order until `rows` changes, and goes back if the returned promise rejects.
 
 ```tsx
 <Card variant="flush">
@@ -82,7 +82,7 @@ Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`,
     aria-label="FAQ order"
     rows={faqs}
     getRowId={(faq) => faq.id}
-    onReorder={(faqs, { row, previous }) => saveOrder(faqs.map((faq) => faq.id))}
+    onReorder={(faqs) => saveOrder(faqs.map((faq) => faq.id))}
   >
     {(faq) => <SortableListRow title={faq.question} actions={<EditButton faq={faq} />} />}
   </SortableList>
