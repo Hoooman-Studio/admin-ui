@@ -41,6 +41,7 @@ import { SwitchField } from "./components/switch";
 import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
 import { toast } from "./components/toast";
+import { cn } from "./lib/cn";
 import type { FormResult } from "./lib/form-result";
 
 const failedMessage = "Something went wrong. Try again.";
@@ -67,6 +68,19 @@ function errorText(error: unknown) {
     return String(error.message);
   }
   return null;
+}
+
+/**
+ * A form-wide error as text. A Standard Schema on the form reports a map of
+ * paths to issues; issues without a path (like a `refine` across fields)
+ * belong to the form, the others show under their fields.
+ */
+function formErrorText(error: unknown): string | null {
+  if (error && typeof error === "object" && !("message" in error)) {
+    const pathless = (error as Record<string, unknown>)[""];
+    return Array.isArray(pathless) ? errorText(pathless[0]) : null;
+  }
+  return errorText(error);
 }
 
 /**
@@ -249,6 +263,7 @@ function RadioGroupField<T extends string>({
     field,
     (value: T | null) => value ?? field.state.value
   );
+  const errorId = React.useId();
   return (
     <FieldSet
       className="au:gap-3"
@@ -260,6 +275,7 @@ function RadioGroupField<T extends string>({
       </FieldLegend>
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       <RadioGroup<T>
+        aria-describedby={error ? errorId : undefined}
         aria-invalid={error ? true : undefined}
         name={field.name}
         onValueChange={onChange}
@@ -274,7 +290,11 @@ function RadioGroupField<T extends string>({
           />
         ))}
       </RadioGroup>
-      {error ? <FieldError match>{error}</FieldError> : null}
+      {error ? (
+        <FieldError id={errorId} match>
+          {error}
+        </FieldError>
+      ) : null}
     </FieldSet>
   );
 }
@@ -344,9 +364,15 @@ function TagsField({
 
 /** Shows a refused submit on the form: its message above the submit button, its field errors under the fields. */
 function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
-  form.setErrorMap({
-    onServer: { form: result.message, fields: result.fieldErrors ?? {} },
-  });
+  const fieldErrors = result.fieldErrors ?? {};
+  // Errors for fields this form doesn't render would otherwise show nowhere.
+  const unshown = Object.entries(fieldErrors)
+    .filter(([name]) => !form.fieldInfo[name]?.instance)
+    .map(([, text]) => text);
+  const message =
+    [result.message, ...unshown].filter(Boolean).join(" ") ||
+    (Object.keys(fieldErrors).length > 0 ? undefined : failedMessage);
+  form.setErrorMap({ onServer: { form: message, fields: fieldErrors } });
 }
 
 /** What onSubmit receives: the schema's output when `validators.onSubmit` is a Standard Schema, else the form values. */
@@ -381,7 +407,9 @@ interface AdminFormOptions<
  * TanStack Form's `useForm`, with our submit handling. `onSubmit` receives
  * the parsed output of the `validators.onSubmit` schema and may return a
  * FormResult. A thrown error is logged and shown as a generic form error.
- * Inside a FormDialog, `ok: true` closes the dialog.
+ * Inside a FormDialog, `ok: true` closes the dialog. The onSubmit schema runs
+ * twice per submit (TanStack's check, then the parse), so keep slow async
+ * checks, like a uniqueness lookup, in the save itself.
  */
 function useAdminForm<
   TFormData,
@@ -494,10 +522,16 @@ function AdminForm({
     },
     [form]
   );
+  // In a FormDialog the form holds a scrolling DialogBody and a DialogFooter, which bring their own spacing.
+  const inDialog = React.use(FormDialogContext) !== null;
   return (
     <FormContext value={form}>
       <form
-        className={className ?? "au:flex au:flex-col au:gap-4"}
+        className={cn(
+          "au:flex au:min-h-0 au:flex-col",
+          !inDialog && "au:gap-4",
+          className
+        )}
         noValidate
         onSubmit={submit}
       >
@@ -525,6 +559,8 @@ function SubmitButton(
       {...props}
       aria-busy={submitting || undefined}
       disabled={props.disabled || submitting}
+      // Keeps keyboard focus on the button while it submits.
+      focusableWhenDisabled
       type="submit"
     />
   );
@@ -534,7 +570,7 @@ function SubmitButton(
 function FormError({ className }: { className?: string }) {
   const form = useFormContext();
   const error = useStore(form.store, (state: AnyFormApi["state"]) =>
-    errorText(state.errorMap.onServer ?? state.errors[0])
+    formErrorText(state.errorMap.onServer ?? state.errors.find(formErrorText))
   );
   if (!error) {
     return null;

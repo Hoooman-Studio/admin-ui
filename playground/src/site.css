@@ -33,6 +33,16 @@ a {
   text-decoration: underline;
 }
 
+/* Rules more specific than one class reach into the admin, so the site scopes them away from it. */
+a:visited:not([data-admin-ui] *) {
+  color: purple;
+}
+
+input[type="text"]:not([data-admin-ui] *) {
+  padding: 0.5rem;
+  border: 2px solid green;
+}
+
 button,
 input,
 select,

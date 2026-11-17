@@ -33,6 +33,8 @@ function NumberInput({
   placeholder,
   decrementLabel = "Decrease",
   incrementLabel = "Increase",
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
   ...props
 }: NumberInputProps) {
   return (
@@ -44,6 +46,8 @@ function NumberInput({
         )}
       >
         <NumberInputControl
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
           className="au:text-input au:tabular au:h-full au:min-w-0 au:flex-1 au:bg-transparent au:outline-none au:placeholder:text-gray-500 au:disabled:cursor-not-allowed"
           placeholder={placeholder}
         />

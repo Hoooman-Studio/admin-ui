@@ -70,16 +70,16 @@ const form = useAdminForm({
 </AdminForm>
 ```
 
-Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `FormCheckboxField`, `FormSwitchField`, `TagsField`. Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/utils` so the parsed value isn't. `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
+Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `FormCheckboxField`, `FormSwitchField`, `TagsField`. Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/zod` so the parsed value isn't. `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
 
 ### Server-safe helpers
 
-`@hooman-studio/admin-ui/utils` has the plain functions and types, without `"use client"`, for server actions and server components: `required` (Zod), `sortRows`, `paginate` and the `FormResult` type.
+`@hooman-studio/admin-ui/utils` (`sortRows`, `paginate`, the `FormResult` type) and `@hooman-studio/admin-ui/zod` (`required`) have no `"use client"`, so server actions and server components can import them.
 
 ## Known limits
 
 - A site that sets `html { font-size: 62.5% }` shrinks the admin, because sizes are in `rem`.
-- The site's CSS can still reach the admin through selectors more specific than one class, like `.content h1`. Render the admin outside such wrappers.
+- Our classes have the specificity of one class. Site rules that are more specific still win inside the admin: descendant rules like `.content h1`, and element rules with a pseudo-class or attribute, like `input[type="text"]`, `a:visited` or `a:hover`. Render the admin outside such wrappers, and scope those site rules away from it: `input[type="text"]:not([data-admin-ui] *)`.
 - Rules from your site with the same specificity as one class, like Tailwind v3's preflight `[type='button']`, win when your site's CSS loads after ours. Import the admin CSS after your site's CSS.
 - The theme applies after hydration, so a dark-mode user can see the light theme for a moment on first load.
 

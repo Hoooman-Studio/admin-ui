@@ -24,6 +24,10 @@
       "types": "./dist/utils.d.ts",
       "default": "./dist/utils.js"
     },
+    "./zod": {
+      "types": "./dist/zod.d.ts",
+      "default": "./dist/zod.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./tailwind.css": "./dist/tailwind.css",
     "./package.json": "./package.json"

@@ -21,7 +21,12 @@ function readTheme(): Theme {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  // Another tab changed the theme.
+  window.addEventListener("storage", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
 }
 
 function setTheme(theme: Theme) {

@@ -71,7 +71,8 @@ interface AdminShellProps {
 
 /**
  * The admin's frame: the header you compose, a nav rail that collapses to
- * icons (the choice is kept in localStorage) and the scrolling page. On phones
+ * icons (the choice is kept in localStorage) and the scrolling page. It covers
+ * the viewport, whatever the site's body and wrappers do. On phones
  * the rail is a drawer opened from AdminHeaderTitle. It is an AdminScope, so the admin's styles apply inside it only. It
  * mounts the Toaster and ConfirmDialog, so `toast()` and `confirm()` work
  * anywhere inside.
@@ -89,7 +90,7 @@ function AdminShell({
     <AdminScope
       accent={accent}
       className={cn(
-        "au:flex au:h-dvh au:flex-col au:bg-gray-50 au:text-gray-950",
+        "au:fixed au:inset-0 au:flex au:flex-col au:bg-gray-50 au:text-gray-950",
         className
       )}
     >

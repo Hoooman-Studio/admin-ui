@@ -28,19 +28,23 @@ import { required } from "../../../src/lib/required";
 
 const titleSchema = z.string().min(3, "Use at least 3 characters.");
 
-const listingSchema = z.object({
-  title: titleSchema,
-  status: z.enum(["draft", "live"], "Choose a status."),
-  rent: required(
-    z.number().int().positive("Rent must be above 0."),
-    "Enter the rent."
-  ),
-  availableFrom: required(z.string(), "Choose a date."),
-  tags: z.array(z.string()),
-  billing: z.enum(["monthly", "yearly"]),
-  featured: z.boolean(),
-  notes: z.string(),
-});
+const listingSchema = z
+  .object({
+    title: titleSchema,
+    status: z.enum(["draft", "live"], "Choose a status."),
+    rent: required(
+      z.number().int().positive("Rent must be above 0."),
+      "Enter the rent."
+    ),
+    availableFrom: required(z.string(), "Choose a date."),
+    tags: z.array(z.string()),
+    billing: z.enum(["monthly", "yearly"]),
+    featured: z.boolean(),
+    notes: z.string(),
+  })
+  .refine((listing) => !listing.featured || listing.tags.length > 0, {
+    message: "Featured listings need at least one tag.",
+  });
 
 type Listing = z.output<typeof listingSchema>;
 
@@ -180,7 +184,7 @@ function NewListingForm() {
   });
 
   return (
-    <AdminForm className="flex min-h-0 flex-col" form={form}>
+    <AdminForm form={form}>
       <DialogBody>
         <form.Field name="title">
           {(field) => <TextField autoFocus field={field} label="Title" />}

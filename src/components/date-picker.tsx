@@ -52,8 +52,12 @@ function DatePicker({
   triggerLabel = "Choose date",
   endLabel = "End date",
   mode,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
   ...props
 }: DatePickerProps) {
+  // The name belongs on the text input, not the wrapper. Inside a Field, its label names it.
+  const name = { "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby };
   return (
     <DatePickerPart
       className={cn(
@@ -66,7 +70,10 @@ function DatePicker({
     >
       {mode === "range" ? (
         <>
-          <DatePickerInput className={cn(inputClass, rangeInputClass)} />
+          <DatePickerInput
+            {...name}
+            className={cn(inputClass, rangeInputClass)}
+          />
           <span aria-hidden="true" className="au:text-sm au:text-gray-500">
             –
           </span>
@@ -78,7 +85,7 @@ function DatePicker({
           <span className="au:flex-1" />
         </>
       ) : (
-        <DatePickerInput className={inputClass} />
+        <DatePickerInput {...name} className={inputClass} />
       )}
       <DatePickerTrigger
         aria-label={triggerLabel}

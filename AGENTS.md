@@ -4,7 +4,7 @@
 
 ## Layout
 
-- `src/components/*.tsx`: one file per component family. Everything public is exported from `src/index.ts`; typed forms from `src/form.tsx` (`./form`); plain functions and types that servers may import from `src/utils.ts` (`./utils`, built without "use client").
+- `src/components/*.tsx`: one file per component family. Everything public is exported from `src/index.ts`; typed forms from `src/form.tsx` (`./form`); plain functions and types that servers may import from `src/utils.ts` (`./utils`) and `src/zod.ts` (`./zod`), both built without "use client".
 - `src/lib/`: shared helpers (`cn`) and pure logic.
 - `src/styles.css`: tokens, the scoped reset and fonts. Built with Tailwind into `dist/styles.css`, which apps import; they need no Tailwind.
 - `setup.md`: the one-time install guide that apps point their agent at. Keep it short: what code and types can't say (where to import the CSS, the AGENTS.md lines). Usage belongs in `README.md`, which ships in the package.

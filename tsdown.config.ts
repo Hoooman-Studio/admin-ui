@@ -17,5 +17,5 @@ export default defineConfig([
     outputOptions: { banner: '"use client";' },
   },
   // Server-safe: no "use client", so server actions and server components can call it.
-  { ...shared, entry: ["src/utils.ts"] },
+  { ...shared, entry: ["src/utils.ts", "src/zod.ts"] },
 ]);
