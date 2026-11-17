@@ -1,24 +1,77 @@
+import {
+  BoxIcon,
+  BuildingIcon,
+  FileCheckIcon,
+  LayersIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  PlusIcon,
+  TableIcon,
+  TextCursorInputIcon,
+  UserIcon,
+} from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "../../src";
+import {
+  AdminHeader,
+  AdminHeaderAccount,
+  AdminHeaderActions,
+  AdminHeaderStudioLink,
+  AdminHeaderTitle,
+  AdminShell,
+  CommandGroup,
+  CommandGroupLabel,
+  CommandItem,
+  CommandItemIcon,
+  CommandPalette,
+  CommandShortcut,
+  MenuItem,
+  NavItem,
+  NavSection,
+  toast,
+} from "../../src";
 import { BasicsPage } from "./pages/basics";
 import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
-import { LayoutPage } from "./pages/layout";
+import { ListingPage, ListingsPage, OverviewPage } from "./pages/layout";
 import { OverlaysPage } from "./pages/overlays";
+import { SitePage } from "./pages/site";
+import { TypedFormsPage } from "./pages/typed-forms";
 
+/** One list for the nav and the command palette. */
 const pages = {
-  basics: BasicsPage,
-  forms: FormsPage,
-  overlays: OverlaysPage,
-  layout: LayoutPage,
-  data: DataPage,
+  overview: {
+    label: "Overview",
+    icon: <LayoutDashboardIcon />,
+    Page: OverviewPage,
+  },
+  listings: { label: "Listings", icon: <BuildingIcon />, Page: ListingsPage },
+  basics: { label: "Basics", icon: <BoxIcon />, Page: BasicsPage },
+  forms: { label: "Forms", icon: <TextCursorInputIcon />, Page: FormsPage },
+  "typed-forms": {
+    label: "Typed forms",
+    icon: <FileCheckIcon />,
+    Page: TypedFormsPage,
+  },
+  overlays: { label: "Overlays", icon: <LayersIcon />, Page: OverlaysPage },
+  data: { label: "Data", icon: <TableIcon />, Page: DataPage },
 };
 
 type PageName = keyof typeof pages;
+const main: PageName[] = ["overview", "listings"];
+const components: PageName[] = [
+  "basics",
+  "forms",
+  "typed-forms",
+  "overlays",
+  "data",
+];
 
-function readPage(): PageName {
+function readPage(): PageName | "listing" | "site" {
   const name = window.location.hash.replace("#/", "");
-  return name in pages ? (name as PageName) : "basics";
+  if (name === "listing" || name === "site") {
+    return name;
+  }
+  return name in pages ? (name as PageName) : "overview";
 }
 
 function subscribe(onChange: () => void) {
@@ -26,38 +79,88 @@ function subscribe(onChange: () => void) {
   return () => window.removeEventListener("hashchange", onChange);
 }
 
-function toggleTheme() {
-  const root = document.documentElement;
-  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+function go(name: string) {
+  window.location.hash = `#/${name}`;
 }
 
 function App() {
   const page = useSyncExternalStore(subscribe, readPage);
-  const Page = pages[page];
+  if (page === "site") {
+    return <SitePage />;
+  }
+  const Page = page === "listing" ? ListingPage : pages[page].Page;
+  const navItem = (name: PageName) => (
+    <NavItem
+      active={name === page || (name === "listings" && page === "listing")}
+      count={name === "listings" ? 128 : undefined}
+      href={`#/${name}`}
+      icon={pages[name].icon}
+      key={name}
+      label={pages[name].label}
+    />
+  );
+  const commandItem = (name: PageName) => (
+    <CommandItem key={name} onSelect={() => go(name)} value={name}>
+      <CommandItemIcon>{pages[name].icon}</CommandItemIcon>
+      {pages[name].label}
+    </CommandItem>
+  );
+
   return (
-    <div className="min-h-dvh">
-      <nav className="border-alpha/10 flex items-center gap-1 border-b px-4 py-2">
-        {Object.keys(pages).map((name) => (
-          <a
-            aria-current={name === page ? "page" : undefined}
-            className="hover:bg-alpha/5 rounded-lg px-2 py-1 text-sm text-gray-600 aria-[current=page]:text-gray-950"
-            href={`#/${name}`}
-            key={name}
-          >
-            {name}
-          </a>
-        ))}
-        <Button
-          className="ml-auto"
-          onClick={toggleTheme}
-          size="sm"
-          variant="ghost"
-        >
-          Toggle theme
-        </Button>
-      </nav>
+    <AdminShell
+      accent="hsl(20 100% 50%)"
+      header={
+        <AdminHeader>
+          <AdminHeaderAccount email="lena@portaeuropa.com" name="Lena Fischer">
+            <MenuItem>
+              <UserIcon />
+              Profile
+            </MenuItem>
+            <MenuItem>
+              <LogOutIcon />
+              Sign out
+            </MenuItem>
+          </AdminHeaderAccount>
+          <AdminHeaderTitle>Porta Europa</AdminHeaderTitle>
+          <AdminHeaderActions>
+            <CommandPalette>
+              <CommandGroup>
+                <CommandGroupLabel>Actions</CommandGroupLabel>
+                <CommandItem
+                  keywords={["create", "add"]}
+                  onSelect={() => toast.success("Draft listing created.")}
+                  shortcut="mod+shift+l"
+                  value="new-listing"
+                >
+                  <CommandItemIcon>
+                    <PlusIcon />
+                  </CommandItemIcon>
+                  New listing
+                  <CommandShortcut />
+                </CommandItem>
+              </CommandGroup>
+              <CommandGroup>
+                <CommandGroupLabel>Pages</CommandGroupLabel>
+                {main.map(commandItem)}
+              </CommandGroup>
+              <CommandGroup>
+                <CommandGroupLabel>Components</CommandGroupLabel>
+                {components.map(commandItem)}
+              </CommandGroup>
+            </CommandPalette>
+          </AdminHeaderActions>
+          <AdminHeaderStudioLink href="#/site" />
+        </AdminHeader>
+      }
+      nav={
+        <>
+          {main.map(navItem)}
+          <NavSection title="Components">{components.map(navItem)}</NavSection>
+        </>
+      }
+    >
       <Page />
-    </div>
+    </AdminShell>
   );
 }
 

@@ -9,8 +9,7 @@ import {
 } from "@ui-sdk/react/field";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-
-type WithClass<T> = Omit<T, "className"> & { className?: string };
+import type { WithClass } from "../lib/types";
 
 function Field({
   className,
@@ -18,7 +17,7 @@ function Field({
 }: WithClass<React.ComponentProps<typeof FieldPart>>) {
   return (
     <FieldPart
-      className={cn("flex w-full flex-col gap-2", className)}
+      className={cn("au:flex au:w-full au:flex-col au:gap-2", className)}
       {...props}
     />
   );
@@ -31,7 +30,7 @@ function FieldLabel({
   return (
     <FieldLabelPart
       className={cn(
-        "px-1 text-xs font-medium text-gray-600 data-invalid:text-red-500 data-required:after:ml-0.5 data-required:after:text-red-500 data-required:after:content-['*']",
+        "au:px-1 au:text-xs au:font-medium au:text-gray-600 au:data-invalid:text-red-500 au:data-required:after:ml-0.5 au:data-required:after:text-red-500 au:data-required:after:content-['*']",
         className
       )}
       {...props}
@@ -45,7 +44,7 @@ function FieldDescription({
 }: WithClass<React.ComponentProps<typeof FieldDescriptionPart>>) {
   return (
     <FieldDescriptionPart
-      className={cn("px-1 text-sm text-gray-600", className)}
+      className={cn("au:px-1 au:text-sm au:text-gray-600", className)}
       {...props}
     />
   );
@@ -57,7 +56,10 @@ function FieldError({
 }: WithClass<React.ComponentProps<typeof FieldErrorPart>>) {
   return (
     <FieldErrorPart
-      className={cn("px-1 text-sm font-medium text-red-500", className)}
+      className={cn(
+        "au:px-1 au:text-sm au:font-medium au:text-red-500",
+        className
+      )}
       {...props}
     />
   );
@@ -69,7 +71,7 @@ function FieldSet({
 }: WithClass<React.ComponentProps<typeof FieldSetPart>>) {
   return (
     <FieldSetPart
-      className={cn("flex min-w-0 flex-col gap-4", className)}
+      className={cn("au:flex au:min-w-0 au:flex-col au:gap-4", className)}
       {...props}
     />
   );
@@ -81,7 +83,10 @@ function FieldLegend({
 }: WithClass<React.ComponentProps<typeof FieldLegendPart>>) {
   return (
     <FieldLegendPart
-      className={cn("mb-1 text-lg font-semibold text-gray-950", className)}
+      className={cn(
+        "au:mb-1 au:text-lg au:font-semibold au:text-gray-950",
+        className
+      )}
       {...props}
     />
   );
@@ -93,7 +98,7 @@ function FieldGroup({
 }: WithClass<React.ComponentProps<typeof FieldGroupPart>>) {
   return (
     <FieldGroupPart
-      className={cn("flex flex-col gap-4", className)}
+      className={cn("au:flex au:flex-col au:gap-4", className)}
       {...props}
     />
   );
@@ -132,7 +137,7 @@ function FormField({
       name={name}
     >
       <div
-        className="group border-alpha/10 focus-within:border-accent/70 focus-within:ring-accent/10 hover:border-alpha/20 hover:focus-within:border-accent/70 flex flex-col gap-1 rounded-lg border bg-gray-50 p-1.5 transition-colors focus-within:ring-4 in-data-disabled:opacity-60 in-data-invalid:border-red-500/70"
+        className="au:group au:border-alpha/10 au:focus-within:border-accent/70 au:focus-within:ring-accent/10 au:hover:border-alpha/20 au:hover:focus-within:border-accent/70 au:flex au:flex-col au:gap-1 au:rounded-lg au:border au:bg-gray-50 au:p-1.5 au:transition-colors au:focus-within:ring-4 au:in-data-invalid:border-red-500/70"
         data-slot="form-field-box"
       >
         <FieldLabel>{label}</FieldLabel>

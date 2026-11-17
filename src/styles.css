@@ -1,0 +1,361 @@
+/*
+ * Built into dist/styles.css (for any site), and shipped as dist/tailwind.css for
+ * sites on Tailwind v4 to build themselves, so their admin code can use `au:` classes.
+ * Hooman Studio's look for admin panels inside any website.
+ * Every class is prefixed (`au:flex`) and every variable is `--au-*`, and nothing here styles
+ * `html`, `body` or the site's own elements. The reset, font and dark mode apply inside
+ * `[data-admin-ui]` only (AdminShell and AdminScope set it).
+ */
+@import "tailwindcss/theme.css" prefix(au);
+@source "./components";
+@source "./form.tsx";
+
+@font-face {
+  font-family: "au InterDisplay";
+  src: url("./fonts/regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "au InterDisplay";
+  src: url("./fonts/medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "au InterDisplay";
+  src: url("./fonts/semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --au-alpha: hsl(0 0% 0%);
+  --au-gray-50: hsl(0 0% 100%);
+  --au-gray-100: hsl(0 0% 98%);
+  --au-gray-200: hsl(0 0% 96%);
+  --au-gray-300: hsl(0 0% 92%);
+  --au-gray-400: hsl(0 0% 81%);
+  --au-gray-500: hsl(0 0% 71%);
+  --au-gray-600: hsl(0 0% 40%);
+  --au-gray-700: hsl(0 0% 25%);
+  --au-gray-800: hsl(0 0% 15%);
+  --au-gray-900: hsl(60 1% 10%);
+  --au-gray-950: hsl(0 0% 4%);
+  --au-blue-50: hsl(220 100% 96%);
+  --au-blue-500: hsl(215 100% 50%);
+  --au-blue-600: hsl(220 100% 45%);
+  --au-green-500: hsl(159 90% 42%);
+  --au-green-600: hsl(128 80% 35%);
+  --au-orange-100: hsl(20 80% 92%);
+  --au-orange-500: hsl(20 100% 50%);
+  --au-orange-600: hsl(17 100% 46%);
+  --au-yellow-500: hsl(48 90% 50%);
+  --au-yellow-600: hsl(47 100% 46%);
+  --au-purple-500: hsl(295 80% 60%);
+  --au-purple-600: #a855f7;
+  --au-red-50: hsl(0 100% 96%);
+  --au-red-500: hsl(0 100% 65%);
+  --au-red-600: hsl(0 70% 50%);
+  /* The client's brand colour. AdminShell's `accent` prop sets it. */
+  --au-accent: var(--au-blue-500);
+  --au-accent-foreground: hsl(0 0% 100%);
+}
+
+[data-au-theme="dark"] {
+  --au-alpha: hsl(0 0% 100%);
+  --au-gray-50: hsl(195 10% 8%);
+  --au-gray-100: hsl(192 10% 10%);
+  --au-gray-200: hsl(195 6% 15%);
+  --au-gray-300: hsl(195 3% 20%);
+  --au-gray-400: hsl(180 2% 24%);
+  --au-gray-500: hsl(180 1% 33%);
+  --au-gray-600: hsl(195 1% 55%);
+  --au-gray-700: hsl(195 1% 65%);
+  --au-gray-800: hsl(195 1% 75%);
+  --au-gray-900: hsl(60 2% 85%);
+  --au-gray-950: hsl(60 6% 90%);
+  --au-blue-50: hsl(215 60% 14%);
+  --au-orange-100: hsl(20 50% 20%);
+  --au-red-50: hsl(0 60% 14%);
+}
+
+/* Colours follow the variables above, so dark mode and the accent can change them per element. */
+@theme inline {
+  --color-alpha: var(--au-alpha);
+  --color-gray-50: var(--au-gray-50);
+  --color-gray-100: var(--au-gray-100);
+  --color-gray-200: var(--au-gray-200);
+  --color-gray-300: var(--au-gray-300);
+  --color-gray-400: var(--au-gray-400);
+  --color-gray-500: var(--au-gray-500);
+  --color-gray-600: var(--au-gray-600);
+  --color-gray-700: var(--au-gray-700);
+  --color-gray-800: var(--au-gray-800);
+  --color-gray-900: var(--au-gray-900);
+  --color-gray-950: var(--au-gray-950);
+  --color-blue-50: var(--au-blue-50);
+  --color-blue-500: var(--au-blue-500);
+  --color-blue-600: var(--au-blue-600);
+  --color-green-500: var(--au-green-500);
+  --color-green-600: var(--au-green-600);
+  --color-orange-100: var(--au-orange-100);
+  --color-orange-500: var(--au-orange-500);
+  --color-orange-600: var(--au-orange-600);
+  --color-yellow-500: var(--au-yellow-500);
+  --color-yellow-600: var(--au-yellow-600);
+  --color-purple-500: var(--au-purple-500);
+  --color-purple-600: var(--au-purple-600);
+  --color-red-50: var(--au-red-50);
+  --color-red-500: var(--au-red-500);
+  --color-red-600: var(--au-red-600);
+  --color-accent: var(--au-accent);
+  --color-accent-foreground: var(--au-accent-foreground);
+}
+
+@theme {
+  --font-sans: "au InterDisplay", ui-sans-serif, system-ui, sans-serif;
+
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.25rem;
+  /* Form field text: `text-sm`, raised to 16px on touch screens so iOS doesn't zoom in. */
+  --text-input: 0.875rem;
+  --text-input--line-height: 1.25rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.5rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 1.75rem;
+  --text-xl--letter-spacing: -0.01em;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2.25rem;
+  --text-2xl--letter-spacing: -0.01em;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 1em;
+  --text-3xl--letter-spacing: -0.01em;
+
+  --shadow-dropdown: 0 4px 24px -8px rgba(0, 0, 0, 0.2);
+  --shadow-floating: 0 48px 64px -16px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 8px 16px -8px rgba(0, 0, 0, 0.1);
+
+  --radius-5xl: 3rem;
+
+  --ease-fluid: cubic-bezier(0.08, 0.82, 0.17, 1);
+
+  /* Our own keyframe names, so they never replace a site's `spin`. */
+  --animate-spin: au-spin 1s linear infinite;
+  --animate-loader-dot: au-loader-dot 1s linear infinite;
+
+  @keyframes au-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes au-loader-dot {
+    0%,
+    40%,
+    100% {
+      opacity: 0.05;
+    }
+    20% {
+      opacity: 1;
+    }
+  }
+}
+
+@media (hover: none) {
+  :root {
+    --au-text-input: 1rem;
+  }
+}
+
+@custom-variant dark (
+  &:where([data-au-theme="dark"], [data-au-theme="dark"] *)
+);
+
+/*
+ * Tailwind's preflight, for the elements this package renders: those with an
+ * `au:` class inside `[data-admin-ui]`. At the specificity of one class it
+ * beats the site's element styles (`h1 {}`, `button {}`) and loses to our
+ * utilities, which come later in this file. The site's own content inside the
+ * admin keeps the site's styles.
+ */
+[data-admin-ui] {
+  color-scheme: light;
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  font-family: var(--au-font-sans);
+  font-feature-settings:
+    "ss03" on,
+    "cv01" on;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  color: var(--au-gray-950);
+  text-align: start;
+  letter-spacing: normal;
+}
+
+/* Dark scrollbars, carets and form controls in dark mode. */
+[data-admin-ui][data-au-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-admin-ui],
+[data-admin-ui] :where(*):where([class*="au:"]),
+[data-admin-ui] :where(*):where([class*="au:"])::before,
+[data-admin-ui] :where(*):where([class*="au:"])::after,
+[data-admin-ui] :where(*):where([class*="au:"])::backdrop,
+[data-admin-ui] :where(*):where([class*="au:"])::file-selector-button {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0 solid;
+}
+
+[data-admin-ui] :where(hr):where([class*="au:"]) {
+  height: 0;
+  color: inherit;
+  border-top-width: 1px;
+}
+
+[data-admin-ui]
+  :where(h1, h2, h3, h4, h5, h6, p, blockquote, figure, dl, dd):where(
+    [class*="au:"]
+  ) {
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: inherit;
+}
+
+[data-admin-ui] :where(a):where([class*="au:"]) {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+[data-admin-ui] :where(b, strong):where([class*="au:"]) {
+  font-weight: bolder;
+}
+
+[data-admin-ui] :where(code, kbd, samp, pre):where([class*="au:"]) {
+  font-family: var(--au-font-mono);
+  font-size: 1em;
+}
+
+[data-admin-ui] :where(small):where([class*="au:"]) {
+  font-size: 80%;
+}
+
+[data-admin-ui] :where(table):where([class*="au:"]) {
+  text-indent: 0;
+  border-collapse: collapse;
+  border-color: inherit;
+}
+
+[data-admin-ui] :where(ol, ul, menu):where([class*="au:"]) {
+  list-style: none;
+}
+
+[data-admin-ui]
+  :where(img, svg, video, canvas, audio, iframe, embed, object):where(
+    [class*="au:"]
+  ) {
+  display: block;
+  vertical-align: middle;
+}
+
+[data-admin-ui] :where(img, video):where([class*="au:"]) {
+  max-width: 100%;
+  height: auto;
+}
+
+[data-admin-ui]
+  :where(button, input, select, optgroup, textarea):where([class*="au:"]),
+[data-admin-ui] :where(*):where([class*="au:"])::file-selector-button {
+  font: inherit;
+  font-variation-settings: inherit;
+  font-feature-settings: inherit;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: inherit;
+  appearance: none;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  opacity: 1;
+}
+
+[data-admin-ui]
+  :where(input:where([type="checkbox"], [type="radio"])):where([class*="au:"]) {
+  appearance: auto;
+}
+
+[data-admin-ui] :where(*):where([class*="au:"])::placeholder {
+  color: color-mix(in oklab, currentcolor 50%, transparent);
+  opacity: 1;
+}
+
+[data-admin-ui] :where(textarea):where([class*="au:"]) {
+  resize: vertical;
+}
+
+[data-admin-ui]
+  :where(
+    button,
+    input:where([type="button"], [type="reset"], [type="submit"])
+  ):where([class*="au:"]),
+[data-admin-ui] :where(*):where([class*="au:"])::file-selector-button {
+  appearance: button;
+}
+
+[data-admin-ui]
+  :where(button:not(:disabled), [role="button"]:not(:disabled)):where(
+    [class*="au:"]
+  ) {
+  cursor: pointer;
+}
+
+[data-admin-ui] :where([hidden]:where(:not([hidden="until-found"]))) {
+  display: none !important;
+}
+
+@utility scrollbar-hidden {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & {
+    scrollbar-width: none;
+  }
+}
+
+@utility tabular {
+  font-feature-settings:
+    "tnum" on,
+    "lnum" on,
+    "cv01" on,
+    "ss03" on;
+}
+
+/* Keep compact controls comfortable on touch screens without changing mouse layouts. */
+@utility touch-target {
+  @media (hover: none) {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Last, so a utility beats the reset above at equal specificity. */
+@tailwind utilities;
