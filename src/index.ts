@@ -203,6 +203,13 @@ export {
   SelectValue,
 } from "./components/select";
 export { Separator } from "./components/separator";
+export {
+  SortableList,
+  type SortableListProps,
+  SortableListRow,
+  type SortableListRowProps,
+  type SortableMove,
+} from "./components/sortable-list";
 export { StatCard, type StatCardProps, StatGrid } from "./components/stat";
 export {
   Switch,

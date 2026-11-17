@@ -72,6 +72,23 @@ const form = useAdminForm({
 
 Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `FormCheckboxField`, `FormSwitchField`, `TagsField`. Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/zod` so the parsed value isn't. `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
 
+### Reorderable lists
+
+`SortableList` is for short lists people put in order (FAQs, team members, menu items): drag a grip, or focus it and use Space and the arrows. `onReorder` gets the new order, and as its second argument the moved row with its new neighbours (`{ row, previous, next }`) for a "move after" save. The list keeps showing the new order until `rows` comes back in a new order, and goes back if the returned promise rejects.
+
+```tsx
+<Card variant="flush">
+  <SortableList
+    aria-label="FAQ order"
+    rows={faqs}
+    getRowId={(faq) => faq.id}
+    onReorder={(faqs) => saveOrder(faqs.map((faq) => faq.id))}
+  >
+    {(faq) => <SortableListRow title={faq.question} actions={<EditButton faq={faq} />} />}
+  </SortableList>
+</Card>
+```
+
 ### Server-safe helpers
 
 `@hooman-studio/admin-ui/utils` (`sortRows`, `paginate`, the `FormResult` type) and `@hooman-studio/admin-ui/zod` (`required`) have no `"use client"`, so server actions and server components can import them.
