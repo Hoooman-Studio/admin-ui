@@ -1,13 +1,17 @@
 import {
   type AnyFormApi,
-  createFormHook,
-  createFormHookContexts,
+  type FormValidateOrFn,
+  isStandardSchemaValidator,
+  type ReactFormExtendedApi,
+  type RejectPromiseValidator,
+  type StandardSchemaV1,
+  useForm,
   useStore,
 } from "@tanstack/react-form";
 import * as React from "react";
 import { Banner } from "./components/banner";
 import { Button, type ButtonProps } from "./components/button";
-import { CheckboxField as Checkbox } from "./components/checkbox";
+import { CheckboxField } from "./components/checkbox";
 import { DatePicker } from "./components/date-picker";
 import {
   Dialog,
@@ -17,7 +21,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./components/dialog";
-import { FormField } from "./components/field";
+import {
+  FieldDescription,
+  FieldError,
+  FieldLegend,
+  FieldSet,
+  FormField,
+} from "./components/field";
 import { Input } from "./components/input";
 import { NumberInput } from "./components/number-input";
 import { RadioField, RadioGroup } from "./components/radio";
@@ -27,23 +37,26 @@ import {
   SelectItem,
   SelectTrigger,
 } from "./components/select";
-import { SwitchField as Switch } from "./components/switch";
+import { SwitchField } from "./components/switch";
 import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
 import { toast } from "./components/toast";
-import { required } from "./lib/required";
+import type { FormResult } from "./lib/form-result";
+
+const failedMessage = "Something went wrong. Try again.";
 
 /**
- * What a submit returns. `ok: false` keeps the form as typed: `message` shows
- * above the submit button and `fieldErrors` under their fields. `ok: true`
- * shows `message` as a toast and closes a FormDialog.
+ * The parts of a TanStack field (from `<form.Field>`) that our fields use.
+ * `handleChange` is a property, not a method, so a field whose value type
+ * doesn't match the control is a type error.
  */
-type FormResult =
-  | { ok: true; message?: string }
-  | { ok: false; message?: string; fieldErrors?: Record<string, string> };
-
-const { fieldContext, formContext, useFieldContext, useFormContext } =
-  createFormHookContexts();
+interface BoundField<T> {
+  form: AnyFormApi;
+  handleBlur: () => void;
+  handleChange: (value: T) => void;
+  name: string;
+  state: { value: T; meta: { errors: readonly unknown[] } };
+}
 
 /** An error from a validator or the server as text. Standard Schema validators report issues, not strings. */
 function errorText(error: unknown) {
@@ -57,34 +70,40 @@ function errorText(error: unknown) {
 }
 
 /**
- * The field in context, its first error, and a change handler that clears the
- * server's error. `toValue` turns what the control reports into the field's value.
+ * The field's first error, and a change handler that also clears the server's
+ * error for it. `toValue` turns what the control reports into the field's value.
  */
-function useBoundField<T, Input = T>(toValue?: (input: Input) => T) {
-  const field = useFieldContext<T>();
-  const error = errorText(field.state.meta.errors[0]);
-  const onChange = (input: Input) => {
-    field.setMeta((meta) => ({
+function bind<T, I = T>(field: BoundField<T>, toValue?: (input: I) => T) {
+  const onChange = (input: I) => {
+    field.form.setFieldMeta(field.name, (meta) => ({
       ...meta,
       errorMap: { ...meta.errorMap, onServer: undefined },
     }));
     field.handleChange(toValue ? toValue(input) : (input as unknown as T));
   };
-  return { field, error, onChange };
+  return { error: errorText(field.state.meta.errors[0]), onChange };
 }
 
-interface LabelProps {
+interface FieldProps<T> {
   description?: React.ReactNode;
+  /** The field from `<form.Field name="…">{(field) => …}</form.Field>`. */
+  field: BoundField<T>;
   label: React.ReactNode;
 }
 
-type InputProps = Omit<
-  React.ComponentProps<typeof Input>,
-  "value" | "defaultValue" | "onValueChange" | "name"
+/** Props of a control, without the ones the field sets. */
+type ControlProps<C extends React.ElementType> = Omit<
+  React.ComponentProps<C>,
+  "value" | "defaultValue" | "onValueChange" | "name" | "onBlur"
 >;
 
-function TextField({ label, description, ...props }: LabelProps & InputProps) {
-  const { field, error, onChange } = useBoundField<string>();
+function TextField({
+  field,
+  label,
+  description,
+  ...props
+}: FieldProps<string> & ControlProps<typeof Input>) {
+  const { error, onChange } = bind(field);
   return (
     <FormField description={description} error={error} label={label}>
       <Input
@@ -92,23 +111,19 @@ function TextField({ label, description, ...props }: LabelProps & InputProps) {
         name={field.name}
         onBlur={field.handleBlur}
         onValueChange={onChange}
-        value={field.state.value ?? ""}
+        value={field.state.value}
       />
     </FormField>
   );
 }
 
-type TextareaProps = Omit<
-  React.ComponentProps<typeof Textarea>,
-  "value" | "defaultValue" | "onValueChange" | "name"
->;
-
 function TextareaField({
+  field,
   label,
   description,
   ...props
-}: LabelProps & TextareaProps) {
-  const { field, error, onChange } = useBoundField<string>();
+}: FieldProps<string> & ControlProps<typeof Textarea>) {
+  const { error, onChange } = bind(field);
   return (
     <FormField description={description} error={error} label={label}>
       <Textarea
@@ -116,90 +131,95 @@ function TextareaField({
         name={field.name}
         onBlur={field.handleBlur}
         onValueChange={onChange}
-        value={field.state.value ?? ""}
+        value={field.state.value}
       />
     </FormField>
   );
 }
 
-type NumberProps = Omit<
-  React.ComponentProps<typeof NumberInput>,
-  "value" | "defaultValue" | "onValueChange" | "name"
->;
-
 /** A number, or null while empty. */
 function NumberField({
+  field,
   label,
   description,
   ...props
-}: LabelProps & NumberProps) {
-  const { field, error, onChange } = useBoundField<number | null>();
+}: FieldProps<number | null> & ControlProps<typeof NumberInput>) {
+  const { error, onChange } = bind(field);
   return (
     <FormField description={description} error={error} label={label}>
       <NumberInput
         {...props}
         name={field.name}
+        onBlur={field.handleBlur}
         onValueChange={onChange}
-        value={field.state.value ?? null}
+        value={field.state.value}
       />
     </FormField>
   );
 }
 
-type DateProps = Omit<
-  React.ComponentProps<typeof DatePicker>,
-  "value" | "defaultValue" | "onValueChange" | "name" | "mode"
->;
 type DateValue = NonNullable<React.ComponentProps<typeof DatePicker>["value"]>;
 
 /** An ISO date string like "2026-10-16", or null while empty. */
-function DateField({ label, description, ...props }: LabelProps & DateProps) {
-  const { field, error, onChange } = useBoundField(
-    (value: DateValue | null): string | null =>
-      typeof value === "string" ? value : null
+function DateField({
+  field,
+  label,
+  description,
+  ...props
+}: FieldProps<string | null> &
+  Omit<ControlProps<typeof DatePicker>, "mode" | "endLabel">) {
+  const { error, onChange } = bind(field, (value: DateValue | null) =>
+    typeof value === "string" ? value : null
   );
   return (
     <FormField description={description} error={error} label={label}>
       <DatePicker
         {...props}
         name={field.name}
+        onBlur={field.handleBlur}
         onValueChange={onChange}
-        value={(field.state.value ?? null) as DateValue | null}
+        value={field.state.value as DateValue | null}
       />
     </FormField>
   );
 }
 
-interface Option {
+interface Option<T extends string> {
   label: React.ReactNode;
-  value: string;
+  value: T;
 }
 
-/** One value from a short list. */
-function SelectField({
+/**
+ * One value from a short list. The field holds a string (or a union of
+ * strings), or null while nothing is chosen; the options must match it.
+ */
+function SelectField<T extends string | null>({
+  field,
   label,
   description,
   options,
   placeholder,
   disabled,
-}: LabelProps & {
-  options: readonly Option[];
+}: FieldProps<T> & {
+  options: readonly Option<NoInfer<NonNullable<T>>>[];
   placeholder?: string;
   disabled?: boolean;
 }) {
-  const { field, error, onChange } = useBoundField(
-    (value: string | null | undefined) => value ?? null
+  // Null only comes from a clear button or a native form reset, and we render neither: keep the value.
+  const { error, onChange } = bind(
+    field,
+    (value: NonNullable<T> | null) => value ?? field.state.value
   );
   return (
     <FormField description={description} error={error} label={label}>
-      <Select
+      <Select<NonNullable<T>>
         disabled={disabled}
         name={field.name}
         onValueChange={onChange}
         placeholder={placeholder}
-        value={field.state.value ?? null}
+        value={field.state.value as NonNullable<T> | null}
       >
-        <SelectTrigger />
+        <SelectTrigger onBlur={field.handleBlur} />
         <SelectContent>
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
@@ -213,24 +233,33 @@ function SelectField({
 }
 
 /** One value from a few options shown at once, each with an optional description. */
-function RadioGroupField({
+function RadioGroupField<T extends string>({
+  field,
   label,
+  description,
   options,
   disabled,
-}: {
-  label: React.ReactNode;
-  options: readonly (Option & { description?: React.ReactNode })[];
+}: FieldProps<T> & {
+  options: readonly (Option<NoInfer<T>> & {
+    description?: React.ReactNode;
+  })[];
   disabled?: boolean;
 }) {
-  const { field, error, onChange } = useBoundField(
-    (value: string | null) => value ?? ""
+  const { error, onChange } = bind(
+    field,
+    (value: T | null) => value ?? field.state.value
   );
   return (
-    <fieldset className="au:flex au:flex-col au:gap-3" disabled={disabled}>
-      <legend className="au:mb-3 au:px-1 au:text-sm au:font-medium au:text-gray-950">
+    <FieldSet
+      className="au:gap-3"
+      disabled={disabled}
+      onBlur={field.handleBlur}
+    >
+      <FieldLegend className="au:mb-0 au:px-1 au:text-sm au:font-medium">
         {label}
-      </legend>
-      <RadioGroup
+      </FieldLegend>
+      {description ? <FieldDescription>{description}</FieldDescription> : null}
+      <RadioGroup<T>
         aria-invalid={error ? true : undefined}
         name={field.name}
         onValueChange={onChange}
@@ -245,70 +274,255 @@ function RadioGroupField({
           />
         ))}
       </RadioGroup>
-      {error ? (
-        <p className="au:px-1 au:text-sm au:font-medium au:text-red-500">
-          {error}
-        </p>
-      ) : null}
-    </fieldset>
+      {error ? <FieldError match>{error}</FieldError> : null}
+    </FieldSet>
   );
 }
 
-function CheckboxField(props: LabelProps & { disabled?: boolean }) {
-  const { field, error, onChange } = useBoundField(
+/** A checkbox for a boolean. */
+function FormCheckboxField({
+  field,
+  ...props
+}: FieldProps<boolean> & { disabled?: boolean }) {
+  const { error, onChange } = bind(
+    field,
     (checked: boolean | "indeterminate") => checked === true
   );
   return (
-    <Checkbox
+    <CheckboxField
       {...props}
       checked={field.state.value}
       error={error}
       name={field.name}
+      onBlur={field.handleBlur}
       onCheckedChange={onChange}
     />
   );
 }
 
-function SwitchField(props: LabelProps & { disabled?: boolean }) {
-  const { field, error, onChange } = useBoundField<boolean>();
+/** A switch for a boolean, as a settings row. */
+function FormSwitchField({
+  field,
+  ...props
+}: FieldProps<boolean> & { disabled?: boolean }) {
+  const { error, onChange } = bind(field);
   return (
-    <Switch
+    <SwitchField
       {...props}
       checked={field.state.value}
       error={error}
       name={field.name}
+      onBlur={field.handleBlur}
       onCheckedChange={onChange}
     />
   );
 }
-
-type TagsProps = Omit<
-  React.ComponentProps<typeof TagInput>,
-  "value" | "defaultValue" | "onValueChange" | "name"
->;
 
 /** A list of free-text tags. */
-function TagsField({ label, description, ...props }: LabelProps & TagsProps) {
-  const { field, error, onChange } = useBoundField<string[]>();
+function TagsField({
+  field,
+  label,
+  description,
+  ...props
+}: FieldProps<string[]> & ControlProps<typeof TagInput>) {
+  const { error, onChange } = bind(field);
   return (
     <FormField description={description} error={error} label={label}>
-      <TagInput
-        {...props}
-        name={field.name}
-        onValueChange={onChange}
-        value={field.state.value ?? []}
-      />
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: TagInput takes no onBlur, so a focus-out anywhere in it counts. */}
+      {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: as above. */}
+      <div onBlur={field.handleBlur}>
+        <TagInput
+          {...props}
+          name={field.name}
+          onValueChange={onChange}
+          value={field.state.value}
+        />
+      </div>
     </FormField>
   );
 }
 
+/** Shows a refused submit on the form: its message above the submit button, its field errors under the fields. */
+function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
+  form.setErrorMap({
+    onServer: { form: result.message, fields: result.fieldErrors ?? {} },
+  });
+}
+
+/** What onSubmit receives: the schema's output when `validators.onSubmit` is a Standard Schema, else the form values. */
+type SubmitValue<TFormData, TOnSubmit> =
+  TOnSubmit extends StandardSchemaV1<unknown, infer TOutput>
+    ? TOutput
+    : TFormData;
+
+type Validator<TFormData> = undefined | FormValidateOrFn<TFormData>;
+
+interface AdminFormOptions<
+  TFormData,
+  TOnChange extends Validator<TFormData>,
+  TOnBlur extends Validator<TFormData>,
+  TOnSubmit extends Validator<TFormData>,
+> {
+  defaultValues: TFormData;
+  /** Runs once the form is valid. Return a FormResult to show the outcome on the form. */
+  onSubmit: (
+    value: SubmitValue<TFormData, TOnSubmit>
+    // biome-ignore lint/suspicious/noConfusingVoidType: a submit may return nothing.
+  ) => FormResult | void | Promise<FormResult | void>;
+  /** Each a Standard Schema (like Zod) or a function, as in TanStack Form. */
+  validators?: {
+    onChange?: RejectPromiseValidator<TOnChange>;
+    onBlur?: RejectPromiseValidator<TOnBlur>;
+    onSubmit?: RejectPromiseValidator<TOnSubmit>;
+  };
+}
+
+/**
+ * TanStack Form's `useForm`, with our submit handling. `onSubmit` receives
+ * the parsed output of the `validators.onSubmit` schema and may return a
+ * FormResult. A thrown error is logged and shown as a generic form error.
+ * Inside a FormDialog, `ok: true` closes the dialog.
+ */
+function useAdminForm<
+  TFormData,
+  TOnChange extends Validator<TFormData> = undefined,
+  TOnBlur extends Validator<TFormData> = undefined,
+  TOnSubmit extends Validator<TFormData> = undefined,
+>({
+  defaultValues,
+  validators,
+  onSubmit,
+}: AdminFormOptions<
+  TFormData,
+  TOnChange,
+  TOnBlur,
+  TOnSubmit
+>): ReactFormExtendedApi<
+  TFormData,
+  undefined,
+  TOnChange,
+  undefined,
+  TOnBlur,
+  undefined,
+  TOnSubmit,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined
+> {
+  const dialog = React.use(FormDialogContext);
+  return useForm<
+    TFormData,
+    undefined,
+    TOnChange,
+    undefined,
+    TOnBlur,
+    undefined,
+    TOnSubmit,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined
+  >({
+    defaultValues,
+    validators,
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        const schema = validators?.onSubmit;
+        let input: unknown = value;
+        if (isStandardSchemaValidator(schema)) {
+          const parsed = await schema["~standard"].validate(value);
+          // TanStack already validated; issues here mean there is nothing to submit.
+          if (parsed.issues) {
+            return;
+          }
+          input = parsed.value;
+        }
+        const result = await onSubmit(
+          input as SubmitValue<TFormData, TOnSubmit>
+        );
+        if (!result) {
+          return;
+        }
+        if (!result.ok) {
+          refuse(formApi, result);
+          return;
+        }
+        if (result.message) {
+          toast.success(result.message);
+        }
+        dialog?.close();
+      } catch (error) {
+        console.error(error);
+        refuse(formApi, { ok: false, message: failedMessage });
+      }
+    },
+  });
+}
+
+const FormContext = React.createContext<AnyFormApi | null>(null);
+
+function useFormContext() {
+  const form = React.use(FormContext);
+  if (!form) {
+    throw new Error("SubmitButton and FormError go inside an AdminForm.");
+  }
+  return form;
+}
+
+/** The `<form>` for a form from useAdminForm: submits it, and gives SubmitButton and FormError their form. */
+function AdminForm({
+  form,
+  className,
+  children,
+}: {
+  form: AnyFormApi;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const submit = React.useCallback(
+    (event: React.FormEvent) => {
+      event.preventDefault();
+      // The last submit's refusal shouldn't block this one.
+      form.setErrorMap({ onServer: { form: undefined, fields: {} } });
+      form.handleSubmit().catch((error: unknown) => {
+        console.error(error);
+        refuse(form, { ok: false, message: failedMessage });
+      });
+    },
+    [form]
+  );
+  return (
+    <FormContext value={form}>
+      <form
+        className={className ?? "au:flex au:flex-col au:gap-4"}
+        noValidate
+        onSubmit={submit}
+      >
+        {children}
+      </form>
+    </FormContext>
+  );
+}
+
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
 /** Pending while the submit runs, and pressable once at a time. */
-function SubmitButton(props: Omit<ButtonProps, "type" | "onClick">) {
+function SubmitButton(
+  props: DistributiveOmit<ButtonProps, "type" | "onClick">
+) {
   const form = useFormContext();
-  const submitting = useStore(form.store, (state) => state.isSubmitting);
+  const submitting = useStore(
+    form.store,
+    (state: AnyFormApi["state"]) => state.isSubmitting
+  );
   return (
     <Button
-      {...(props as ButtonProps)}
+      {...props}
       aria-busy={submitting || undefined}
       disabled={props.disabled || submitting}
       type="submit"
@@ -319,7 +533,7 @@ function SubmitButton(props: Omit<ButtonProps, "type" | "onClick">) {
 /** The form-wide error: a refused submit's message, or a schema issue that names no field. */
 function FormError({ className }: { className?: string }) {
   const form = useFormContext();
-  const error = useStore(form.store, (state) =>
+  const error = useStore(form.store, (state: AnyFormApi["state"]) =>
     errorText(state.errorMap.onServer ?? state.errors[0])
   );
   if (!error) {
@@ -328,96 +542,7 @@ function FormError({ className }: { className?: string }) {
   return <Banner className={className} title={error} tone="danger" />;
 }
 
-const { useAppForm, withForm, extendForm } = createFormHook({
-  fieldContext,
-  formContext,
-  fieldComponents: {
-    CheckboxField,
-    DateField,
-    NumberField,
-    RadioGroupField,
-    SelectField,
-    SwitchField,
-    TagsField,
-    TextareaField,
-    TextField,
-  },
-  formComponents: { FormError, SubmitButton },
-});
-
-function isFormResult(value: unknown): value is FormResult {
-  return typeof value === "object" && value !== null && "ok" in value;
-}
-
-/** Shows a returned FormResult on the form. */
-function applyResult(formApi: AnyFormApi, result: unknown, onOk?: () => void) {
-  if (!isFormResult(result)) {
-    return;
-  }
-  if (result.ok) {
-    if (result.message) {
-      toast.success(result.message);
-    }
-    onOk?.();
-    return;
-  }
-  formApi.setErrorMap({
-    onServer: { form: result.message, fields: result.fieldErrors ?? {} },
-  });
-}
-
-/**
- * TanStack Form's `useAppForm` with our fields (`f.TextField`, `f.SelectField`…),
- * `SubmitButton` and `FormError`. Pass a Standard Schema (like Zod) as a
- * validator and `value` in `onSubmit` is typed from it. `onSubmit` may return
- * a FormResult. Inside a FormDialog, `ok: true` closes the dialog.
- */
-const useAdminForm: typeof useAppForm = (options) => {
-  const dialog = React.use(FormDialogContext);
-  const { onSubmit } = options;
-  return useAppForm({
-    ...options,
-    onSubmit: onSubmit
-      ? async (props) => {
-          applyResult(props.formApi, await onSubmit(props), dialog?.close);
-        }
-      : undefined,
-  });
-};
-
-/** The `<form>` for a form from useAdminForm: submits it, and gives SubmitButton and FormError their form. */
-function AdminForm({
-  form,
-  className,
-  children,
-}: {
-  form: {
-    AppForm: React.ComponentType<{ children?: React.ReactNode }>;
-    handleSubmit: () => unknown;
-  };
-  className?: string;
-  children: React.ReactNode;
-}) {
-  const submit = React.useCallback(
-    (event: React.FormEvent) => {
-      event.preventDefault();
-      form.handleSubmit();
-    },
-    [form]
-  );
-  return (
-    <form.AppForm>
-      <form
-        className={className ?? "au:flex au:flex-col au:gap-4"}
-        noValidate
-        onSubmit={submit}
-      >
-        {children}
-      </form>
-    </form.AppForm>
-  );
-}
-
+/** Closes the FormDialog, but only for the opening its form belongs to. */
 const FormDialogContext = React.createContext<{ close: () => void } | null>(
   null
 );
@@ -441,18 +566,26 @@ function FormDialog({
   children: React.ReactNode;
   size?: React.ComponentProps<typeof DialogContent>["size"];
 }) {
-  const [open, setOpen] = React.useState(false);
-  // A new key per opening starts the form fresh, and the old one stays visible while the dialog animates out.
-  const [opening, setOpening] = React.useState(0);
-  const context = React.useMemo(() => ({ close: () => setOpen(false) }), []);
-  const change = React.useCallback((next: boolean) => {
-    setOpen(next);
-    if (next) {
-      setOpening((count) => count + 1);
-    }
+  // A new opening number starts the form fresh, and the old form stays visible while the dialog animates out.
+  const [state, setState] = React.useState({ opening: 0, open: false });
+  const change = React.useCallback((open: boolean) => {
+    setState((prev) =>
+      open ? { opening: prev.opening + 1, open } : { ...prev, open }
+    );
   }, []);
+  const { opening } = state;
+  // A slow submit from an earlier opening must not close a newer one.
+  const context = React.useMemo(
+    () => ({
+      close: () =>
+        setState((prev) =>
+          prev.opening === opening ? { ...prev, open: false } : prev
+        ),
+    }),
+    [opening]
+  );
   return (
-    <Dialog onOpenChange={change} open={open}>
+    <Dialog onOpenChange={change} open={state.open}>
       <DialogTrigger render={trigger} />
       <DialogContent size={size}>
         <DialogHeader>
@@ -472,11 +605,17 @@ function FormDialog({
 export type { FormResult };
 export {
   AdminForm,
-  extendForm,
+  DateField,
+  FormCheckboxField,
   FormDialog,
-  required,
+  FormError,
+  FormSwitchField,
+  NumberField,
+  RadioGroupField,
+  SelectField,
+  SubmitButton,
+  TagsField,
+  TextareaField,
+  TextField,
   useAdminForm,
-  useFieldContext,
-  useFormContext,
-  withForm,
 };

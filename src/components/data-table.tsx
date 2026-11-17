@@ -189,7 +189,10 @@ function DataTable<Row>({
 }: DataTableProps<Row>) {
   const baseId = React.useId();
   const selectable = selected !== undefined;
-  const pageIds = rows?.map(getRowId) ?? [];
+  const pageIds = React.useMemo(
+    () => rows?.map(getRowId) ?? [],
+    [rows, getRowId]
+  );
   const selectedSet = new Set(selected);
   const columnCount =
     columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);

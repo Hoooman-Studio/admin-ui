@@ -1,12 +1,10 @@
 import { Textarea as TextareaPart } from "@ui-sdk/react/textarea";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 import { boxClass, inFieldBox } from "./input";
 
-type TextareaProps = Omit<
-  React.ComponentProps<typeof TextareaPart>,
-  "className"
-> & { className?: string };
+type TextareaProps = WithClass<React.ComponentProps<typeof TextareaPart>>;
 
 function Textarea({ className, ...props }: TextareaProps) {
   return (

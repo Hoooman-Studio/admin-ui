@@ -12,12 +12,8 @@ import {
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-import type { WithClass } from "../lib/types";
+import type { WithClass, WithNodeChildren } from "../lib/types";
 import { boxClass, inFieldBox } from "./input";
-
-type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {
-  children?: React.ReactNode;
-};
 
 /** A bordered control box like Input's, that turns borderless inside a FormField. */
 const controlBoxClass = cn(

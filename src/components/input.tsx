@@ -6,6 +6,7 @@ import {
 import { XIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 
 /** The bordered box a standalone control sits in. Inside a FormField's card, the card is the box. */
 const boxClass =
@@ -18,9 +19,7 @@ const inFieldBox =
 const inGroup =
   "au:in-data-[slot=input-group]:h-full au:in-data-[slot=input-group]:border-0 au:in-data-[slot=input-group]:bg-transparent au:in-data-[slot=input-group]:px-0 au:in-data-[slot=input-group]:ring-0 au:in-data-[slot=input-group]:focus-within:border-0 au:in-data-[slot=input-group]:focus-within:ring-0";
 
-type InputProps = Omit<React.ComponentProps<typeof InputPart>, "className"> & {
-  className?: string;
-};
+type InputProps = WithClass<React.ComponentProps<typeof InputPart>>;
 
 function Input({ className, ...props }: InputProps) {
   return (
@@ -37,10 +36,7 @@ function Input({ className, ...props }: InputProps) {
   );
 }
 
-type InputGroupProps = Omit<
-  React.ComponentProps<typeof InputGroupPart>,
-  "className"
-> & { className?: string };
+type InputGroupProps = WithClass<React.ComponentProps<typeof InputGroupPart>>;
 
 /** An input with icons, text or a clear button around it: `<InputGroup><SearchIcon /><Input /><InputClear /></InputGroup>`. */
 function InputGroup({ className, ...props }: InputGroupProps) {

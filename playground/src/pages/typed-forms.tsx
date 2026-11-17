@@ -10,14 +10,26 @@ import {
 } from "../../../src";
 import {
   AdminForm,
+  DateField,
   FormDialog,
+  FormError,
   type FormResult,
-  required,
+  FormSwitchField,
+  NumberField,
+  RadioGroupField,
+  SelectField,
+  SubmitButton,
+  TagsField,
+  TextareaField,
+  TextField,
   useAdminForm,
 } from "../../../src/form";
+import { required } from "../../../src/lib/required";
+
+const titleSchema = z.string().min(3, "Use at least 3 characters.");
 
 const listingSchema = z.object({
-  title: z.string().min(3, "Use at least 3 characters."),
+  title: titleSchema,
   status: z.enum(["draft", "live"], "Choose a status."),
   rent: required(
     z.number().int().positive("Rent must be above 0."),
@@ -25,40 +37,48 @@ const listingSchema = z.object({
   ),
   availableFrom: required(z.string(), "Choose a date."),
   tags: z.array(z.string()),
-  billing: z.string(),
+  billing: z.enum(["monthly", "yearly"]),
   featured: z.boolean(),
   notes: z.string(),
 });
 
-type ListingInput = z.input<typeof listingSchema>;
+type Listing = z.output<typeof listingSchema>;
 
 const statusOptions = [
   { value: "draft", label: "Draft" },
   { value: "live", label: "Live" },
-];
+] as const;
+
+const billingOptions = [
+  { value: "monthly", label: "Monthly" },
+  { value: "yearly", label: "Yearly", description: "Two months free." },
+] as const;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Stands in for the app's backend, like a Convex mutation. */
-async function saveListing(value: z.output<typeof listingSchema>) {
+async function saveListing(value: Listing): Promise<FormResult> {
   await wait(800);
   if (value.title.toLowerCase().includes("taken")) {
     return {
       ok: false,
       message: "The listing wasn't saved.",
       fieldErrors: { title: "Another listing already uses this title." },
-    } satisfies FormResult;
+    };
+  }
+  if (value.title.toLowerCase().includes("crash")) {
+    throw new Error("The backend crashed.");
   }
   if (value.status === "live" && value.rent > 5000) {
     return {
       ok: false,
       message: "Listings above €5,000 need a manager's approval to go live.",
-    } satisfies FormResult;
+    };
   }
-  return { ok: true, message: `Saved ${value.title}.` } satisfies FormResult;
+  return { ok: true, message: `Saved ${value.title}.` };
 }
 
-const emptyListing: ListingInput = {
+const emptyListing: z.input<typeof listingSchema> = {
   title: "",
   status: "draft",
   rent: null,
@@ -69,7 +89,7 @@ const emptyListing: ListingInput = {
   notes: "",
 };
 
-const sunnyLoft: ListingInput = {
+const sunnyLoft: z.input<typeof listingSchema> = {
   ...emptyListing,
   title: "Sunny loft by the Spree",
   rent: 1850,
@@ -81,74 +101,72 @@ function EditListingForm() {
   const form = useAdminForm({
     defaultValues: sunnyLoft,
     validators: { onSubmit: listingSchema },
-    onSubmit: ({ value }) => saveListing(listingSchema.parse(value)),
+    onSubmit: saveListing,
   });
 
   return (
     <AdminForm form={form}>
-      <form.AppField name="title">
+      <form.Field name="title" validators={{ onBlur: titleSchema }}>
         {(field) => (
-          <field.TextField
-            description="Try a title with “taken”, or Live above €5,000."
+          <TextField
+            description="Checked when you leave it. Try a title with “taken” or “crash”, or Live above €5,000."
+            field={field}
             label="Title"
           />
         )}
-      </form.AppField>
+      </form.Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <form.AppField name="status">
+        <form.Field name="status">
           {(field) => (
-            <field.SelectField label="Status" options={statusOptions} />
+            <SelectField field={field} label="Status" options={statusOptions} />
           )}
-        </form.AppField>
-        <form.AppField name="rent">
+        </form.Field>
+        <form.Field name="rent">
           {(field) => (
-            <field.NumberField
+            <NumberField
+              field={field}
               format={{ style: "currency", currency: "EUR" }}
               label="Monthly rent"
             />
           )}
-        </form.AppField>
+        </form.Field>
       </div>
-      <form.AppField name="availableFrom">
-        {(field) => <field.DateField label="Available from" />}
-      </form.AppField>
-      <form.AppField name="tags">
+      <form.Field name="availableFrom">
+        {(field) => <DateField field={field} label="Available from" />}
+      </form.Field>
+      <form.Field name="tags">
         {(field) => (
-          <field.TagsField
+          <TagsField
+            field={field}
             label="Tags"
             suggestions={["balcony", "garden", "pets allowed"]}
           />
         )}
-      </form.AppField>
-      <form.AppField name="billing">
+      </form.Field>
+      <form.Field name="billing">
         {(field) => (
-          <field.RadioGroupField
+          <RadioGroupField
+            field={field}
             label="Billing"
-            options={[
-              { value: "monthly", label: "Monthly" },
-              {
-                value: "yearly",
-                label: "Yearly",
-                description: "Two months free.",
-              },
-            ]}
+            options={billingOptions}
           />
         )}
-      </form.AppField>
-      <form.AppField name="featured">
+      </form.Field>
+      <form.Field name="featured">
         {(field) => (
-          <field.SwitchField
+          <FormSwitchField
             description="Shown first on the homepage."
+            field={field}
             label="Featured"
           />
         )}
-      </form.AppField>
-      <form.AppField name="notes">
-        {(field) => <field.TextareaField label="Internal notes" />}
-      </form.AppField>
-      <form.FormError />
+      </form.Field>
+      <form.Field name="notes">
+        {(field) => <TextareaField field={field} label="Internal notes" />}
+      </form.Field>
+      <FormError />
       <div>
-        <form.SubmitButton>Save listing</form.SubmitButton>
+        <SubmitButton>Save listing</SubmitButton>
       </div>
     </AdminForm>
   );
@@ -158,41 +176,43 @@ function NewListingForm() {
   const form = useAdminForm({
     defaultValues: emptyListing,
     validators: { onSubmit: listingSchema },
-    onSubmit: ({ value }) => saveListing(listingSchema.parse(value)),
+    onSubmit: saveListing,
   });
 
   return (
     <AdminForm className="flex min-h-0 flex-col" form={form}>
       <DialogBody>
-        <form.AppField name="title">
-          {(field) => <field.TextField autoFocus label="Title" />}
-        </form.AppField>
+        <form.Field name="title">
+          {(field) => <TextField autoFocus field={field} label="Title" />}
+        </form.Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <form.AppField name="status">
+          <form.Field name="status">
             {(field) => (
-              <field.SelectField
+              <SelectField
+                field={field}
                 label="Status"
                 options={statusOptions}
                 placeholder="Choose a status"
               />
             )}
-          </form.AppField>
-          <form.AppField name="rent">
+          </form.Field>
+          <form.Field name="rent">
             {(field) => (
-              <field.NumberField
+              <NumberField
+                field={field}
                 format={{ style: "currency", currency: "EUR" }}
                 label="Monthly rent"
               />
             )}
-          </form.AppField>
+          </form.Field>
         </div>
-        <form.AppField name="availableFrom">
-          {(field) => <field.DateField label="Available from" />}
-        </form.AppField>
-        <form.FormError />
+        <form.Field name="availableFrom">
+          {(field) => <DateField field={field} label="Available from" />}
+        </form.Field>
+        <FormError />
       </DialogBody>
       <DialogFooter>
-        <form.SubmitButton>Create listing</form.SubmitButton>
+        <SubmitButton>Create listing</SubmitButton>
       </DialogFooter>
     </AdminForm>
   );
@@ -220,7 +240,7 @@ function TypedFormsPage() {
       />
       <PageBody width="narrow">
         <PageSection
-          description="useAdminForm with a Zod schema. Values are typed from the schema, and the save returns ok or refused."
+          description="useAdminForm with a Zod schema. The save receives the schema's output and returns ok or refused."
           title="Edit listing"
         >
           <EditListingForm />

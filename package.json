@@ -1,6 +1,6 @@
 {
   "name": "@hooman-studio/admin-ui",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Hooman Studio building blocks for client admin panels, styled with the Hooman Studio design system on UI SDK behaviors.",
   "repository": {
     "type": "git",
@@ -14,20 +14,26 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./form": {
       "types": "./dist/form.d.ts",
-      "import": "./dist/form.js"
+      "default": "./dist/form.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
     },
     "./styles.css": "./dist/styles.css",
-    "./tailwind.css": "./dist/tailwind.css"
+    "./tailwind.css": "./dist/tailwind.css",
+    "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "setup.md"
   ],
   "scripts": {
-    "build": "tsdown && tailwindcss -i src/styles.css -o dist/styles.css --minify && cp -R src/fonts dist/fonts && sed -e 's#@source \"./components\";#@source \"./\";#' -e '/@source \"\\.\\/form\\.tsx\";/d' src/styles.css > dist/tailwind.css",
+    "build": "rm -rf dist && tsdown && tailwindcss -i src/styles.css -o dist/styles.css --minify && cp -R src/fonts dist/fonts && sed -e 's#@source \"./components\";#@source \"./\";#' -e '/@source \"\\.\\/form\\.tsx\";/d' src/styles.css > dist/tailwind.css",
     "check": "bun run typecheck && bun run lint && bun run fallow && bun run test && bun run build",
     "dev": "vite playground",
     "fallow": "fallow dead-code",
@@ -48,7 +54,6 @@
     "@biomejs/biome": "^2.6.8",
     "@tailwindcss/cli": "^4.3.5",
     "@tailwindcss/node": "^4.3.5",
-    "@tailwindcss/oxide": "^4.3.5",
     "@tailwindcss/vite": "^4.3.5",
     "@tanstack/react-form": "^1.33.5",
     "@types/bun": "^1.4.4",
@@ -82,5 +87,8 @@
     "zod": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

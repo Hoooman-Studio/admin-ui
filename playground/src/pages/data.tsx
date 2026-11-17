@@ -52,8 +52,7 @@ import {
   SelectTrigger,
 } from "../../../src/components/select";
 import { toast } from "../../../src/components/toast";
-import { paginate } from "../../../src/lib/paging";
-import { type SortState, sortRows } from "../../../src/lib/sort-rows";
+import { paginate, type SortState, sortRows } from "../../../src/utils";
 
 const statuses = {
   live: { label: "Live", tone: "success" },

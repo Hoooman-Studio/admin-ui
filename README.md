@@ -17,7 +17,7 @@ Import the CSS in your admin route only, so the rest of the site never downloads
 import "@hooman-studio/admin-ui/styles.css";
 ```
 
-No Tailwind needed. If your site uses Tailwind (v3 or v4), it keeps working as before, even after someone navigates from the admin back to the site with the CSS still loaded: every class we ship is prefixed (`au:flex`), every variable is `--au-*`, and nothing styles `html`, `body` or your site's elements. Our font, reset and dark mode only apply inside the admin.
+No Tailwind needed. If your site uses Tailwind (v3 or v4), it keeps working as before, even after someone navigates from the admin back to the site with the CSS still loaded: every class we ship is prefixed (`au:flex`), every theme variable is `--au-*`, our animation names are `au-*`, and nothing styles `html`, `body` or your site's elements. (Like any Tailwind v4 build, it registers Tailwind's internal `--tw-*` properties.) Our font, reset and dark mode only apply inside the admin.
 
 Render `AdminShell` as your admin route's whole page, without your site's header and footer (it fills the viewport):
 
@@ -54,28 +54,33 @@ Render `AdminShell` as your admin route's whole page, without your site's header
 
 ### Forms
 
-`@hooman-studio/admin-ui/form` (needs `@tanstack/react-form` and `zod`) gives `useAdminForm`: TanStack Form with our fields, typed from a Standard Schema like Zod. `onSubmit` can return `{ ok: true, message? }` or `{ ok: false, message?, fieldErrors? }`.
+`@hooman-studio/admin-ui/form` (needs `@tanstack/react-form`) gives `useAdminForm`: TanStack Form's `useForm` with our submit handling. `onSubmit` receives the output of the `validators.onSubmit` schema (any Standard Schema, like Zod), so values come in parsed. It returns `{ ok: true, message? }`, `{ ok: false, message?, fieldErrors? }` or nothing; a thrown error shows "Something went wrong. Try again." Fields take the TanStack field, and one whose value type doesn't fit the field is a type error.
 
 ```tsx
 const form = useAdminForm({
   defaultValues: listing,
   validators: { onSubmit: listingSchema },
-  onSubmit: ({ value }) => updateListing(listingSchema.parse(value)),
+  onSubmit: (listing) => updateListing(listing),
 });
 
 <AdminForm form={form}>
-  <form.AppField name="title">{(f) => <f.TextField label="Title" />}</form.AppField>
-  <form.FormError />
-  <form.SubmitButton>Save</form.SubmitButton>
+  <form.Field name="title">{(field) => <TextField field={field} label="Title" />}</form.Field>
+  <FormError />
+  <SubmitButton>Save</SubmitButton>
 </AdminForm>
 ```
 
-Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` so the parsed value isn't. `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
+Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `FormCheckboxField`, `FormSwitchField`, `TagsField`. Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/utils` so the parsed value isn't. `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`. See `playground/src/pages/typed-forms.tsx`.
+
+### Server-safe helpers
+
+`@hooman-studio/admin-ui/utils` has the plain functions and types, without `"use client"`, for server actions and server components: `required` (Zod), `sortRows`, `paginate` and the `FormResult` type.
 
 ## Known limits
 
 - A site that sets `html { font-size: 62.5% }` shrinks the admin, because sizes are in `rem`.
 - The site's CSS can still reach the admin through selectors more specific than one class, like `.content h1`. Render the admin outside such wrappers.
+- Rules from your site with the same specificity as one class, like Tailwind v3's preflight `[type='button']`, win when your site's CSS loads after ours. Import the admin CSS after your site's CSS.
 - The theme applies after hydration, so a dark-mode user can see the light theme for a moment on first load.
 
 ## Develop

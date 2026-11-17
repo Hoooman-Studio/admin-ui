@@ -5,6 +5,7 @@ import {
 } from "@ui-sdk/react/segmented-control";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import type { WithClass } from "../lib/types";
 
 type SegmentedControlProps<T extends string> = Omit<
   React.ComponentProps<typeof SegmentedControlPart<T>>,
@@ -34,9 +35,7 @@ function SegmentedControl<T extends string = string>({
 function SegmentedControlItem({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof SegmentedControlItemPart>, "className"> & {
-  className?: string;
-}) {
+}: WithClass<React.ComponentProps<typeof SegmentedControlItemPart>>) {
   return (
     <SegmentedControlItemPart
       className={cn(

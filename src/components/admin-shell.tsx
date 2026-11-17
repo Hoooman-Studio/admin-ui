@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../lib/cn";
+import { readStorage, writeStorage } from "../lib/storage";
 import { AdminScope } from "./admin-scope";
 import { ConfirmDialog } from "./alert-dialog";
 import { Toaster } from "./toast";
@@ -43,10 +44,10 @@ function subscribeCollapsed(onChange: () => void) {
   };
 }
 
-const readCollapsed = () => localStorage.getItem(storageKey) === "true";
+const readCollapsed = () => readStorage(storageKey) === "true";
 
 function toggleCollapsed() {
-  localStorage.setItem(storageKey, String(!readCollapsed()));
+  writeStorage(storageKey, String(!readCollapsed()));
   for (const listener of listeners) {
     listener();
   }

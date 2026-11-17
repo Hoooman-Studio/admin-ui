@@ -12,9 +12,7 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 import { Button } from "./button";
-
-const backdropClass =
-  "au:fixed au:inset-0 au:bg-black/40 au:transition-opacity au:duration-200 au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";
+import { backdropClass } from "./dialog";
 
 const contentClass =
   "au:fixed au:inset-0 au:m-auto au:flex au:h-fit au:max-h-[calc(100dvh-2rem)] au:w-[calc(100%-2rem)] au:max-w-sm au:flex-col au:overflow-hidden au:rounded-3xl au:border au:border-alpha/10 au:bg-gray-50 au:p-0 au:text-center au:text-gray-950 au:shadow-floating au:outline-none au:transition-[opacity,scale,translate] au:duration-200 au:ease-fluid au:data-ending-style:translate-y-2 au:data-starting-style:translate-y-2 au:data-ending-style:scale-[0.98] au:data-starting-style:scale-[0.98] au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";

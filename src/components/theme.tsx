@@ -1,5 +1,6 @@
 import { LaptopIcon, MoonIcon, SunIcon } from "lucide-react";
 import * as React from "react";
+import { readStorage, writeStorage } from "../lib/storage";
 import { MenuGroupLabel, MenuRadioGroup, MenuRadioItem } from "./menu";
 
 const themes = ["system", "light", "dark"] as const;
@@ -14,7 +15,7 @@ function isTheme(value: string | null): value is Theme {
 }
 
 function readTheme(): Theme {
-  const stored = localStorage.getItem(storageKey);
+  const stored = readStorage(storageKey);
   return isTheme(stored) ? stored : "system";
 }
 
@@ -24,7 +25,7 @@ function subscribe(listener: () => void) {
 }
 
 function setTheme(theme: Theme) {
-  localStorage.setItem(storageKey, theme);
+  writeStorage(storageKey, theme);
   for (const listener of listeners) {
     listener();
   }

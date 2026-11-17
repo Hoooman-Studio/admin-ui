@@ -1,11 +1,21 @@
 import { defineConfig } from "tsdown";
 
-export default defineConfig({
-  entry: ["src/index.ts", "src/form.tsx"],
+const shared = {
   format: "esm",
   dts: true,
-  // TanStack Form and Zod are peers of ./form; keep them (and form-core's types) out of our bundle.
-  deps: { neverBundle: [/^@tanstack\//u, "zod"] },
   platform: "neutral",
-  outputOptions: { banner: '"use client";' },
-});
+  // The build script empties dist first; the two builds share it.
+  clean: false,
+  // TanStack Form and Zod are peers of ./form and ./utils; keep them out of our bundle.
+  deps: { neverBundle: [/^@tanstack\//u, "zod"] },
+} as const;
+
+export default defineConfig([
+  {
+    ...shared,
+    entry: ["src/index.ts", "src/form.tsx"],
+    outputOptions: { banner: '"use client";' },
+  },
+  // Server-safe: no "use client", so server actions and server components can call it.
+  { ...shared, entry: ["src/utils.ts"] },
+]);

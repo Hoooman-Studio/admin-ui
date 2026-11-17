@@ -221,5 +221,4 @@ export {
   TooltipShortcut,
   TooltipTrigger,
 } from "./components/tooltip";
-export { paginate } from "./lib/paging";
-export { type SortDirection, type SortState, sortRows } from "./lib/sort-rows";
+export type { SortDirection, SortState } from "./lib/sort-rows";

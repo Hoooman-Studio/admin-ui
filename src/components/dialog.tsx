@@ -132,6 +132,7 @@ function DialogClose(props: React.ComponentProps<typeof DialogClosePart>) {
 }
 
 export {
+  backdropClass,
   Dialog,
   DialogBody,
   DialogClose,

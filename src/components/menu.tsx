@@ -17,13 +17,9 @@ import {
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-import type { WithClass } from "../lib/types";
+import type { WithClass, WithNodeChildren } from "../lib/types";
 
 /** Parts that add their own indicator or chevron take plain children, not a render function. */
-type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {
-  children?: React.ReactNode;
-};
-
 /** The floating surface shared by menus and popovers, and the bottom sheet they become on small touch screens. */
 const popupClass =
   "au:origin-(--transform-origin) au:rounded-2xl au:border au:border-alpha/10 au:bg-gray-50 au:text-gray-950 au:shadow-dropdown au:outline-none au:transition-[opacity,scale] au:duration-100 au:ease-out au:data-ending-style:scale-95 au:data-ending-style:opacity-0 au:data-starting-style:scale-95 au:data-starting-style:opacity-0 au:motion-reduce:transition-none au:data-[presentation=sheet]:w-full au:data-[presentation=sheet]:max-w-none au:data-[presentation=sheet]:scale-100 au:data-[presentation=sheet]:rounded-t-3xl au:data-[presentation=sheet]:rounded-b-none au:data-[presentation=sheet]:border-x-0 au:data-[presentation=sheet]:border-b-0 au:data-[presentation=sheet]:opacity-100";

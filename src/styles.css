@@ -146,9 +146,17 @@
 
   --ease-fluid: cubic-bezier(0.08, 0.82, 0.17, 1);
 
-  --animate-loader-dot: loader-dot 1s linear infinite;
+  /* Our own keyframe names, so they never replace a site's `spin`. */
+  --animate-spin: au-spin 1s linear infinite;
+  --animate-loader-dot: au-loader-dot 1s linear infinite;
 
-  @keyframes loader-dot {
+  @keyframes au-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes au-loader-dot {
     0%,
     40%,
     100% {
@@ -178,6 +186,11 @@
  * admin keeps the site's styles.
  */
 [data-admin-ui] {
+  color-scheme: light;
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
   tab-size: 4;
@@ -190,6 +203,11 @@
   color: var(--au-gray-950);
   text-align: start;
   letter-spacing: normal;
+}
+
+/* Dark scrollbars, carets and form controls in dark mode. */
+[data-admin-ui][data-au-theme="dark"] {
+  color-scheme: dark;
 }
 
 [data-admin-ui],
