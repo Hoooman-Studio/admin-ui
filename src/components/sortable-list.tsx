@@ -5,6 +5,7 @@ import {
   definePrimitive,
   type ReorderDraft,
   type ReorderReason,
+  sourceOf,
 } from "@ui-sdk/core";
 import { createParts } from "@ui-sdk/react/primitive";
 import { GripVerticalIcon } from "lucide-react";
@@ -65,9 +66,15 @@ const sortableList = definePrimitive({
       props: { value: "string" },
       role: "button",
       focus: "native",
-      // Keys are handled on keydown; this is a screen reader's click (detail 0) in browse mode.
+      // Keys are handled on keydown; this is a screen reader's click in browse mode.
       press: ({ api, key, store }, event) => {
-        if (!(event instanceof MouseEvent) || event.detail !== 0) {
+        // sourceOf alone also calls a mouse click on the grip "virtual", since the drag handles its pointerdown.
+        const virtual =
+          sourceOf(event) === "virtual" &&
+          event !== undefined &&
+          "detail" in event &&
+          event.detail === 0;
+        if (!virtual) {
           return;
         }
         if (api.reorder.moving(store.get(), key)) {
@@ -114,7 +121,7 @@ type SortableListProps<Row> = Omit<React.ComponentProps<"ul">, "children"> & {
   getRowId: (row: Row) => string;
   /**
    * The rows in their new order, to save however you like. The list shows the
-   * new order until `rows` changes, or goes back if the returned promise rejects.
+   * new order until `rows` comes back in a new order, or goes back if the returned promise rejects.
    */
   onReorder: (rows: Row[], move: SortableMove<Row>) => unknown;
   /** One SortableListRow per row. */
