@@ -1,7 +1,7 @@
 import { ArrowLeftIcon } from "lucide-react";
 import type * as React from "react";
+import { Button } from "../components/button";
 import { cn } from "../lib/cn";
-import { Button } from "./button";
 
 type PageHeaderProps = Omit<React.ComponentProps<"header">, "title"> & {
   title: React.ReactNode;

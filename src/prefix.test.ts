@@ -17,9 +17,11 @@ test("every Tailwind class in the package carries the au: prefix", async () => {
   });
   const isUtility = (token: string) =>
     Boolean(plain.candidatesToCss([token])[0]);
-  const dir = path.join(import.meta.dir, "components");
   const files = [
-    ...readdirSync(dir).map((name) => path.join(dir, name)),
+    ...["components", "patterns"].flatMap((folder) => {
+      const dir = path.join(import.meta.dir, folder);
+      return readdirSync(dir).map((name) => path.join(dir, name));
+    }),
     path.join(import.meta.dir, "form.tsx"),
   ];
 

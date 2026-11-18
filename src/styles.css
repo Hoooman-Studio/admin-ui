@@ -8,6 +8,7 @@
  */
 @import "tailwindcss/theme.css" prefix(au);
 @source "./components";
+@source "./patterns";
 @source "./form.tsx";
 
 @font-face {

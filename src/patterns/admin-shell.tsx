@@ -1,22 +1,10 @@
 import * as React from "react";
+import { AdminScope } from "../components/admin-scope";
+import { ConfirmDialog } from "../components/alert-dialog";
+import { RailContext } from "../components/nav";
+import { Toaster } from "../components/toast";
 import { cn } from "../lib/cn";
 import { readStorage, writeStorage } from "../lib/storage";
-import { AdminScope } from "./admin-scope";
-import { ConfirmDialog } from "./alert-dialog";
-import { Toaster } from "./toast";
-
-interface RailState {
-  collapsed: boolean;
-  /** Closes the phone drawer once a nav item is pressed. */
-  onNavigate?: () => void;
-}
-
-const RailContext = React.createContext<RailState>({ collapsed: false });
-
-/** What the nav inside AdminShell needs to know about the rail it sits in. */
-function useRail() {
-  return React.use(RailContext);
-}
 
 /** The shell's nav and rail state, for AdminHeaderTitle's rail toggle and phone menu. */
 const ShellContext = React.createContext<{
@@ -126,4 +114,4 @@ function AdminShell({
 }
 
 export type { AdminShellProps };
-export { AdminShell, RailContext, toggleCollapsed, useRail, useShell };
+export { AdminShell, toggleCollapsed, useShell };

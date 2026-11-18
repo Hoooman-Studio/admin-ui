@@ -4,5 +4,29 @@
     "playground/src/main.tsx",
     "src/**/*.test.ts",
     "src/**/*.typetest.tsx"
-  ]
+  ],
+  "ignorePatterns": ["api/**"],
+  "boundaries": {
+    "zones": [
+      { "name": "lib", "patterns": ["src/lib/**"] },
+      { "name": "components", "patterns": ["src/components/**"] },
+      { "name": "patterns", "patterns": ["src/patterns/**"] },
+      {
+        "name": "entries",
+        "patterns": [
+          "src/index.ts",
+          "src/form.tsx",
+          "src/utils.ts",
+          "src/zod.ts"
+        ]
+      },
+      { "name": "playground", "patterns": ["playground/**"] }
+    ],
+    "rules": [
+      { "from": "lib", "allow": [] },
+      { "from": "components", "allow": ["lib"] },
+      { "from": "patterns", "allow": ["components", "lib"] },
+      { "from": "entries", "allow": ["components", "patterns", "lib"] }
+    ]
+  }
 }
