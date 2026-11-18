@@ -104,6 +104,10 @@ function ColorField({ field, label, description }: FieldProps<string>) {
 
 Pass `bindField(field, (input) => value)` when the control reports something other than what the field holds, like `null`. See `playground/src/pages/typed-forms.tsx`.
 
+### Row menus
+
+`DataTable`'s `rowActions` gives each row a "…" menu. For `ListRow` and `SortableListRow`, put a `RowMenu` with `MenuItem`s in `actions`: `<RowMenu label={faq.question}>` reads "Actions for {question}" to screen readers.
+
 ### Reorderable lists
 
 `SortableList` is for short lists people put in order (FAQs, team members, menu items): drag a grip, or focus it and use Space and the arrows. `onReorder` gets the new order, and as its second argument the moved row with its new neighbours (`{ row, previous, next }`) for a "move after" save. The list keeps showing the new order until `rows` comes back in a new order, and goes back if the returned promise rejects.
@@ -116,7 +120,16 @@ Pass `bindField(field, (input) => value)` when the control reports something oth
     getRowId={(faq) => faq.id}
     onReorder={(faqs) => saveOrder(faqs.map((faq) => faq.id))}
   >
-    {(faq) => <SortableListRow title={faq.question} actions={<EditButton faq={faq} />} />}
+    {(faq) => (
+      <SortableListRow
+        title={faq.question}
+        actions={
+          <RowMenu label={faq.question}>
+            <MenuItem onSelect={() => editFaq(faq)}>Edit</MenuItem>
+          </RowMenu>
+        }
+      />
+    )}
   </SortableList>
 </Card>
 ```

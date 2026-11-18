@@ -3,7 +3,6 @@ import {
   BuildingIcon,
   CalendarIcon,
   CopyIcon,
-  EllipsisIcon,
   ExternalLinkIcon,
   ListFilterIcon,
   MenuIcon,
@@ -52,6 +51,7 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
+  RowMenu,
 } from "../../../src/components/menu";
 import { NavItem } from "../../../src/components/nav";
 import { PageSection } from "../../../src/components/page";
@@ -147,60 +147,47 @@ function RowActions({
   onStatus: (status: Status) => void;
 }) {
   return (
-    <Menu>
-      <MenuTrigger
-        render={
-          <Button
-            aria-label={`Actions for ${listing.title}`}
-            size="icon-sm"
-            variant="ghost"
-          />
-        }
-      >
-        <EllipsisIcon />
-      </MenuTrigger>
-      <MenuContent align="end">
-        <MenuItem onSelect={onOpen}>
-          <PencilIcon />
-          Edit
-        </MenuItem>
-        <MenuItem onSelect={() => toast.success("Listing duplicated")}>
-          <CopyIcon />
-          Duplicate
-        </MenuItem>
-        <MenuItem render={<a href="#/overlays" />}>
-          <ExternalLinkIcon />
-          View on site
-        </MenuItem>
-        <MenuSub>
-          <MenuSubTrigger>
-            <ArchiveIcon />
-            Set status
-          </MenuSubTrigger>
-          <MenuSubContent>
-            <MenuRadioGroup
-              onValueChange={(value) => {
-                if (value && isStatus(value)) {
-                  onStatus(value);
-                }
-              }}
-              value={listing.status}
-            >
-              {Object.entries(statuses).map(([value, status]) => (
-                <MenuRadioItem closeOnSelect key={value} value={value}>
-                  {status.label}
-                </MenuRadioItem>
-              ))}
-            </MenuRadioGroup>
-          </MenuSubContent>
-        </MenuSub>
-        <MenuSeparator />
-        <MenuItem destructive onSelect={onDelete}>
-          <TrashIcon />
-          Delete
-        </MenuItem>
-      </MenuContent>
-    </Menu>
+    <RowMenu label={listing.title}>
+      <MenuItem onSelect={onOpen}>
+        <PencilIcon />
+        Edit
+      </MenuItem>
+      <MenuItem onSelect={() => toast.success("Listing duplicated")}>
+        <CopyIcon />
+        Duplicate
+      </MenuItem>
+      <MenuItem render={<a href="#/overlays" />}>
+        <ExternalLinkIcon />
+        View on site
+      </MenuItem>
+      <MenuSub>
+        <MenuSubTrigger>
+          <ArchiveIcon />
+          Set status
+        </MenuSubTrigger>
+        <MenuSubContent>
+          <MenuRadioGroup
+            onValueChange={(value) => {
+              if (value && isStatus(value)) {
+                onStatus(value);
+              }
+            }}
+            value={listing.status}
+          >
+            {Object.entries(statuses).map(([value, status]) => (
+              <MenuRadioItem closeOnSelect key={value} value={value}>
+                {status.label}
+              </MenuRadioItem>
+            ))}
+          </MenuRadioGroup>
+        </MenuSubContent>
+      </MenuSub>
+      <MenuSeparator />
+      <MenuItem destructive onSelect={onDelete}>
+        <TrashIcon />
+        Delete
+      </MenuItem>
+    </RowMenu>
   );
 }
 

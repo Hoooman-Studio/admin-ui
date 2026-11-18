@@ -14,10 +14,11 @@ import {
   MenuSubTrigger as MenuSubTriggerPart,
   MenuTrigger,
 } from "@ui-sdk/react/menu";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass, WithNodeChildren } from "../lib/types";
+import { Button } from "./button";
 
 /** The floating surface shared by menus and popovers, and the bottom sheet they become on small touch screens. */
 const popupClass =
@@ -155,6 +156,41 @@ function MenuSubContent({
   );
 }
 
+interface RowMenuBaseProps {
+  "aria-label": string;
+  "aria-labelledby"?: string;
+  /** MenuItems. */
+  children: React.ReactNode;
+  className?: string;
+}
+
+/** The row "…" menu. DataTable names it by ids, since its row names aren't plain text. */
+function RowMenuBase({ children, ...props }: RowMenuBaseProps) {
+  return (
+    <Menu>
+      <MenuTrigger
+        render={
+          <Button size="icon-sm" variant="ghost" {...props}>
+            <EllipsisIcon />
+          </Button>
+        }
+      />
+      <MenuContent align="end">{children}</MenuContent>
+    </Menu>
+  );
+}
+
+type RowMenuProps = Omit<RowMenuBaseProps, "aria-label" | "aria-labelledby"> & {
+  /** The row's name. The button reads "Actions for {label}". */
+  label: string;
+};
+
+/** The "…" button and menu for a row's actions, as in DataTable. Put it in a ListRow's `actions`. */
+function RowMenu({ label, ...props }: RowMenuProps) {
+  return <RowMenuBase aria-label={`Actions for ${label}`} {...props} />;
+}
+
+export type { RowMenuProps };
 export {
   Menu,
   MenuCheckboxItem,
@@ -170,4 +206,6 @@ export {
   MenuSubTrigger,
   MenuTrigger,
   popupClass,
+  RowMenu,
+  RowMenuBase,
 };
