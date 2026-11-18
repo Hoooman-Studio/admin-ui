@@ -70,7 +70,7 @@ const form = useAdminForm({
 </AdminForm>
 ```
 
-Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `ChecklistField` (a `string[]`, like related IDs), `FormCheckboxField`, `FormSwitchField`, `TagsField`. Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/zod` so the parsed value isn't. A `SelectField` on a nullable field can take `emptyLabel="None"`, a choice that sets it back to `null`. Group fields under a heading with `FieldSet` and `FieldLegend`.
+Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `ChecklistField` (a `string[]`, like related IDs), `FormCheckboxField`, `FormSwitchField`, `TagsField`, `FileField`. Empty number, date, select and file fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/zod` so the parsed value isn't. A `SelectField` on a nullable field can take `emptyLabel="None"`, a choice that sets it back to `null`. Group fields under a heading with `FieldSet` and `FieldLegend`.
 
 `FileField` uploads a file as soon as it's picked and holds the ID your `upload(file, onProgress)` returns, so any storage works; it shows a progress bar meanwhile, a rejected upload as the field's error, and blocks the submit until it's done. `preview={(id) => <img src={urlFor(id)} alt="" />}` (or `<audio controls>`, `<video controls>`) shows the current file; `removable` adds Remove on a nullable field.
 

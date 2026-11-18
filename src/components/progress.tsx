@@ -28,14 +28,14 @@ function Progress({ className, label, ...props }: ProgressProps) {
       )}
       {...props}
     >
-      {label ? (
+      {label === undefined ? null : (
         <>
           <ProgressLabel className="au:truncate au:text-sm au:font-medium au:text-gray-950">
             {label}
           </ProgressLabel>
           <ProgressValue className="au:tabular au:text-sm au:text-gray-500" />
         </>
-      ) : null}
+      )}
       <ProgressTrack className="au:col-span-full au:h-1.5 au:overflow-hidden au:rounded-full au:bg-alpha/10">
         <ProgressIndicator className="au:h-full au:rounded-full au:bg-accent au:transition-[width] au:duration-200 au:data-indeterminate:w-full au:data-indeterminate:opacity-40 au:motion-safe:data-indeterminate:animate-pulse" />
       </ProgressTrack>

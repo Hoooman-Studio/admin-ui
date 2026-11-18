@@ -62,6 +62,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "../../../src/components/popover";
+import { Progress } from "../../../src/components/progress";
 import { Separator } from "../../../src/components/separator";
 import {
   Tabs,
@@ -576,6 +577,10 @@ function SmallThingsSection() {
         <Loader />
         <Loader size="sm" />
         <Loader size="lg" />
+      </div>
+      <div className="grid max-w-sm gap-4">
+        <Progress label="Exporting listings" value={60} />
+        <Progress aria-label="Connecting" value={null} />
       </div>
       <div className="flex flex-wrap gap-2">
         <Badge>Neutral</Badge>

@@ -70,6 +70,17 @@ interface BoundField<T> {
   state: { value: T; meta: { errors: readonly unknown[] } };
 }
 
+/** Sets or clears a field's server error, which the next change or submit clears. */
+function setServerError(
+  field: Pick<BoundField<unknown>, "form" | "name">,
+  message: string | undefined
+) {
+  field.form.setFieldMeta(field.name, (meta) => ({
+    ...meta,
+    errorMap: { ...meta.errorMap, onServer: message },
+  }));
+}
+
 /**
  * For your own fields: the field's first error as text, and a change handler
  * that also clears the server's error for it. `toValue` turns what the control
@@ -77,10 +88,7 @@ interface BoundField<T> {
  */
 function bindField<T, I = T>(field: BoundField<T>, toValue?: (input: I) => T) {
   const onChange = (input: I) => {
-    field.form.setFieldMeta(field.name, (meta) => ({
-      ...meta,
-      errorMap: { ...meta.errorMap, onServer: undefined },
-    }));
+    setServerError(field, undefined);
     field.handleChange(toValue ? toValue(input) : (input as unknown as T));
   };
   return { error: errorText(field.state.meta.errors[0]), onChange };
@@ -472,12 +480,16 @@ function uploadErrorText(error: unknown) {
     : "The upload failed. Try again.";
 }
 
-/** What FileField says next to its button. We know a file's name only when we uploaded it. */
-function fileName<T>(value: T, uploaded: { id: T; name: string } | null) {
-  if (value === null) {
-    return "No file";
+/** What FileField tells screen readers, which don't follow the progress bar. */
+function uploadStatus(
+  pending: { name: string } | null,
+  error: string | null,
+  uploadedName: string | null
+) {
+  if (pending) {
+    return `Uploading ${pending.name}`;
   }
-  return uploaded?.id === value ? uploaded.name : null;
+  return error ?? (uploadedName ? `Uploaded ${uploadedName}` : "");
 }
 
 /**
@@ -517,9 +529,14 @@ function FileField<T extends string | null>({
     id: T;
     name: string;
   } | null>(null);
-  const [uploadError, setUploadError] = React.useState<string | null>(null);
-  // Only the latest pick counts: picking again while one uploads replaces it.
+  // Only the latest pick counts: picking again while one uploads replaces it, and unmounting drops it.
   const latest = React.useRef(0);
+  React.useEffect(
+    () => () => {
+      latest.current += 1;
+    },
+    []
+  );
   const trigger = React.useRef<HTMLButtonElement>(null);
   const startUpload = React.use(FormContext)?.startUpload;
   const uploading = pending !== null;
@@ -536,7 +553,7 @@ function FileField<T extends string | null>({
       }
       latest.current += 1;
       const run = latest.current;
-      setUploadError(null);
+      setServerError(field, undefined);
       setPending({ name: file.name, progress: null });
       try {
         const id = await upload(file, (progress) => {
@@ -550,7 +567,7 @@ function FileField<T extends string | null>({
         }
       } catch (reason) {
         if (run === latest.current) {
-          setUploadError(uploadErrorText(reason));
+          setServerError(field, uploadErrorText(reason));
         }
       } finally {
         if (run === latest.current) {
@@ -558,26 +575,23 @@ function FileField<T extends string | null>({
         }
       }
     },
-    [upload, onChange]
+    [field, upload, onChange]
   );
   const reject = React.useCallback(
-    () => setUploadError("This type of file isn't accepted."),
-    []
+    () => setServerError(field, "This type of file isn't accepted."),
+    [field]
   );
   const remove = React.useCallback(() => {
-    setUploadError(null);
     onChange(null as T);
     // The Remove button goes away, so keep focus in the field.
     trigger.current?.focus();
   }, [onChange]);
 
   const { value } = field.state;
+  // We know a file's name only when this field uploaded it.
+  const uploadedName = uploaded?.id === value ? uploaded.name : null;
   return (
-    <FormField
-      description={description}
-      error={uploadError ?? error}
-      label={label}
-    >
+    <FormField description={description} error={error} label={label}>
       <FileInput
         accept={accept}
         className="au:gap-3 au:px-1 au:pb-0.5"
@@ -608,7 +622,7 @@ function FileField<T extends string | null>({
             />
           ) : (
             <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
-              {fileName(value, uploaded)}
+              {value === null ? "No file" : (uploadedName ?? "Current file")}
             </span>
           )}
           {removable && value !== null && !pending ? (
@@ -622,6 +636,9 @@ function FileField<T extends string | null>({
             </Button>
           ) : null}
         </div>
+        <span aria-live="polite" className="au:sr-only">
+          {uploadStatus(pending, error, uploadedName)}
+        </span>
       </FileInput>
     </FormField>
   );
