@@ -25,8 +25,11 @@ type FilePreviewProps = {
   className?: string;
 } & (
   | { status?: "ready"; progress?: never }
-  /** `progress` from 0 to 1, or null while unknown. */
-  | { status: "uploading"; progress: number | null }
+  | {
+      status: "uploading";
+      /** From 0 to 1, or null while unknown. */
+      progress: number | null;
+    }
   | { status: "error"; progress?: never }
 );
 
@@ -175,6 +178,8 @@ function VideoPlayer({ url, name }: { url: string; name: string }) {
         ref={video}
         // Asking for the first moment makes Safari show the first frame too.
         src={`${url}#t=0.001`}
+        // Lets focus() reach it in every browser once its controls show.
+        tabIndex={-1}
       />
       {started ? null : (
         <button
@@ -269,9 +274,10 @@ function TileContent({
     );
   }
   if (kind === "video") {
-    return <VideoPlayer name={name} url={url} />;
+    // A new file starts a new player.
+    return <VideoPlayer key={url} name={name} url={url} />;
   }
-  return <AudioPlayer name={name} url={url} />;
+  return <AudioPlayer key={url} name={name} url={url} />;
 }
 
 /**
@@ -298,7 +304,10 @@ function FilePreview({
       )}
       data-slot="file-preview"
     >
-      <TileContent failed={failed} kind={kind} name={label} url={url} />
+      {/* Under the upload's overlay, the controls are out of reach. */}
+      <div className="au:contents" inert={state.status === "uploading"}>
+        <TileContent failed={failed} kind={kind} name={label} url={url} />
+      </div>
       {state.status === "uploading" ? (
         <div
           className={cn(

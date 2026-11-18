@@ -640,9 +640,13 @@ function FileField<T extends string | null>({
   }, [onChange]);
 
   const { value } = field.state;
-  // A picked file shows until a saved value that isn't it takes over, like after a reset.
+  // A picked file shows while it uploads and once saved. A failed one shows only
+  // when there's no saved file, which stays visible otherwise, next to the error.
   const showPicked =
-    picked !== null && (picked.status !== "ready" || picked.id === value);
+    picked !== null &&
+    (picked.status === "uploading" ||
+      (picked.status === "error" && value === null) ||
+      (picked.status === "ready" && picked.id === value));
   let tile: React.ReactNode = null;
   if (showPicked) {
     tile = <PickedPreview picked={picked} />;
