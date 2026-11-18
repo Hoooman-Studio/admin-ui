@@ -11,7 +11,7 @@ import {
 import * as React from "react";
 import { Banner } from "./components/banner";
 import { Button, type ButtonProps } from "./components/button";
-import { CheckboxField } from "./components/checkbox";
+import { CheckboxField, CheckboxGroup } from "./components/checkbox";
 import { DatePicker } from "./components/date-picker";
 import {
   Dialog,
@@ -21,6 +21,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./components/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./components/drawer";
 import {
   FieldDescription,
   FieldError,
@@ -61,10 +69,11 @@ interface BoundField<T> {
 }
 
 /**
- * The field's first error, and a change handler that also clears the server's
- * error for it. `toValue` turns what the control reports into the field's value.
+ * For your own fields: the field's first error as text, and a change handler
+ * that also clears the server's error for it. `toValue` turns what the control
+ * reports into the field's value.
  */
-function bind<T, I = T>(field: BoundField<T>, toValue?: (input: I) => T) {
+function bindField<T, I = T>(field: BoundField<T>, toValue?: (input: I) => T) {
   const onChange = (input: I) => {
     field.form.setFieldMeta(field.name, (meta) => ({
       ...meta,
@@ -75,6 +84,7 @@ function bind<T, I = T>(field: BoundField<T>, toValue?: (input: I) => T) {
   return { error: errorText(field.state.meta.errors[0]), onChange };
 }
 
+/** What every field takes. Give your own fields these props too. */
 interface FieldProps<T> {
   description?: React.ReactNode;
   /** The field from `<form.Field name="…">{(field) => …}</form.Field>`. */
@@ -94,7 +104,7 @@ function TextField({
   description,
   ...props
 }: FieldProps<string> & ControlProps<typeof Input>) {
-  const { error, onChange } = bind(field);
+  const { error, onChange } = bindField(field);
   return (
     <FormField description={description} error={error} label={label}>
       <Input
@@ -114,7 +124,7 @@ function TextareaField({
   description,
   ...props
 }: FieldProps<string> & ControlProps<typeof Textarea>) {
-  const { error, onChange } = bind(field);
+  const { error, onChange } = bindField(field);
   return (
     <FormField description={description} error={error} label={label}>
       <Textarea
@@ -135,7 +145,7 @@ function NumberField({
   description,
   ...props
 }: FieldProps<number | null> & ControlProps<typeof NumberInput>) {
-  const { error, onChange } = bind(field);
+  const { error, onChange } = bindField(field);
   return (
     <FormField description={description} error={error} label={label}>
       <NumberInput
@@ -159,7 +169,7 @@ function DateField({
   ...props
 }: FieldProps<string | null> &
   Omit<ControlProps<typeof DatePicker>, "mode" | "endLabel">) {
-  const { error, onChange } = bind(field, (value: DateValue | null) =>
+  const { error, onChange } = bindField(field, (value: DateValue | null) =>
     typeof value === "string" ? value : null
   );
   return (
@@ -180,6 +190,9 @@ interface Option<T extends string> {
   value: T;
 }
 
+/** The empty choice's value inside the Select; the field holds null for it. */
+const emptyValue = "";
+
 /**
  * One value from a short list. The field holds a string (or a union of
  * strings), or null while nothing is chosen; the options must match it.
@@ -190,17 +203,27 @@ function SelectField<T extends string | null>({
   description,
   options,
   placeholder,
+  emptyLabel,
   disabled,
 }: FieldProps<T> & {
   options: readonly Option<NoInfer<NonNullable<T>>>[];
   placeholder?: string;
+  /** Adds a first choice, like "None", that sets the field to null, so `placeholder` never shows. Only for fields that can be null. */
+  emptyLabel?: null extends T ? string : never;
   disabled?: boolean;
 }) {
-  // Null only comes from a clear button or a native form reset, and we render neither: keep the value.
-  const { error, onChange } = bind(
+  const hasEmpty = emptyLabel !== undefined;
+  const { error, onChange } = bindField(
     field,
-    (value: NonNullable<T> | null) => value ?? field.state.value
+    (value: NonNullable<T> | null) => {
+      if (hasEmpty && value === emptyValue) {
+        return null as T;
+      }
+      // Null only comes from a clear button or a native form reset, and we render neither: keep the value.
+      return value ?? field.state.value;
+    }
   );
+  const selected = field.state.value ?? (hasEmpty ? emptyValue : null);
   return (
     <FormField description={description} error={error} label={label}>
       <Select<NonNullable<T>>
@@ -208,10 +231,15 @@ function SelectField<T extends string | null>({
         name={field.name}
         onValueChange={onChange}
         placeholder={placeholder}
-        value={field.state.value as NonNullable<T> | null}
+        value={selected as NonNullable<T> | null}
       >
         <SelectTrigger onBlur={field.handleBlur} />
         <SelectContent>
+          {hasEmpty ? (
+            <SelectItem value={emptyValue as NonNullable<T>}>
+              {emptyLabel}
+            </SelectItem>
+          ) : null}
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -223,23 +251,31 @@ function SelectField<T extends string | null>({
   );
 }
 
-/** One value from a few options shown at once, each with an optional description. */
-function RadioGroupField<T extends string>({
-  field,
+type ChoiceOption<T extends string> = Option<T> & {
+  description?: React.ReactNode;
+};
+
+/** The ARIA a radio or checkbox group needs from the fieldset around it. */
+interface GroupAria {
+  "aria-describedby": string | undefined;
+  "aria-invalid": true | undefined;
+  "aria-labelledby": string;
+}
+
+/** A fieldset with a legend, description and error, around a radio or checkbox group. */
+function ChoiceGroup({
   label,
   description,
-  options,
+  error,
   disabled,
-}: FieldProps<T> & {
-  options: readonly (Option<NoInfer<T>> & {
-    description?: React.ReactNode;
-  })[];
+  onBlur,
+  children,
+}: Omit<FieldProps<unknown>, "field"> & {
+  error: string | null;
   disabled?: boolean;
+  onBlur: () => void;
+  children: (aria: GroupAria) => React.ReactNode;
 }) {
-  const { error, onChange } = bind(
-    field,
-    (value: T | null) => value ?? field.state.value
-  );
   const errorId = React.useId();
   const legendId = React.useId();
   const descriptionId = React.useId();
@@ -248,11 +284,7 @@ function RadioGroupField<T extends string>({
       .filter(Boolean)
       .join(" ") || undefined;
   return (
-    <FieldSet
-      className="au:gap-3"
-      disabled={disabled}
-      onBlur={field.handleBlur}
-    >
+    <FieldSet className="au:gap-3" disabled={disabled} onBlur={onBlur}>
       <FieldLegend
         className="au:mb-0 au:px-1 au:text-sm au:font-medium"
         id={legendId}
@@ -262,23 +294,11 @@ function RadioGroupField<T extends string>({
       {description ? (
         <FieldDescription id={descriptionId}>{description}</FieldDescription>
       ) : null}
-      <RadioGroup<T>
-        aria-describedby={describedBy}
-        aria-invalid={error ? true : undefined}
-        aria-labelledby={legendId}
-        name={field.name}
-        onValueChange={onChange}
-        value={field.state.value}
-      >
-        {options.map((option) => (
-          <RadioField
-            description={option.description}
-            key={option.value}
-            label={option.label}
-            value={option.value}
-          />
-        ))}
-      </RadioGroup>
+      {children({
+        "aria-describedby": describedBy,
+        "aria-invalid": error ? true : undefined,
+        "aria-labelledby": legendId,
+      })}
       {error ? (
         <FieldError id={errorId} match>
           {error}
@@ -288,12 +308,97 @@ function RadioGroupField<T extends string>({
   );
 }
 
+/** One value from a few options shown at once, each with an optional description. */
+function RadioGroupField<T extends string>({
+  field,
+  label,
+  description,
+  options,
+  disabled,
+}: FieldProps<T> & {
+  options: readonly ChoiceOption<NoInfer<T>>[];
+  disabled?: boolean;
+}) {
+  const { error, onChange } = bindField(
+    field,
+    (value: T | null) => value ?? field.state.value
+  );
+  return (
+    <ChoiceGroup
+      description={description}
+      disabled={disabled}
+      error={error}
+      label={label}
+      onBlur={field.handleBlur}
+    >
+      {(aria) => (
+        <RadioGroup<T>
+          {...aria}
+          name={field.name}
+          onValueChange={onChange}
+          value={field.state.value}
+        >
+          {options.map((option) => (
+            <RadioField
+              description={option.description}
+              key={option.value}
+              label={option.label}
+              value={option.value}
+            />
+          ))}
+        </RadioGroup>
+      )}
+    </ChoiceGroup>
+  );
+}
+
+/** Any number of values from a few options shown at once, like the IDs of related records. */
+function ChecklistField<T extends string>({
+  field,
+  label,
+  description,
+  options,
+  disabled,
+}: FieldProps<T[]> & {
+  options: readonly ChoiceOption<NoInfer<T>>[];
+  disabled?: boolean;
+}) {
+  const { error, onChange } = bindField(field);
+  return (
+    <ChoiceGroup
+      description={description}
+      disabled={disabled}
+      error={error}
+      label={label}
+      onBlur={field.handleBlur}
+    >
+      {(aria) => (
+        <CheckboxGroup<T>
+          {...aria}
+          name={field.name}
+          onValueChange={onChange}
+          value={field.state.value}
+        >
+          {options.map((option) => (
+            <CheckboxField
+              description={option.description}
+              key={option.value}
+              label={option.label}
+              value={option.value}
+            />
+          ))}
+        </CheckboxGroup>
+      )}
+    </ChoiceGroup>
+  );
+}
+
 /** A checkbox for a boolean. */
 function FormCheckboxField({
   field,
   ...props
 }: FieldProps<boolean> & { disabled?: boolean }) {
-  const { error, onChange } = bind(
+  const { error, onChange } = bindField(
     field,
     (checked: boolean | "indeterminate") => checked === true
   );
@@ -314,7 +419,7 @@ function FormSwitchField({
   field,
   ...props
 }: FieldProps<boolean> & { disabled?: boolean }) {
-  const { error, onChange } = bind(field);
+  const { error, onChange } = bindField(field);
   return (
     <SwitchField
       {...props}
@@ -334,7 +439,7 @@ function TagsField({
   description,
   ...props
 }: FieldProps<string[]> & ControlProps<typeof TagInput>) {
-  const { error, onChange } = bind(field);
+  const { error, onChange } = bindField(field);
   return (
     <FormField description={description} error={error} label={label}>
       {/* biome-ignore lint/a11y/noStaticElementInteractions: TagInput takes no onBlur, so a focus-out anywhere in it counts. */}
@@ -398,7 +503,7 @@ interface AdminFormOptions<
  * TanStack Form's `useForm`, with our submit handling. `onSubmit` receives
  * the parsed output of the `validators.onSubmit` schema and may return a
  * FormResult. A thrown error is logged and shown as a generic form error.
- * Inside a FormDialog, `ok: true` closes the dialog. The onSubmit schema runs
+ * Inside a FormDialog or FormDrawer, `ok: true` closes it. The onSubmit schema runs
  * twice per submit (TanStack's check, then the parse), so keep slow async
  * checks, like a uniqueness lookup, in the save itself.
  */
@@ -430,7 +535,7 @@ function useAdminForm<
   undefined,
   undefined
 > {
-  const dialog = React.use(FormDialogContext);
+  const overlay = React.use(FormOverlayContext);
   return useForm<
     TFormData,
     undefined,
@@ -472,7 +577,7 @@ function useAdminForm<
         if (result.message) {
           toast.success(result.message);
         }
-        dialog?.close();
+        overlay?.close();
       } catch (error) {
         console.error(error);
         refuse(formApi, { ok: false, message: failedMessage });
@@ -513,14 +618,14 @@ function AdminForm({
     },
     [form]
   );
-  // In a FormDialog the form holds a scrolling DialogBody and a DialogFooter, which bring their own spacing.
-  const inDialog = React.use(FormDialogContext) !== null;
+  // In a FormDialog or FormDrawer the form holds a scrolling body and a footer, which bring their own spacing; in a drawer it fills the height.
+  const inOverlay = React.use(FormOverlayContext) !== null;
   return (
     <FormContext value={form}>
       <form
         className={cn(
           "au:flex au:min-h-0 au:flex-col",
-          !inDialog && "au:gap-4",
+          inOverlay ? "au:grow" : "au:gap-4",
           className
         )}
         noValidate
@@ -578,33 +683,24 @@ function FormError({ className }: { className?: string }) {
   return <Banner className={className} title={error} tone="danger" />;
 }
 
-/** Closes the FormDialog, but only for the opening its form belongs to. */
-const FormDialogContext = React.createContext<{ close: () => void } | null>(
+/** Closes the FormDialog or FormDrawer, but only for the opening its form belongs to. */
+const FormOverlayContext = React.createContext<{ close: () => void } | null>(
   null
 );
 
-/**
- * A dialog holding a form. The form mounts fresh each time it opens, and a
- * submit that returns `{ ok: true }` closes it. Put a component that calls
- * useAdminForm inside, rendering DialogBody and DialogFooter in its AdminForm.
- */
-function FormDialog({
-  title,
-  description,
-  trigger,
-  children,
-  size,
-}: {
-  title: React.ReactNode;
+interface FormOverlayProps {
+  children: React.ReactNode;
   description?: React.ReactNode;
+  title: React.ReactNode;
   /** The element that opens it, like `<Button>New listing</Button>`. */
   trigger: React.ReactElement<Record<string, unknown>>;
-  children: React.ReactNode;
-  size?: React.ComponentProps<typeof DialogContent>["size"];
-}) {
-  // A new opening number starts the form fresh, and the old form stays visible while the dialog animates out.
+}
+
+/** Open state for a FormDialog or FormDrawer, and `content` to wrap the form so it starts fresh on each opening. */
+function useFormOverlay() {
+  // A new opening number starts the form fresh, and the old form stays visible while the overlay animates out.
   const [state, setState] = React.useState({ opening: 0, open: false });
-  const change = React.useCallback((open: boolean) => {
+  const onOpenChange = React.useCallback((open: boolean) => {
     setState((prev) =>
       open ? { opening: prev.opening + 1, open } : { ...prev, open }
     );
@@ -620,8 +716,31 @@ function FormDialog({
     }),
     [opening]
   );
+  const content = (children: React.ReactNode) => (
+    <FormOverlayContext key={opening} value={context}>
+      {children}
+    </FormOverlayContext>
+  );
+  return { open: state.open, onOpenChange, content };
+}
+
+/**
+ * A dialog holding a form. The form mounts fresh each time it opens, and a
+ * submit that returns `{ ok: true }` closes it. Put a component that calls
+ * useAdminForm inside, rendering DialogBody and DialogFooter in its AdminForm.
+ */
+function FormDialog({
+  title,
+  description,
+  trigger,
+  children,
+  size,
+}: FormOverlayProps & {
+  size?: React.ComponentProps<typeof DialogContent>["size"];
+}) {
+  const { content, ...root } = useFormOverlay();
   return (
-    <Dialog onOpenChange={change} open={state.open}>
+    <Dialog {...root}>
       <DialogTrigger render={trigger} />
       <DialogContent size={size}>
         <DialogHeader>
@@ -630,20 +749,51 @@ function FormDialog({
             <DialogDescription>{description}</DialogDescription>
           ) : null}
         </DialogHeader>
-        <FormDialogContext key={opening} value={context}>
-          {children}
-        </FormDialogContext>
+        {content(children)}
       </DialogContent>
     </Dialog>
   );
 }
 
-export type { FormResult };
+/**
+ * FormDialog as a side sheet, for longer forms. Render DrawerBody and
+ * DrawerFooter in its AdminForm, with other buttons before the SubmitButton.
+ */
+function FormDrawer({
+  title,
+  description,
+  trigger,
+  children,
+  size,
+}: FormOverlayProps & {
+  size?: React.ComponentProps<typeof DrawerContent>["size"];
+}) {
+  const { content, ...root } = useFormOverlay();
+  return (
+    <Drawer {...root}>
+      <DrawerTrigger render={trigger} />
+      <DrawerContent size={size}>
+        <DrawerHeader>
+          <DrawerTitle>{title}</DrawerTitle>
+          {description ? (
+            <DrawerDescription>{description}</DrawerDescription>
+          ) : null}
+        </DrawerHeader>
+        {content(children)}
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+export type { FieldProps, FormResult };
 export {
   AdminForm,
+  bindField,
+  ChecklistField,
   DateField,
   FormCheckboxField,
   FormDialog,
+  FormDrawer,
   FormError,
   FormSwitchField,
   NumberField,
