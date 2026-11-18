@@ -985,40 +985,58 @@ const FormOverlayContext = React.createContext<{ close: () => void } | null>(
   null
 );
 
-interface FormOverlayProps {
+/** Either a `trigger` that opens it, or `open` and `onOpenChange` from your own state, like the URL. */
+type FormOverlayProps = {
   children: React.ReactNode;
   description?: React.ReactNode;
   title: React.ReactNode;
-  /** The element that opens it, like `<Button>New listing</Button>`. */
-  trigger: React.ReactElement<Record<string, unknown>>;
-}
+} & (
+  | {
+      /** The element that opens it, like `<Button>New listing</Button>`. */
+      trigger: React.ReactElement<Record<string, unknown>>;
+      open?: never;
+      onOpenChange?: never;
+    }
+  | {
+      trigger?: never;
+      open: boolean;
+      /** Called with `false` on Escape, Cancel or a submit that returns `ok: true`. */
+      onOpenChange: (open: boolean) => void;
+    }
+);
 
 /** Open state for a FormDialog or FormDrawer, and `content` to wrap the form so it starts fresh on each opening. */
-function useFormOverlay() {
+function useFormOverlay(props: FormOverlayProps) {
+  const [ownOpen, setOwnOpen] = React.useState(false);
+  const open = props.open ?? ownOpen;
+  const onOpenChange = props.onOpenChange ?? setOwnOpen;
   // A new opening number starts the form fresh, and the old form stays visible while the overlay animates out.
-  const [state, setState] = React.useState({ opening: 0, open: false });
-  const onOpenChange = React.useCallback((open: boolean) => {
-    setState((prev) =>
-      open ? { opening: prev.opening + 1, open } : { ...prev, open }
-    );
-  }, []);
+  const [state, setState] = React.useState({ opening: 0, open });
+  if (state.open !== open) {
+    setState({ opening: open ? state.opening + 1 : state.opening, open });
+  }
   const { opening } = state;
   // A slow submit from an earlier opening must not close a newer one.
+  const latestOpening = React.useRef(opening);
+  React.useEffect(() => {
+    latestOpening.current = opening;
+  }, [opening]);
   const context = React.useMemo(
     () => ({
-      close: () =>
-        setState((prev) =>
-          prev.opening === opening ? { ...prev, open: false } : prev
-        ),
+      close: () => {
+        if (latestOpening.current === opening) {
+          onOpenChange(false);
+        }
+      },
     }),
-    [opening]
+    [opening, onOpenChange]
   );
   const content = (children: React.ReactNode) => (
     <FormOverlayContext key={opening} value={context}>
       {children}
     </FormOverlayContext>
   );
-  return { open: state.open, onOpenChange, content };
+  return { open, onOpenChange, content };
 }
 
 /**
@@ -1027,18 +1045,16 @@ function useFormOverlay() {
  * useAdminForm inside, rendering DialogBody and DialogFooter in its AdminForm.
  */
 function FormDialog({
-  title,
-  description,
-  trigger,
-  children,
   size,
+  ...props
 }: FormOverlayProps & {
   size?: React.ComponentProps<typeof DialogContent>["size"];
 }) {
-  const { content, ...root } = useFormOverlay();
+  const { title, description, trigger, children } = props;
+  const { content, ...root } = useFormOverlay(props);
   return (
     <Dialog {...root}>
-      <DialogTrigger render={trigger} />
+      {trigger ? <DialogTrigger render={trigger} /> : null}
       <DialogContent size={size}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -1057,18 +1073,16 @@ function FormDialog({
  * DrawerFooter in its AdminForm, with other buttons before the SubmitButton.
  */
 function FormDrawer({
-  title,
-  description,
-  trigger,
-  children,
   size,
+  ...props
 }: FormOverlayProps & {
   size?: React.ComponentProps<typeof DrawerContent>["size"];
 }) {
-  const { content, ...root } = useFormOverlay();
+  const { title, description, trigger, children } = props;
+  const { content, ...root } = useFormOverlay(props);
   return (
     <Drawer {...root}>
-      <DrawerTrigger render={trigger} />
+      {trigger ? <DrawerTrigger render={trigger} /> : null}
       <DrawerContent size={size}>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>

@@ -1,4 +1,4 @@
-import { CalendarIcon, PlusIcon } from "lucide-react";
+import { CalendarIcon, ListChecksIcon, PlusIcon } from "lucide-react";
 import * as React from "react";
 import { z } from "zod";
 import {
@@ -479,12 +479,84 @@ function PlanViewingForm() {
   );
 }
 
+const amenities = [
+  "Wi-Fi",
+  "Heating",
+  "Air conditioning",
+  "Washing machine",
+  "Dryer",
+  "Dishwasher",
+  "Oven",
+  "Microwave",
+  "Fridge",
+  "Freezer",
+  "Coffee machine",
+  "TV",
+  "Desk",
+  "Bathtub",
+  "Garden",
+  "Balcony",
+  "Lift",
+  "Parking",
+  "Bike storage",
+  "Pets allowed",
+].map((label) => ({ value: label.toLowerCase(), label }));
+
+const amenitiesSchema = z.object({ amenities: z.array(z.string()) });
+
+function AmenitiesForm() {
+  const form = useAdminForm({
+    defaultValues: { amenities: ["wi-fi", "heating"] },
+    validators: { onSubmit: amenitiesSchema },
+    onSubmit: async ({ amenities: chosen }) => {
+      await wait(600);
+      return { ok: true, message: `${chosen.length} amenities saved.` };
+    },
+  });
+
+  return (
+    <AdminForm form={form}>
+      <DrawerBody>
+        <form.Field name="amenities">
+          {(field) => (
+            <ChecklistField
+              description="More than 8 options flow into columns."
+              field={field}
+              label="Amenities"
+              options={amenities}
+            />
+          )}
+        </form.Field>
+      </DrawerBody>
+      <DrawerFooter>
+        <DrawerClose render={<Button variant="outline" />}>Cancel</DrawerClose>
+        <SubmitButton>Save amenities</SubmitButton>
+      </DrawerFooter>
+    </AdminForm>
+  );
+}
+
 function TypedFormsPage() {
+  // Stands in for app state like a `?open=amenities` search param.
+  const [amenitiesOpen, setAmenitiesOpen] = React.useState(false);
   return (
     <>
       <PageHeader
         actions={
           <>
+            <Button onClick={() => setAmenitiesOpen(true)} variant="outline">
+              <ListChecksIcon />
+              Amenities
+            </Button>
+            <FormDrawer
+              description="A controlled FormDrawer: the page holds its open state."
+              onOpenChange={setAmenitiesOpen}
+              open={amenitiesOpen}
+              size="lg"
+              title="Amenities"
+            >
+              <AmenitiesForm />
+            </FormDrawer>
             <FormDrawer
               description="A FormDrawer: it starts fresh each time and closes once saved."
               title="Plan a viewing"

@@ -449,24 +449,33 @@ declare function FormError({
 }: {
   className?: string;
 }): React.JSX.Element | null;
-interface FormOverlayProps {
+/** Either a `trigger` that opens it, or `open` and `onOpenChange` from your own state, like the URL. */
+type FormOverlayProps = {
   children: React.ReactNode;
   description?: React.ReactNode;
   title: React.ReactNode;
-  /** The element that opens it, like `<Button>New listing</Button>`. */
-  trigger: React.ReactElement<Record<string, unknown>>;
-}
+} & (
+  | {
+      /** The element that opens it, like `<Button>New listing</Button>`. */
+      trigger: React.ReactElement<Record<string, unknown>>;
+      open?: never;
+      onOpenChange?: never;
+    }
+  | {
+      trigger?: never;
+      open: boolean;
+      /** Called with `false` on Escape, Cancel or a submit that returns `ok: true`. */
+      onOpenChange: (open: boolean) => void;
+    }
+);
 /**
  * A dialog holding a form. The form mounts fresh each time it opens, and a
  * submit that returns `{ ok: true }` closes it. Put a component that calls
  * useAdminForm inside, rendering DialogBody and DialogFooter in its AdminForm.
  */
 declare function FormDialog({
-  title,
-  description,
-  trigger,
-  children,
   size,
+  ...props
 }: FormOverlayProps & {
   size?: React.ComponentProps<typeof DialogContent>["size"];
 }): React.JSX.Element;
@@ -475,11 +484,8 @@ declare function FormDialog({
  * DrawerFooter in its AdminForm, with other buttons before the SubmitButton.
  */
 declare function FormDrawer({
-  title,
-  description,
-  trigger,
-  children,
   size,
+  ...props
 }: FormOverlayProps & {
   size?: React.ComponentProps<typeof DrawerContent>["size"];
 }): React.JSX.Element;
