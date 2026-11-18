@@ -469,6 +469,9 @@ function TagsField({
 /** FileInput's value: a picked file goes to `upload`, not into the field. */
 const noFiles: File[] = [];
 
+/** FileField's own live region speaks for it, so FileInput stays quiet. */
+const noAnnouncement = () => null;
+
 type FileChange = NonNullable<
   React.ComponentProps<typeof FileInput>["onValueChange"]
 >;
@@ -594,6 +597,7 @@ function FileField<T extends string | null>({
     <FormField description={description} error={error} label={label}>
       <FileInput
         accept={accept}
+        announcement={noAnnouncement}
         className="au:gap-3 au:px-1 au:pb-0.5"
         disabled={disabled}
         onReject={reject}
