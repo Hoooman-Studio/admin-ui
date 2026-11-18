@@ -74,7 +74,7 @@ Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`,
 
 `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`; render `DialogBody` and `DialogFooter` in its `AdminForm`. `FormDrawer` is the same as a side sheet, with `DrawerBody` and `DrawerFooter`; put extra buttons before the `SubmitButton`.
 
-Your own field takes `FieldProps<Value>` and calls `bindField`, which gives the field's error and an `onChange` that also clears the server's error:
+Your own field takes `FieldProps<Value>` and calls `bindField`, which gives the field's error and an `onChange` that also clears the server's error. Here `ColorPicker` stands for your own control:
 
 ```tsx
 function ColorField({ field, label, description }: FieldProps<string>) {

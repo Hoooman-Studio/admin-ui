@@ -208,8 +208,8 @@ function SelectField<T extends string | null>({
 }: FieldProps<T> & {
   options: readonly Option<NoInfer<NonNullable<T>>>[];
   placeholder?: string;
-  /** Adds a first choice, like "None", that sets the field to null. Only for fields that can be null. */
-  emptyLabel?: null extends T ? React.ReactNode : never;
+  /** Adds a first choice, like "None", that sets the field to null, so `placeholder` never shows. Only for fields that can be null. */
+  emptyLabel?: null extends T ? string : never;
   disabled?: boolean;
 }) {
   const hasEmpty = emptyLabel !== undefined;
@@ -696,7 +696,7 @@ interface FormOverlayProps {
   trigger: React.ReactElement<Record<string, unknown>>;
 }
 
-/** Open state for a FormDialog or FormDrawer, and `form` to wrap the form so it starts fresh on each opening. */
+/** Open state for a FormDialog or FormDrawer, and `content` to wrap the form so it starts fresh on each opening. */
 function useFormOverlay() {
   // A new opening number starts the form fresh, and the old form stays visible while the overlay animates out.
   const [state, setState] = React.useState({ opening: 0, open: false });
@@ -716,12 +716,12 @@ function useFormOverlay() {
     }),
     [opening]
   );
-  const form = (children: React.ReactNode) => (
+  const content = (children: React.ReactNode) => (
     <FormOverlayContext key={opening} value={context}>
       {children}
     </FormOverlayContext>
   );
-  return { open: state.open, onOpenChange, form };
+  return { open: state.open, onOpenChange, content };
 }
 
 /**
@@ -738,7 +738,7 @@ function FormDialog({
 }: FormOverlayProps & {
   size?: React.ComponentProps<typeof DialogContent>["size"];
 }) {
-  const { form, ...root } = useFormOverlay();
+  const { content, ...root } = useFormOverlay();
   return (
     <Dialog {...root}>
       <DialogTrigger render={trigger} />
@@ -749,7 +749,7 @@ function FormDialog({
             <DialogDescription>{description}</DialogDescription>
           ) : null}
         </DialogHeader>
-        {form(children)}
+        {content(children)}
       </DialogContent>
     </Dialog>
   );
@@ -757,7 +757,7 @@ function FormDialog({
 
 /**
  * FormDialog as a side sheet, for longer forms. Render DrawerBody and
- * DrawerFooter in its AdminForm; the footer keeps the SubmitButton last.
+ * DrawerFooter in its AdminForm, with other buttons before the SubmitButton.
  */
 function FormDrawer({
   title,
@@ -768,7 +768,7 @@ function FormDrawer({
 }: FormOverlayProps & {
   size?: React.ComponentProps<typeof DrawerContent>["size"];
 }) {
-  const { form, ...root } = useFormOverlay();
+  const { content, ...root } = useFormOverlay();
   return (
     <Drawer {...root}>
       <DrawerTrigger render={trigger} />
@@ -779,7 +779,7 @@ function FormDrawer({
             <DrawerDescription>{description}</DrawerDescription>
           ) : null}
         </DrawerHeader>
-        {form(children)}
+        {content(children)}
       </DrawerContent>
     </Drawer>
   );
