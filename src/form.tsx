@@ -867,8 +867,12 @@ function AdminForm({
       if (uploads > 0) {
         return;
       }
-      // The last submit's refusal shouldn't block this one.
-      form.setErrorMap({ onServer: { form: undefined, fields: {} } });
+      // The last submit's errors shouldn't block this one. TanStack skips the
+      // form schema while a field still holds its error, so new errors wouldn't show.
+      form.setErrorMap({
+        onSubmit: { form: undefined, fields: {} },
+        onServer: { form: undefined, fields: {} },
+      });
       form.handleSubmit().catch((error: unknown) => {
         console.error(error);
         refuse(form, { ok: false, message: failedMessage });
