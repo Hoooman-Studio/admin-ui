@@ -137,7 +137,7 @@ interface AdminProviderProps {
   /** The client's brand colour, any CSS colour. */
   accent?: string;
   children: React.ReactNode;
-  /** Places the admin's box on a site page, like `mt-8`. */
+  /** Spacing and layout for the admin's box on a site page, like `mt-8`. */
   className?: string;
 }
 /**

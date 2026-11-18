@@ -7,7 +7,7 @@ interface AdminProviderProps {
   /** The client's brand colour, any CSS colour. */
   accent?: string;
   children: React.ReactNode;
-  /** Places the admin's box on a site page, like `mt-8`. */
+  /** Spacing and layout for the admin's box on a site page, like `mt-8`. */
   className?: string;
 }
 
@@ -57,7 +57,13 @@ function AdminProvider({ accent, children, className }: AdminProviderProps) {
       className={className}
       data-admin-ui=""
       data-au-theme={theme}
-      style={{ "--au-accent": accent } as React.CSSProperties}
+      // A provider inside another adds no box, so it keeps the page's layout.
+      style={
+        {
+          display: nested ? "contents" : undefined,
+          "--au-accent": accent,
+        } as React.CSSProperties
+      }
     >
       <ProviderContext value>
         {children}

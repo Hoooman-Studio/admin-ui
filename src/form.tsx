@@ -687,7 +687,7 @@ function FileField<T extends string | null>({
           <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
             {tile ? null : "No file"}
           </span>
-          {removable && value !== null && !uploading ? (
+          {removable && (value !== null || failed) && !uploading ? (
             <Button
               disabled={disabled}
               onClick={remove}
