@@ -179,6 +179,7 @@ export {
   PopoverTitle,
   PopoverTrigger,
 } from "./components/popover";
+export { Progress, type ProgressProps } from "./components/progress";
 export {
   Radio,
   RadioField,
