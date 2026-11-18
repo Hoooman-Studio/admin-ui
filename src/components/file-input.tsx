@@ -111,4 +111,5 @@ function FileInputList({
   );
 }
 
-export { FileInput, FileInputDropzone, FileInputList };
+// FileInputTrigger is for our own fields, like FileField; it isn't public.
+export { FileInput, FileInputDropzone, FileInputList, FileInputTrigger };

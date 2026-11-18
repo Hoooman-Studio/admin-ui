@@ -115,6 +115,11 @@ export {
   FileInputList,
 } from "./components/file-input";
 export {
+  type FileKind,
+  FilePreview,
+  type FilePreviewProps,
+} from "./components/file-preview";
+export {
   FilterChip,
   type FilterChipProps,
   FilterChips,
@@ -179,6 +184,7 @@ export {
   PopoverTitle,
   PopoverTrigger,
 } from "./components/popover";
+export { Progress, type ProgressProps } from "./components/progress";
 export {
   Radio,
   RadioField,

@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-form";
 import * as React from "react";
 import { Banner } from "./components/banner";
-import { Button, type ButtonProps } from "./components/button";
+import { Button, type ButtonProps, buttonVariants } from "./components/button";
 import { CheckboxField, CheckboxGroup } from "./components/checkbox";
 import { DatePicker } from "./components/date-picker";
 import {
@@ -36,6 +36,8 @@ import {
   FieldSet,
   FormField,
 } from "./components/field";
+import { FileInput, FileInputTrigger } from "./components/file-input";
+import { type FileKind, FilePreview } from "./components/file-preview";
 import { Input } from "./components/input";
 import { NumberInput } from "./components/number-input";
 import { RadioField, RadioGroup } from "./components/radio";
@@ -68,6 +70,17 @@ interface BoundField<T> {
   state: { value: T; meta: { errors: readonly unknown[] } };
 }
 
+/** Sets or clears a field's server error, which the next change or submit clears. */
+function setServerError(
+  field: Pick<BoundField<unknown>, "form" | "name">,
+  message: string | undefined
+) {
+  field.form.setFieldMeta(field.name, (meta) => ({
+    ...meta,
+    errorMap: { ...meta.errorMap, onServer: message },
+  }));
+}
+
 /**
  * For your own fields: the field's first error as text, and a change handler
  * that also clears the server's error for it. `toValue` turns what the control
@@ -75,10 +88,7 @@ interface BoundField<T> {
  */
 function bindField<T, I = T>(field: BoundField<T>, toValue?: (input: I) => T) {
   const onChange = (input: I) => {
-    field.form.setFieldMeta(field.name, (meta) => ({
-      ...meta,
-      errorMap: { ...meta.errorMap, onServer: undefined },
-    }));
+    setServerError(field, undefined);
     field.handleChange(toValue ? toValue(input) : (input as unknown as T));
   };
   return { error: errorText(field.state.meta.errors[0]), onChange };
@@ -456,6 +466,239 @@ function TagsField({
   );
 }
 
+/** FileInput's value: a picked file goes to `upload`, not into the field. */
+const noFiles: File[] = [];
+
+/** FileField's own live region speaks for it, so FileInput stays quiet. */
+const noAnnouncement = () => null;
+
+type FileChange = NonNullable<
+  React.ComponentProps<typeof FileInput>["onValueChange"]
+>;
+
+/** Why an upload failed, as the field's error. */
+function uploadErrorText(error: unknown) {
+  return error instanceof Error && error.message
+    ? error.message
+    : "The upload failed. Try again.";
+}
+
+/** The tile for a file's MIME type, like "audio/mpeg". */
+function fileKind(type: string): FileKind {
+  const [group] = type.split("/");
+  return group === "image" || group === "video" || group === "audio"
+    ? group
+    : "file";
+}
+
+/** A file picked in this field, shown from the browser's copy while it uploads and after. */
+interface Picked<T> {
+  id: T | null;
+  kind: FileKind;
+  name: string;
+  progress: number | null;
+  status: "uploading" | "error" | "ready";
+  url: string;
+}
+
+function PickedPreview<T>({ picked }: { picked: Picked<T> }) {
+  const { url, name, kind } = picked;
+  if (picked.status === "uploading") {
+    return (
+      <FilePreview
+        kind={kind}
+        name={name}
+        progress={picked.progress}
+        status="uploading"
+        url={url}
+      />
+    );
+  }
+  return (
+    <FilePreview kind={kind} name={name} status={picked.status} url={url} />
+  );
+}
+
+/** What FileField tells screen readers, which don't follow the progress bar. */
+function uploadStatus<T>(
+  picked: Picked<T> | null,
+  error: string | null,
+  value: T
+) {
+  if (picked?.status === "uploading") {
+    return `Uploading ${picked.name}`;
+  }
+  if (error) {
+    return error;
+  }
+  return picked?.status === "ready" && picked.id === value
+    ? `Uploaded ${picked.name}`
+    : "";
+}
+
+/**
+ * One file, uploaded as soon as it's picked. The field holds the ID `upload`
+ * returns, or null while empty. A picked file shows at once, with its
+ * progress; `preview` shows a saved one. Inside an AdminForm, the form
+ * doesn't submit while it uploads.
+ */
+function FileField<T extends string | null>({
+  field,
+  label,
+  description,
+  upload,
+  preview,
+  accept,
+  removable,
+  disabled,
+}: FieldProps<T> & {
+  /** Uploads the file and returns its ID. Call `onProgress` with 0 to 1 as it goes. A rejection's message shows as the field's error. */
+  upload: (
+    file: File,
+    onProgress: (fraction: number) => void
+  ) => Promise<NonNullable<NoInfer<T>>>;
+  /** Shows the saved file with this ID, usually as a `<FilePreview>`. Without it, a saved file shows as "Current file". */
+  preview?: (id: NonNullable<NoInfer<T>>) => React.ReactNode;
+  /** MIME types and extensions, like `"image/*"` or `[".mp3", ".wav"]`. */
+  accept?: React.ComponentProps<typeof FileInput>["accept"];
+  /** Adds a Remove button that sets the field to null. Only for fields that can be null. */
+  removable?: null extends T ? boolean : never;
+  disabled?: boolean;
+}) {
+  const { error, onChange } = bindField(field);
+  const [picked, setPicked] = React.useState<Picked<T> | null>(null);
+  const pickedUrl = picked?.url;
+  React.useEffect(
+    () => () => {
+      if (pickedUrl) {
+        URL.revokeObjectURL(pickedUrl);
+      }
+    },
+    [pickedUrl]
+  );
+  // Only the latest pick counts: picking again while one uploads replaces it, and unmounting drops it.
+  const latest = React.useRef(0);
+  React.useEffect(
+    () => () => {
+      latest.current += 1;
+    },
+    []
+  );
+  const trigger = React.useRef<HTMLButtonElement>(null);
+  const startUpload = React.use(FormContext)?.startUpload;
+  const uploading = picked?.status === "uploading";
+  React.useEffect(
+    () => (uploading ? startUpload?.() : undefined),
+    [uploading, startUpload]
+  );
+
+  const pick = React.useCallback<FileChange>(
+    async ([file], details) => {
+      details.cancel();
+      if (!file) {
+        return;
+      }
+      latest.current += 1;
+      const run = latest.current;
+      setServerError(field, undefined);
+      setPicked({
+        url: URL.createObjectURL(file),
+        name: file.name,
+        kind: fileKind(file.type),
+        status: "uploading",
+        progress: null,
+        id: null,
+      });
+      try {
+        const id = await upload(file, (progress) => {
+          if (run === latest.current) {
+            setPicked((prev) => prev && { ...prev, progress });
+          }
+        });
+        if (run === latest.current) {
+          setPicked((prev) => prev && { ...prev, status: "ready", id });
+          onChange(id);
+        }
+      } catch (reason) {
+        if (run === latest.current) {
+          setPicked((prev) => prev && { ...prev, status: "error" });
+          setServerError(field, uploadErrorText(reason));
+        }
+      }
+    },
+    [field, upload, onChange]
+  );
+  const reject = React.useCallback(
+    () => setServerError(field, "This type of file isn't accepted."),
+    [field]
+  );
+  const remove = React.useCallback(() => {
+    setPicked(null);
+    onChange(null as T);
+    // The Remove button goes away, so keep focus in the field.
+    trigger.current?.focus();
+  }, [onChange]);
+
+  const { value } = field.state;
+  // A picked file shows while it uploads and once saved. A failed one shows only
+  // when there's no saved file, which stays visible otherwise, next to the error.
+  const showPicked =
+    picked !== null &&
+    (picked.status === "uploading" ||
+      (picked.status === "error" && value === null) ||
+      (picked.status === "ready" && picked.id === value));
+  let tile: React.ReactNode = null;
+  if (showPicked) {
+    tile = <PickedPreview picked={picked} />;
+  } else if (value !== null) {
+    tile = preview ? (
+      preview(value)
+    ) : (
+      <FilePreview kind="file" name="Current file" />
+    );
+  }
+  return (
+    <FormField description={description} error={error} label={label}>
+      <FileInput
+        accept={accept}
+        announcement={noAnnouncement}
+        className="au:gap-3 au:px-1 au:pb-0.5"
+        disabled={disabled}
+        onReject={reject}
+        onValueChange={pick}
+        value={noFiles}
+      >
+        {tile}
+        <div className="au:flex au:min-h-8 au:items-center au:gap-3">
+          <FileInputTrigger
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+            onBlur={field.handleBlur}
+            ref={trigger}
+          >
+            {value === null ? "Choose file" : "Replace"}
+          </FileInputTrigger>
+          <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
+            {tile ? null : "No file"}
+          </span>
+          {removable && value !== null && !uploading ? (
+            <Button
+              disabled={disabled}
+              onClick={remove}
+              size="sm"
+              variant="ghost"
+            >
+              Remove
+            </Button>
+          ) : null}
+        </div>
+        <span aria-live="polite" className="au:sr-only">
+          {uploadStatus(picked, error, value)}
+        </span>
+      </FileInput>
+    </FormField>
+  );
+}
+
 /** Shows a refused submit on the form: its message above the submit button, its field errors under the fields. */
 function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
   // An empty message would mark its field invalid without saying why.
@@ -586,14 +829,20 @@ function useAdminForm<
   });
 }
 
-const FormContext = React.createContext<AnyFormApi | null>(null);
+const FormContext = React.createContext<{
+  form: AnyFormApi;
+  /** True while a FileField uploads. The form doesn't submit then. */
+  uploading: boolean;
+  /** Counts an upload as running; call what it returns once it's done. */
+  startUpload: () => () => void;
+} | null>(null);
 
 function useFormContext() {
-  const form = React.use(FormContext);
-  if (!form) {
+  const context = React.use(FormContext);
+  if (!context) {
     throw new Error("SubmitButton and FormError go inside an AdminForm.");
   }
-  return form;
+  return context;
 }
 
 /** The `<form>` for a form from useAdminForm: submits it, and gives SubmitButton and FormError their form. */
@@ -606,9 +855,18 @@ function AdminForm({
   className?: string;
   children: React.ReactNode;
 }) {
+  const [uploads, setUploads] = React.useState(0);
+  const startUpload = React.useCallback(() => {
+    setUploads((count) => count + 1);
+    return () => setUploads((count) => count - 1);
+  }, []);
   const submit = React.useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
+      // Saving now would keep the file the upload replaces.
+      if (uploads > 0) {
+        return;
+      }
       // The last submit's refusal shouldn't block this one.
       form.setErrorMap({ onServer: { form: undefined, fields: {} } });
       form.handleSubmit().catch((error: unknown) => {
@@ -616,12 +874,16 @@ function AdminForm({
         refuse(form, { ok: false, message: failedMessage });
       });
     },
-    [form]
+    [form, uploads]
+  );
+  const context = React.useMemo(
+    () => ({ form, uploading: uploads > 0, startUpload }),
+    [form, uploads, startUpload]
   );
   // In a FormDialog or FormDrawer the form holds a scrolling body and a footer, which bring their own spacing; in a drawer it fills the height.
   const inOverlay = React.use(FormOverlayContext) !== null;
   return (
-    <FormContext value={form}>
+    <FormContext value={context}>
       <form
         className={cn(
           "au:flex au:min-h-0 au:flex-col",
@@ -641,11 +903,11 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   ? Omit<T, K>
   : never;
 
-/** Pending while the submit runs, and pressable once at a time. */
+/** Pending while the submit runs or a FileField uploads, and pressable once at a time. */
 function SubmitButton(
   props: DistributiveOmit<ButtonProps, "type" | "onClick">
 ) {
-  const form = useFormContext();
+  const { form, uploading } = useFormContext();
   const submitting = useStore(
     form.store,
     (state: AnyFormApi["state"]) => state.isSubmitting
@@ -653,8 +915,8 @@ function SubmitButton(
   return (
     <Button
       {...props}
-      aria-busy={submitting || undefined}
-      disabled={props.disabled || submitting}
+      aria-busy={submitting || uploading || undefined}
+      disabled={props.disabled || submitting || uploading}
       // Keeps keyboard focus on the button while it submits.
       focusableWhenDisabled
       type="submit"
@@ -664,7 +926,7 @@ function SubmitButton(
 
 /** The form-wide error: a refused submit's message, or a schema issue that names no field or a field the form doesn't render. */
 function FormError({ className }: { className?: string }) {
-  const form = useFormContext();
+  const { form } = useFormContext();
   const error = useStore(form.store, (state: AnyFormApi["state"]) => {
     const isRendered = (path: string) =>
       Boolean(form.fieldInfo[path]?.instance);
@@ -791,6 +1053,7 @@ export {
   bindField,
   ChecklistField,
   DateField,
+  FileField,
   FormCheckboxField,
   FormDialog,
   FormDrawer,

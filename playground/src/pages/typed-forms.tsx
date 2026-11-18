@@ -1,4 +1,5 @@
 import { CalendarIcon, PlusIcon } from "lucide-react";
+import * as React from "react";
 import { z } from "zod";
 import {
   Button,
@@ -9,6 +10,8 @@ import {
   DrawerFooter,
   FieldLegend,
   FieldSet,
+  type FileKind,
+  FilePreview,
   FormField,
   PageBody,
   PageHeader,
@@ -22,6 +25,7 @@ import {
   ChecklistField,
   DateField,
   type FieldProps,
+  FileField,
   FormDialog,
   FormDrawer,
   FormError,
@@ -49,6 +53,9 @@ const listingSchema = z
       "Enter the rent."
     ),
     availableFrom: required(z.string(), "Choose a date."),
+    coverId: z.string().nullable(),
+    audioTourId: z.string().nullable(),
+    videoId: z.string().nullable(),
     tags: z.array(z.string()),
     billing: z.enum(["monthly", "yearly"]),
     featured: z.boolean(),
@@ -71,6 +78,55 @@ const billingOptions = [
 ] as const;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const loftPhoto = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs><rect width="640" height="400" fill="url(#sky)"/><circle cx="470" cy="130" r="54" fill="#fff7ed"/><path d="M0 300 L120 220 L230 290 L360 190 L520 300 L640 240 L640 400 L0 400 Z" fill="#7c2d12"/></svg>'
+)}`;
+
+const mdnMedia = "https://interactive-examples.mdn.mozilla.net/media";
+
+/** The fake storage: each saved file's URL and name, by ID. Public-domain samples from MDN. */
+const storage = new Map([
+  ["photo_loft", { url: loftPhoto, name: "Loft.svg" }],
+  [
+    "audio_tour",
+    { url: `${mdnMedia}/cc0-audio/t-rex-roar.mp3`, name: "Audio tour.mp3" },
+  ],
+  [
+    "video_walkthrough",
+    { url: `${mdnMedia}/cc0-videos/flower.mp4`, name: "Walkthrough.mp4" },
+  ],
+]);
+
+/** Like an app's own component that loads a saved file's URL, say with Convex `useQuery`. */
+function StoredFile({ id, kind }: { id: string; kind: FileKind }) {
+  const [url, setUrl] = React.useState<string>();
+  React.useEffect(() => {
+    const timer = setTimeout(() => setUrl(storage.get(id)?.url), 500);
+    return () => clearTimeout(timer);
+  }, [id]);
+  return <FilePreview kind={kind} name={storage.get(id)?.name} url={url} />;
+}
+
+/** Stands in for the app's upload, like an upload URL and XMLHttpRequest. A file with "fail" in its name fails halfway. */
+function fakeUpload(file: File, onProgress: (fraction: number) => void) {
+  return new Promise<string>((resolve, reject) => {
+    let step = 0;
+    const timer = setInterval(() => {
+      step += 1;
+      onProgress(step / 10);
+      if (step === 5 && file.name.includes("fail")) {
+        clearInterval(timer);
+        reject(new Error("The storage server refused the file."));
+      } else if (step === 10) {
+        clearInterval(timer);
+        const id = `file_${crypto.randomUUID()}`;
+        storage.set(id, { url: URL.createObjectURL(file), name: file.name });
+        resolve(id);
+      }
+    }, 300);
+  });
+}
 
 /** Stands in for the app's backend, like a Convex mutation. */
 async function saveListing(value: Listing): Promise<FormResult> {
@@ -99,6 +155,9 @@ const emptyListing: z.input<typeof listingSchema> = {
   status: "draft",
   rent: null,
   availableFrom: null,
+  coverId: null,
+  audioTourId: null,
+  videoId: null,
   tags: [],
   billing: "monthly",
   featured: false,
@@ -110,6 +169,9 @@ const sunnyLoft: z.input<typeof listingSchema> = {
   title: "Sunny loft by the Spree",
   rent: 1850,
   availableFrom: "2026-12-01",
+  coverId: "photo_loft",
+  audioTourId: "audio_tour",
+  videoId: "video_walkthrough",
   tags: ["balcony"],
 };
 
@@ -128,6 +190,43 @@ function EditListingForm() {
             description="Checked when you leave it. Try a title with “taken” or “crash”, or Live above €5,000."
             field={field}
             label="Title"
+          />
+        )}
+      </form.Field>
+      <form.Field name="coverId">
+        {(field) => (
+          <FileField
+            accept="image/*"
+            description="Uploads as soon as you pick it. Try a file with “fail” in its name."
+            field={field}
+            label="Cover photo"
+            preview={(id) => <StoredFile id={id} kind="image" />}
+            removable
+            upload={fakeUpload}
+          />
+        )}
+      </form.Field>
+      <form.Field name="audioTourId">
+        {(field) => (
+          <FileField
+            accept="audio/*"
+            field={field}
+            label="Audio tour"
+            preview={(id) => <StoredFile id={id} kind="audio" />}
+            removable
+            upload={fakeUpload}
+          />
+        )}
+      </form.Field>
+      <form.Field name="videoId">
+        {(field) => (
+          <FileField
+            accept="video/*"
+            field={field}
+            label="Video walkthrough"
+            preview={(id) => <StoredFile id={id} kind="video" />}
+            removable
+            upload={fakeUpload}
           />
         )}
       </form.Field>

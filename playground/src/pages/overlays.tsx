@@ -33,6 +33,7 @@ import {
 } from "../../../src/components/drawer";
 import { EmptyState } from "../../../src/components/empty-state";
 import { FormField } from "../../../src/components/field";
+import { FilePreview } from "../../../src/components/file-preview";
 import { Input } from "../../../src/components/input";
 import { Kbd } from "../../../src/components/kbd";
 import { List, ListRow } from "../../../src/components/list-row";
@@ -62,6 +63,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "../../../src/components/popover";
+import { Progress } from "../../../src/components/progress";
 import { Separator } from "../../../src/components/separator";
 import {
   Tabs,
@@ -576,6 +578,12 @@ function SmallThingsSection() {
         <Loader />
         <Loader size="sm" />
         <Loader size="lg" />
+      </div>
+      <div className="grid max-w-sm gap-4">
+        <Progress label="Exporting listings" value={60} />
+        <Progress aria-label="Connecting" value={null} />
+        <FilePreview kind="file" name="Floor plan.pdf" url="#" />
+        <FilePreview kind="audio" name="Loading audio" />
       </div>
       <div className="flex flex-wrap gap-2">
         <Badge>Neutral</Badge>
