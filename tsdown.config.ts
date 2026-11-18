@@ -23,6 +23,6 @@ export default defineConfig([
   ...["index.ts", "form.tsx", "utils.ts", "zod.ts"].map((file) => ({
     ...shared,
     entry: [`src/${file}`],
-    dts: { emitDtsOnly: true },
+    dts: { dtsOnly: true },
   })),
 ]);

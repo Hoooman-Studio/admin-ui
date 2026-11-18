@@ -37,7 +37,8 @@
     "setup.md"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsdown && tailwindcss -i src/styles.css -o dist/styles.css --minify && cp -R src/fonts dist/fonts && sed -e 's#@source \"./components\";#@source \"./\";#' -e '/@source \"\\.\\/patterns\";/d' -e '/@source \"\\.\\/form\\.tsx\";/d' src/styles.css > dist/tailwind.css && rm -rf api && mkdir api && cp dist/*.d.ts api/ && biome check --write api",
+    "api": "rm -rf api && mkdir api && cp dist/*.d.ts api/ && biome check --write api",
+    "build": "rm -rf dist && tsdown && tailwindcss -i src/styles.css -o dist/styles.css --minify && cp -R src/fonts dist/fonts && sed -e 's#@source \"./components\";#@source \"./\";#' -e '/@source \"\\.\\/patterns\";/d' -e '/@source \"\\.\\/form\\.tsx\";/d' src/styles.css > dist/tailwind.css && bun run api",
     "check": "bun run typecheck && bun run lint && bun run fallow && bun run test && bun run build",
     "dev": "vite playground",
     "fallow": "fallow dead-code",

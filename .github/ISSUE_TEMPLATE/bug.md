@@ -7,4 +7,4 @@ about: Something in admin-ui doesn't work as it should
 
 **Workaround you used in the app:**
 
-**File in the app** (path or link):
+**File in the app** (path or link) **and admin-ui version:**

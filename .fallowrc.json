@@ -11,15 +11,7 @@
       { "name": "lib", "patterns": ["src/lib/**"] },
       { "name": "components", "patterns": ["src/components/**"] },
       { "name": "patterns", "patterns": ["src/patterns/**"] },
-      {
-        "name": "entries",
-        "patterns": [
-          "src/index.ts",
-          "src/form.tsx",
-          "src/utils.ts",
-          "src/zod.ts"
-        ]
-      },
+      { "name": "entries", "patterns": ["src/*.{ts,tsx}"] },
       { "name": "playground", "patterns": ["playground/**"] }
     ],
     "rules": [
