@@ -19,7 +19,9 @@ import "@hooman-studio/admin-ui/styles.css";
 
 No Tailwind needed. If your site uses Tailwind (v3 or v4), it keeps working as before, even after someone navigates from the admin back to the site with the CSS still loaded: every class we ship is prefixed (`au:flex`), every theme variable is `--au-*`, our animation names are `au-*`, and nothing styles `html`, `body` or your site's elements. (Like any Tailwind v4 build, it registers Tailwind's internal `--tw-*` properties.) Our font, reset and dark mode only apply inside the admin.
 
-Put `AdminProvider` in your admin's layout route, around every admin page, login too. It gives everything inside the admin's font, theme and accent (`accent`, any CSS colour), and makes `toast()` and `confirm()` work. It adds no layout of its own.
+`styles.css` only has the `au:` classes our own components use, so your admin code can't count on other `au:` classes. To use any of them, build the CSS with your Tailwind v4 instead: `@import "@hooman-studio/admin-ui/tailwind.css";` in your admin CSS, with an `@source` for your admin code (see setup.md).
+
+Put `AdminProvider` in your admin's layout route, around every admin page, login too. It gives everything inside the admin's font, theme and accent (`accent`, any CSS colour), and makes `toast()` and `confirm()` work. It's a plain block with the admin's background and text colour.
 
 ```tsx
 <AdminProvider accent="hsl(20 100% 50%)">
@@ -49,8 +51,8 @@ On a normal admin page, render `AdminShell` as the whole page, without your site
 
 - **Next.js:** put the admin under its own layout (for example a route group whose layout has no site header) with `AdminProvider` in it, and render `AdminShell` from a `"use client"` component.
 - **TanStack Start / Vite:** render `AdminProvider` from the admin layout route's component.
-- **Own layout** (login, a full-screen editor): skip `AdminShell` and build the page from our components inside `AdminProvider`. Paint its background yourself (`au:bg-gray-50`); the provider adds no box.
-- **Admin pieces on a site page:** wrap them in `AdminProvider` too. Use one per page, or nest them, so toasts don't show twice.
+- **Own layout** (login, a full-screen editor): skip `AdminShell` and build the page from our components inside `AdminProvider`. It paints the admin background as tall as your page, so make the page fill the screen.
+- **Admin pieces on a site page:** wrap them in `AdminProvider` too, so they're readable in either theme, and place it with `className` (`mt-8`). Use one per page, or nest them, so toasts don't show twice.
 - **Links:** pass your router's link to `render` on `NavItem`, `Button` and `PageHeader`'s `back`.
 - **Your own content inside the admin** (custom pages) keeps your site's classes and styles. Build it from our components where you can, so it matches.
 - **Overriding our styles:** your site's classes on our components lose to ours, because your site's CSS is on the admin page too and Tailwind v4 puts it in a cascade layer. Size components from a wrapper element, or use Tailwind's important modifier (`w-40!`).
@@ -112,6 +114,27 @@ function ColorField({ field, label, description }: FieldProps<string>) {
 
 Pass `bindField(field, (input) => value)` when the control reports something other than what the field holds, like `null`. See `playground/src/pages/typed-forms.tsx`.
 
+### Tables
+
+`DataTable` shows rows from your own data hook (`undefined` while loading). A column's `key` names a field of the row, or brings its own `cell`. Sorting, selection and paging are yours to hold, so it works for client and server data; `sortRows` and `paginate` from `./utils` do it on the client.
+
+```tsx
+const [sort, setSort] = useState<SortState | null>(null);
+
+<DataTable
+  aria-label="Listings"
+  rows={listings && sortRows(listings, sort)}
+  getRowId={(listing) => listing.id}
+  columns={[
+    { key: "title", header: "Listing", sortable: true },
+    { key: "price", header: "Rent", align: "end", cell: (listing) => `€${listing.price}` },
+  ]}
+  sort={sort}
+  onSortChange={setSort}
+  rowLink={(listing) => <Link to={`/admin/listings/${listing.id}`} />}
+/>
+```
+
 ### Row menus
 
 `DataTable`'s `rowActions` gives each row a "…" menu. For `ListRow` and `SortableListRow`, put a `RowMenu` with `MenuItem`s in `actions`: `<RowMenu label={faq.question}>` reads "Actions for {question}" to screen readers.
@@ -148,7 +171,7 @@ Pass `bindField(field, (input) => value)` when the control reports something oth
 
 ## Known limits
 
-- A site that sets `html { font-size: 62.5% }` shrinks the admin, because sizes are in `rem`.
+- Sizes are in `rem`, so any root font size other than 16px scales the admin: `html { font-size: 62.5% }`, or `:root { font: 18px/… }` from the default Vite template.
 - Our classes have the specificity of one class. Site rules that are more specific still win inside the admin: descendant rules like `.content h1`, and element rules with a pseudo-class or attribute, like `input[type="text"]`, `a:visited` or `a:hover`. Render the admin outside such wrappers, and scope those site rules away from it: `input[type="text"]:not([data-admin-ui] *)`.
 - Rules from your site with the same specificity as one class, like Tailwind v3's preflight `[type='button']`, win when your site's CSS loads after ours. Import the admin CSS after your site's CSS.
 - The theme applies after hydration, so a dark-mode user can see the light theme for a moment on first load.
