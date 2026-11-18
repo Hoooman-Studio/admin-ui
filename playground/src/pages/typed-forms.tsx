@@ -26,6 +26,7 @@ import {
   DateField,
   type FieldProps,
   FileField,
+  FormCheckboxField,
   FormDialog,
   FormDrawer,
   FormError,
@@ -59,6 +60,7 @@ const listingSchema = z
     tags: z.array(z.string()),
     billing: z.enum(["monthly", "yearly"]),
     featured: z.boolean(),
+    furnished: z.boolean(),
     notes: z.string(),
   })
   .refine((listing) => !listing.featured || listing.tags.length > 0, {
@@ -161,6 +163,7 @@ const emptyListing: z.input<typeof listingSchema> = {
   tags: [],
   billing: "monthly",
   featured: false,
+  furnished: false,
   notes: "",
 };
 
@@ -275,6 +278,9 @@ function EditListingForm() {
             label="Featured"
           />
         )}
+      </form.Field>
+      <form.Field name="furnished">
+        {(field) => <FormCheckboxField field={field} label="Furnished" />}
       </form.Field>
       <form.Field name="notes">
         {(field) => <TextareaField field={field} label="Internal notes" />}

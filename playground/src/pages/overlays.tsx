@@ -13,13 +13,14 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { confirm } from "../../../src/components/alert-dialog";
-import { Avatar } from "../../../src/components/avatar";
-import { Badge, type BadgeProps } from "../../../src/components/badge";
-import { Banner } from "../../../src/components/banner";
-import { Button } from "../../../src/components/button";
-import { Card } from "../../../src/components/card";
 import {
+  Avatar,
+  Badge,
+  type BadgeProps,
+  Banner,
+  Button,
+  Card,
+  confirm,
   Drawer,
   DrawerBody,
   DrawerClose,
@@ -29,15 +30,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "../../../src/components/drawer";
-import { EmptyState } from "../../../src/components/empty-state";
-import { FormField } from "../../../src/components/field";
-import { FilePreview } from "../../../src/components/file-preview";
-import { Input } from "../../../src/components/input";
-import { Kbd } from "../../../src/components/kbd";
-import { List, ListRow } from "../../../src/components/list-row";
-import { Loader } from "../../../src/components/loader";
-import {
+  EmptyState,
+  FilePreview,
+  FormField,
+  Input,
+  Kbd,
+  List,
+  ListRow,
+  Loader,
   Menu,
   MenuCheckboxItem,
   MenuContent,
@@ -51,33 +51,27 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
-  RowMenu,
-} from "../../../src/components/menu";
-import { NavItem } from "../../../src/components/nav";
-import { PageSection } from "../../../src/components/page";
-import {
+  NavItem,
+  PageSection,
   Popover,
   PopoverClose,
   PopoverContent,
   PopoverDescription,
   PopoverTitle,
   PopoverTrigger,
-} from "../../../src/components/popover";
-import { Progress } from "../../../src/components/progress";
-import { Separator } from "../../../src/components/separator";
-import {
+  Progress,
+  RowMenu,
+  Separator,
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-} from "../../../src/components/tabs";
-import { toast } from "../../../src/components/toast";
-import {
   Tooltip,
   TooltipContent,
   TooltipShortcut,
   TooltipTrigger,
-} from "../../../src/components/tooltip";
+  toast,
+} from "../../../src";
 
 const drawerNav = [
   { label: "Listings", icon: <BuildingIcon /> },

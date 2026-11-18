@@ -1,9 +1,11 @@
+import { ArrowUpDownIcon } from "lucide-react";
 import { useState } from "react";
-import { Banner } from "../../../src/components/banner";
-import { Button } from "../../../src/components/button";
-import { Card } from "../../../src/components/card";
-import { CheckboxField, CheckboxGroup } from "../../../src/components/checkbox";
 import {
+  Banner,
+  Button,
+  Card,
+  CheckboxField,
+  CheckboxGroup,
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
@@ -11,30 +13,23 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxStatus,
-  useAsyncOptions,
-} from "../../../src/components/combobox";
-import { DatePicker } from "../../../src/components/date-picker";
-import {
+  DatePicker,
   Field,
   FieldDescription,
   FieldLabel,
-  FormField,
-} from "../../../src/components/field";
-import {
   FileInput,
   FileInputDropzone,
   FileInputList,
-} from "../../../src/components/file-input";
-import { Input } from "../../../src/components/input";
-import { List, ListRow } from "../../../src/components/list-row";
-import { NumberInput } from "../../../src/components/number-input";
-import { PageSection } from "../../../src/components/page";
-import { RadioField, RadioGroup } from "../../../src/components/radio";
-import {
+  FormField,
+  Input,
+  List,
+  ListRow,
+  NumberInput,
+  PageSection,
+  RadioField,
+  RadioGroup,
   SegmentedControl,
   SegmentedControlItem,
-} from "../../../src/components/segmented-control";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -42,10 +37,12 @@ import {
   SelectItem,
   SelectSeparator,
   SelectTrigger,
-} from "../../../src/components/select";
-import { SwitchField } from "../../../src/components/switch";
-import { TagInput } from "../../../src/components/tag-input";
-import { Textarea } from "../../../src/components/textarea";
+  SelectValue,
+  SwitchField,
+  TagInput,
+  Textarea,
+  useAsyncOptions,
+} from "../../../src";
 
 const industries = [
   {
@@ -132,9 +129,17 @@ function ProjectsToolbar() {
           <SegmentedControlItem value="archived">Archived</SegmentedControlItem>
           <SegmentedControlItem value="all">All</SegmentedControlItem>
         </SegmentedControl>
-        <div className="w-44">
+        <div className="w-52">
           <Select defaultValue="recent">
-            <SelectTrigger aria-label="Sort projects" />
+            <SelectTrigger aria-label="Sort projects">
+              <span className="flex min-w-0 items-center gap-2">
+                <ArrowUpDownIcon
+                  aria-hidden="true"
+                  className="size-4 shrink-0"
+                />
+                <SelectValue />
+              </span>
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="recent">Recently updated</SelectItem>
               <SelectItem value="name">Name</SelectItem>
