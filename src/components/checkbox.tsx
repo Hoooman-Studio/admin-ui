@@ -6,7 +6,11 @@ import {
 import { CheckIcon, MinusIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-import { ChoiceField, type ChoiceFieldProps } from "./choice-field";
+import {
+  ChoiceField,
+  type ChoiceFieldProps,
+  choiceGroupClass,
+} from "./choice-field";
 
 type CheckboxProps = Omit<
   React.ComponentProps<typeof CheckboxPart>,
@@ -70,7 +74,7 @@ function CheckboxGroup<T extends string = string>({
 }) {
   return (
     <CheckboxGroupPart<T>
-      className={cn("au:flex au:flex-col au:gap-3", className)}
+      className={cn(choiceGroupClass, className)}
       {...props}
     />
   );

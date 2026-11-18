@@ -5,7 +5,11 @@ import {
 } from "@ui-sdk/react/radio";
 import type * as React from "react";
 import { cn } from "../lib/cn";
-import { ChoiceField, type ChoiceFieldProps } from "./choice-field";
+import {
+  ChoiceField,
+  type ChoiceFieldProps,
+  choiceGroupClass,
+} from "./choice-field";
 
 type RadioGroupProps<T extends string> = Omit<
   React.ComponentProps<typeof RadioGroupPart<T>>,
@@ -18,10 +22,7 @@ function RadioGroup<T extends string = string>({
   ...props
 }: RadioGroupProps<T>) {
   return (
-    <RadioGroupPart<T>
-      className={cn("au:flex au:flex-col au:gap-3", className)}
-      {...props}
-    />
+    <RadioGroupPart<T> className={cn(choiceGroupClass, className)} {...props} />
   );
 }
 
