@@ -36,6 +36,7 @@
 ## Done means
 
 - `bun run check` passes (typecheck, Biome/Ultracite, fallow, tests, build).
+- A change apps notice gets a line in `CHANGELOG.md` under `## Unreleased`; a breaking one says how to upgrade.
 - New or changed components are shown in the playground, and checked in a browser with the `verify` skill at desktop and phone sizes, with the playground's hostile site styles in place.
 
 ## Never without asking

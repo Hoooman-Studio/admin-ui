@@ -188,4 +188,4 @@ See `AGENTS.md` for the rules.
 
 ### Release
 
-Bump `version` in `package.json` on `main`, then push a tag: `git tag v0.1.1 && git push origin v0.1.1`. The release workflow runs the checks and stages the release on npm with provenance, through npm trusted publishing (no token in GitHub). It goes live once a maintainer approves it with 2FA: `npm stage list`, then `npm stage approve <stage-id>` (npm 11.15+).
+Bump `version` in `package.json` and rename `## Unreleased` in `CHANGELOG.md` to it, on `main`, then push a tag: `git tag v0.1.1 && git push origin v0.1.1`. The release workflow runs the checks and stages the release on npm with provenance, through npm trusted publishing (no token in GitHub). It goes live once a maintainer approves it with 2FA: `npm stage list`, then `npm stage approve <stage-id>` (npm 11.15+).
