@@ -89,7 +89,7 @@ function DatePicker({
       )}
       <DatePickerTrigger
         aria-label={triggerLabel}
-        className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:disabled:pointer-events-none au:in-data-[slot=form-field-box]:size-5"
+        className="au:hover:bg-alpha/5 au:focus-visible:outline-accent au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:focus-visible:outline-2 au:disabled:pointer-events-none au:in-data-[slot=form-field-box]:size-5"
       >
         <CalendarIcon aria-hidden="true" className="au:size-4" />
       </DatePickerTrigger>
