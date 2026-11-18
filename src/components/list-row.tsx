@@ -54,9 +54,14 @@ type ListRowProps = Omit<React.ComponentProps<"li">, "title"> & {
   actions?: React.ReactNode;
   /** Makes the whole row open this link: `<a href="/clients/1" />` or your router's `<Link />`. The title is its text. */
   link?: RowLinkElement;
+  /** Shows the whole title and subtitle over several lines instead of cutting them off. */
+  wrap?: boolean;
 };
 
-/** The dashboard's list row: a leading avatar or square, a title and subtitle, and meta or controls at the end. */
+/**
+ * The dashboard's list row: a leading avatar or square, a title and subtitle,
+ * and meta or controls at the end. On narrow rows the end moves under the title.
+ */
 function ListRow({
   title,
   subtitle,
@@ -64,39 +69,52 @@ function ListRow({
   meta,
   actions,
   link,
+  wrap = false,
   className,
   ...props
 }: ListRowProps) {
+  const text = wrap ? "au:wrap-break-word" : "au:truncate";
   return (
     <li
       className={cn(
-        "au:border-alpha/5 au:hover:bg-alpha/2 au:relative au:flex au:min-h-19 au:items-center au:gap-4 au:not-first:border-t au:px-4 au:py-3 au:transition-colors au:duration-100 au:sm:gap-5 au:sm:px-6",
+        "au:@container/list-row au:border-alpha/5 au:hover:bg-alpha/2 au:relative au:flex au:min-h-19 au:items-center au:gap-4 au:not-first:border-t au:px-4 au:py-3 au:transition-colors au:duration-100 au:sm:gap-5 au:sm:px-6",
         aboveRowLink,
         className
       )}
       {...props}
     >
       {leading ? <div className="au:flex au:shrink-0">{leading}</div> : null}
-      <div className="au:flex au:min-w-0 au:flex-1 au:flex-col">
-        <span className="au:truncate au:text-base au:font-semibold au:text-gray-950">
-          <RowLink link={link}>{title}</RowLink>
-        </span>
-        {subtitle ? (
-          <span className="au:truncate au:text-sm au:font-medium au:text-gray-500">
-            {subtitle}
+      <div className="au:flex au:min-w-0 au:flex-1 au:flex-col au:gap-x-4 au:gap-y-2 au:sm:gap-x-5 au:@sm/list-row:flex-row au:@sm/list-row:items-center">
+        <div className="au:flex au:min-w-0 au:flex-1 au:flex-col">
+          <span
+            className={cn(
+              "au:text-base au:font-semibold au:text-gray-950",
+              text
+            )}
+          >
+            <RowLink link={link}>{title}</RowLink>
           </span>
+          {subtitle ? (
+            <span
+              className={cn("au:text-sm au:font-medium au:text-gray-500", text)}
+            >
+              {subtitle}
+            </span>
+          ) : null}
+        </div>
+        {meta || actions ? (
+          <div className="au:flex au:shrink-0 au:items-center au:gap-x-4 au:sm:gap-x-5">
+            {meta ? (
+              <span className="au:tabular au:text-sm au:font-medium au:text-gray-500">
+                {meta}
+              </span>
+            ) : null}
+            {actions ? (
+              <div className="au:flex au:items-center au:gap-2">{actions}</div>
+            ) : null}
+          </div>
         ) : null}
       </div>
-      {meta ? (
-        <span className="au:tabular au:shrink-0 au:text-sm au:font-medium au:text-gray-500">
-          {meta}
-        </span>
-      ) : null}
-      {actions ? (
-        <div className="au:flex au:shrink-0 au:items-center au:gap-2">
-          {actions}
-        </div>
-      ) : null}
     </li>
   );
 }
