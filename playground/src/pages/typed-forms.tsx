@@ -1,17 +1,29 @@
-import { PlusIcon } from "lucide-react";
+import { CalendarIcon, PlusIcon } from "lucide-react";
 import { z } from "zod";
 import {
   Button,
   DialogBody,
   DialogFooter,
+  DrawerBody,
+  DrawerClose,
+  DrawerFooter,
+  FieldLegend,
+  FieldSet,
+  FormField,
   PageBody,
   PageHeader,
   PageSection,
+  SegmentedControl,
+  SegmentedControlItem,
 } from "../../../src";
 import {
   AdminForm,
+  bindField,
+  ChecklistField,
   DateField,
+  type FieldProps,
   FormDialog,
+  FormDrawer,
   FormError,
   type FormResult,
   FormSwitchField,
@@ -222,23 +234,177 @@ function NewListingForm() {
   );
 }
 
+const meetingPoints = [
+  { value: "lobby", label: "Lobby" },
+  { value: "garden", label: "Garden" },
+  { value: "street", label: "Street" },
+];
+
+/** An app's own field, built like ours: bindField gives the error and a change that clears the server's error. */
+function MeetingPointField({ field, label, description }: FieldProps<string>) {
+  const { error, onChange } = bindField(
+    field,
+    (value: string | null) => value ?? field.state.value
+  );
+  return (
+    <FormField description={description} error={error} label={label}>
+      <SegmentedControl
+        onBlur={field.handleBlur}
+        onValueChange={onChange}
+        value={field.state.value}
+      >
+        {meetingPoints.map((point) => (
+          <SegmentedControlItem key={point.value} value={point.value}>
+            {point.label}
+          </SegmentedControlItem>
+        ))}
+      </SegmentedControl>
+    </FormField>
+  );
+}
+
+const viewingSchema = z.object({
+  date: required(z.string(), "Choose a date."),
+  meetingPoint: z.string(),
+  guideId: z.string().nullable(),
+  roomIds: z.array(z.string()).min(1, "Choose at least one room to show."),
+  notes: z.string(),
+});
+
+const guides = [
+  { value: "user_mira", label: "Mira Jansen" },
+  { value: "user_tom", label: "Tom de Vries" },
+];
+
+const rooms = [
+  { value: "room_living", label: "Living room" },
+  { value: "room_kitchen", label: "Kitchen" },
+  {
+    value: "room_bedroom",
+    label: "Bedroom",
+    description: "Ask the tenant first.",
+  },
+  { value: "room_balcony", label: "Balcony" },
+  { value: "room_storage", label: "Storage" },
+];
+
+async function saveViewing(
+  value: z.output<typeof viewingSchema>
+): Promise<FormResult> {
+  await wait(800);
+  const fieldErrors: Record<string, string> = {};
+  if (value.guideId === "user_tom") {
+    fieldErrors.guideId = "Tom is fully booked that week.";
+  }
+  if (value.meetingPoint === "garden") {
+    fieldErrors.meetingPoint = "The garden is closed for the winter.";
+  }
+  if (Object.keys(fieldErrors).length > 0) {
+    return { ok: false, fieldErrors };
+  }
+  const guide = value.guideId === null ? "without a guide" : "with a guide";
+  return { ok: true, message: `Viewing planned ${guide}.` };
+}
+
+const newViewing: z.input<typeof viewingSchema> = {
+  date: null,
+  meetingPoint: "lobby",
+  guideId: "user_mira",
+  roomIds: ["room_living"],
+  notes: "",
+};
+
+function PlanViewingForm() {
+  const form = useAdminForm({
+    defaultValues: newViewing,
+    validators: { onSubmit: viewingSchema },
+    onSubmit: saveViewing,
+  });
+
+  return (
+    <AdminForm form={form}>
+      <DrawerBody>
+        <FieldSet>
+          <FieldLegend>When</FieldLegend>
+          <form.Field name="date">
+            {(field) => <DateField field={field} label="Date" />}
+          </form.Field>
+          <form.Field name="meetingPoint">
+            {(field) => (
+              <MeetingPointField
+                description="A custom field. Try Garden."
+                field={field}
+                label="Meeting point"
+              />
+            )}
+          </form.Field>
+        </FieldSet>
+        <FieldSet>
+          <FieldLegend>Who</FieldLegend>
+          <form.Field name="guideId">
+            {(field) => (
+              <SelectField
+                description="Try Tom, or Nobody."
+                emptyLabel="Nobody"
+                field={field}
+                label="Guided by"
+                options={guides}
+              />
+            )}
+          </form.Field>
+        </FieldSet>
+        <FieldSet>
+          <FieldLegend>What to show</FieldLegend>
+          <form.Field name="roomIds">
+            {(field) => (
+              <ChecklistField field={field} label="Rooms" options={rooms} />
+            )}
+          </form.Field>
+          <form.Field name="notes">
+            {(field) => <TextareaField field={field} label="Notes" />}
+          </form.Field>
+        </FieldSet>
+        <FormError />
+      </DrawerBody>
+      <DrawerFooter>
+        <DrawerClose render={<Button variant="outline" />}>Cancel</DrawerClose>
+        <SubmitButton>Plan viewing</SubmitButton>
+      </DrawerFooter>
+    </AdminForm>
+  );
+}
+
 function TypedFormsPage() {
   return (
     <>
       <PageHeader
         actions={
-          <FormDialog
-            description="It starts empty each time it opens, and closes once saved."
-            title="New listing"
-            trigger={
-              <Button variant="accent">
-                <PlusIcon />
-                New listing
-              </Button>
-            }
-          >
-            <NewListingForm />
-          </FormDialog>
+          <>
+            <FormDrawer
+              description="A FormDrawer: it starts fresh each time and closes once saved."
+              title="Plan a viewing"
+              trigger={
+                <Button variant="outline">
+                  <CalendarIcon />
+                  Plan viewing
+                </Button>
+              }
+            >
+              <PlanViewingForm />
+            </FormDrawer>
+            <FormDialog
+              description="It starts empty each time it opens, and closes once saved."
+              title="New listing"
+              trigger={
+                <Button variant="accent">
+                  <PlusIcon />
+                  New listing
+                </Button>
+              }
+            >
+              <NewListingForm />
+            </FormDialog>
+          </>
         }
         title="Typed forms"
       />
