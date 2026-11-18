@@ -57,5 +57,9 @@ function ChoiceField({
   );
 }
 
+/** Stacks the choices of a CheckboxGroup or RadioGroup. More than 8 flow into as many columns as fit, read top to bottom. */
+const choiceGroupClass =
+  "au:flex au:flex-col au:gap-3 au:has-[>:nth-child(9)]:block au:has-[>:nth-child(9)]:columns-[12rem] au:has-[>:nth-child(9)]:gap-x-6 au:has-[>:nth-child(9)]:-mb-3 au:has-[>:nth-child(9)]:*:break-inside-avoid au:has-[>:nth-child(9)]:*:pb-3";
+
 export type { ChoiceFieldProps };
-export { ChoiceField };
+export { ChoiceField, choiceGroupClass };

@@ -97,7 +97,7 @@ function StoredFile({ id }: { id: Id<"_storage"> }) {
 
 `FilePreview` is the tile: an image, a video that plays inline, an audio player, or a file with its type (`kind`: `"image" | "video" | "audio" | "file"`).
 
-`FormDialog` holds a form that starts fresh on every open and closes on `ok: true`; render `DialogBody` and `DialogFooter` in its `AdminForm`. `FormDrawer` is the same as a side sheet, with `DrawerBody` and `DrawerFooter`; put extra buttons before the `SubmitButton`.
+`FormDialog` holds a form that starts fresh on every open and closes on `ok: true`; render `DialogBody` and `DialogFooter` in its `AdminForm`. `FormDrawer` is the same as a side sheet, with `DrawerBody` and `DrawerFooter`; put extra buttons before the `SubmitButton`. To open either from your own state, like the URL, pass `open` and `onOpenChange` instead of `trigger`.
 
 Your own field takes `FieldProps<Value>` and calls `bindField`, which gives the field's error and an `onChange` that also clears the server's error. Here `ColorPicker` stands for your own control:
 
