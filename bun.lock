@@ -33,11 +33,11 @@
         "zod": "^4.6.7",
       },
       "peerDependencies": {
-        "@tanstack/react-form": ">=1.33",
+        "@tanstack/react-form": "^1.33.0",
         "react": ">=19",
         "react-dom": ">=19",
-        "tailwindcss": ">=4.1",
-        "zod": ">=4",
+        "tailwindcss": "^4.1.0",
+        "zod": "^4.0.0",
       },
       "optionalPeers": [
         "@tanstack/react-form",
