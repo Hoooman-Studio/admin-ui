@@ -17,6 +17,7 @@ import {
   AdminHeaderActions,
   AdminHeaderStudioLink,
   AdminHeaderTitle,
+  AdminProvider,
   AdminShell,
   CommandGroup,
   CommandGroupLabel,
@@ -33,6 +34,7 @@ import { BasicsPage } from "./pages/basics";
 import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
 import { ListingPage, ListingsPage, OverviewPage } from "./pages/layout";
+import { LoginPage } from "./pages/login";
 import { OverlaysPage } from "./pages/overlays";
 import { SitePage } from "./pages/site";
 import { TypedFormsPage } from "./pages/typed-forms";
@@ -66,9 +68,9 @@ const components: PageName[] = [
   "data",
 ];
 
-function readPage(): PageName | "listing" | "site" {
+function readPage(): PageName | "listing" | "login" | "site" {
   const name = window.location.hash.replace("#/", "");
-  if (name === "listing" || name === "site") {
+  if (name === "listing" || name === "login" || name === "site") {
     return name;
   }
   return name in pages ? (name as PageName) : "overview";
@@ -83,11 +85,20 @@ function go(name: string) {
   window.location.hash = `#/${name}`;
 }
 
+/** The admin's layout route: AdminProvider around every admin page, login too. */
 function App() {
   const page = useSyncExternalStore(subscribe, readPage);
   if (page === "site") {
     return <SitePage />;
   }
+  return (
+    <AdminProvider accent="hsl(20 100% 50%)">
+      {page === "login" ? <LoginPage /> : <Shell page={page} />}
+    </AdminProvider>
+  );
+}
+
+function Shell({ page }: { page: PageName | "listing" }) {
   const Page = page === "listing" ? ListingPage : pages[page].Page;
   const navItem = (name: PageName) => (
     <NavItem
@@ -108,7 +119,6 @@ function App() {
 
   return (
     <AdminShell
-      accent="hsl(20 100% 50%)"
       header={
         <AdminHeader>
           <AdminHeaderAccount email="lena@portaeuropa.com" name="Lena Fischer">
@@ -116,7 +126,7 @@ function App() {
               <UserIcon />
               Profile
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={() => go("login")}>
               <LogOutIcon />
               Sign out
             </MenuItem>

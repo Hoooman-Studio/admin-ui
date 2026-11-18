@@ -3,8 +3,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { __unstable__loadDesignSystem } from "@tailwindcss/node";
 
-// Single words that are utilities but used as prop values, like `variant="outline"`.
-const propValues = new Set(["outline"]);
+// Single words that are utilities but used as prop or style values, like `variant="outline"`.
+const propValues = new Set(["outline", "contents"]);
 const strings = /"(?<quoted>[^"\\\n]*)"|`(?<template>[^`]*)`/gu;
 const comments = /\/\*[\s\S]*?\*\/|^\s*\/\/.*$/gmu;
 const interpolations = /\$\{[^}]*\}/gu;

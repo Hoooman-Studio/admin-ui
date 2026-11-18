@@ -1,8 +1,6 @@
 import * as React from "react";
-import { AdminScope } from "../components/admin-scope";
-import { ConfirmDialog } from "../components/alert-dialog";
+import { useAdminProvider } from "../components/admin-provider";
 import { RailContext } from "../components/nav";
-import { Toaster } from "../components/toast";
 import { cn } from "../lib/cn";
 import { readStorage, writeStorage } from "../lib/storage";
 
@@ -46,8 +44,6 @@ const useCollapsed = () =>
   React.useSyncExternalStore(subscribeCollapsed, readCollapsed, () => false);
 
 interface AdminShellProps {
-  /** The client's brand colour, any CSS colour. Sets `--au-accent` for everything inside. */
-  accent?: string;
   /** The page: a PageHeader, PageToolbar and PageBody. */
   children: React.ReactNode;
   className?: string;
@@ -61,22 +57,15 @@ interface AdminShellProps {
  * The admin's frame: the header you compose, a nav rail that collapses to
  * icons (the choice is kept in localStorage) and the scrolling page. It covers
  * the viewport, whatever the site's body and wrappers do. On phones
- * the rail is a drawer opened from AdminHeaderTitle. It is an AdminScope, so the admin's styles apply inside it only. It
- * mounts the Toaster and ConfirmDialog, so `toast()` and `confirm()` work
- * anywhere inside.
+ * the rail is a drawer opened from AdminHeaderTitle. It must be inside
+ * AdminProvider.
  */
-function AdminShell({
-  accent,
-  header,
-  nav,
-  children,
-  className,
-}: AdminShellProps) {
+function AdminShell({ header, nav, children, className }: AdminShellProps) {
+  useAdminProvider("AdminShell");
   const collapsed = useCollapsed();
 
   return (
-    <AdminScope
-      accent={accent}
+    <div
       className={cn(
         "au:fixed au:inset-0 au:flex au:flex-col au:bg-gray-50 au:text-gray-950",
         className
@@ -107,9 +96,7 @@ function AdminShell({
           {children}
         </main>
       </div>
-      <Toaster />
-      <ConfirmDialog />
-    </AdminScope>
+    </div>
   );
 }
 

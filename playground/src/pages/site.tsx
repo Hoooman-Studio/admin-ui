@@ -1,11 +1,4 @@
-import {
-  AdminScope,
-  Button,
-  ConfirmDialog,
-  confirm,
-  Toaster,
-  toast,
-} from "../../../src";
+import { AdminProvider, Button, confirm, toast } from "../../../src";
 
 async function unpublish() {
   if (
@@ -41,13 +34,11 @@ function SitePage() {
       <button type="button">A site button</button>
       {/* Admin pieces on the site's own page, outside AdminShell. */}
       <div className="mt-8">
-        <AdminScope accent="hsl(20 100% 50%)">
+        <AdminProvider accent="hsl(20 100% 50%)">
           <Button onClick={unpublish} variant="outline">
             Unpublish page
           </Button>
-          <Toaster />
-          <ConfirmDialog />
-        </AdminScope>
+        </AdminProvider>
       </div>
     </div>
   );

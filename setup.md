@@ -4,7 +4,7 @@ You are adding a Hooman Studio admin panel to an existing React 19 website. The 
 
 1. **Check the project.** Find the framework (Next.js App Router, TanStack Start, or a Vite React app) and whether the site uses Tailwind CSS v4 (`tailwindcss` 4.x in `package.json`). Stop and ask if it isn't React 19.
 2. **Install** `@hooman-studio/admin-ui` with the project's package manager. If the admin needs forms, also install `@tanstack/react-form` and `zod`.
-3. **Add the admin route** as its own page without the site's header and footer, for example a Next.js route group with its own layout, or a TanStack Start / router route. Render `AdminShell` there, as in the package README.
+3. **Add the admin route** as its own layout without the site's header and footer, for example a Next.js route group with its own layout, or a TanStack Start / router layout route. Wrap every admin page in `AdminProvider` there, the login page too, and render `AdminShell` on the normal admin pages, as in the package README.
 4. **Load the CSS in that route only:**
    - Site on Tailwind v4: create an admin CSS file next to the route with `@import "@hooman-studio/admin-ui/tailwind.css";` and `@source "./";`, and import that file in the route. Admin code can then use `au:` classes. Admin code in another folder, like `src/components/admin`, needs its own `@source` line, or its `au:` classes are missing.
    - Otherwise: `import "@hooman-studio/admin-ui/styles.css";` in the route.
