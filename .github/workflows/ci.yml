@@ -15,3 +15,8 @@ jobs:
           bun-version: 1.4.3
       - run: bun install --frozen-lockfile
       - run: bun run check
+      # The build writes the public types to api/. Commit them so API changes show in the PR.
+      - name: api/ matches the build
+        run: |
+          git add --intent-to-add api
+          git diff --exit-code api/ || (echo "Public API changed: run bun run build and commit api/." && exit 1)
