@@ -14,10 +14,11 @@ import {
   MenuSubTrigger as MenuSubTriggerPart,
   MenuTrigger,
 } from "@ui-sdk/react/menu";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass, WithNodeChildren } from "../lib/types";
+import { Button } from "./button";
 
 /** The floating surface shared by menus and popovers, and the bottom sheet they become on small touch screens. */
 const popupClass =
@@ -155,6 +156,48 @@ function MenuSubContent({
   );
 }
 
+type RowMenuProps = {
+  /** MenuItems. */
+  children: React.ReactNode;
+  className?: string;
+} & (
+  | {
+      /** The row's name. The button reads "Actions for {label}". */
+      label: string;
+    }
+  | {
+      /** Ids of the elements that name the button, when the row's name isn't plain text. */
+      "aria-labelledby": string;
+    }
+);
+
+/** The "…" button and menu for a row's actions, as in DataTable. Put it in a ListRow's `actions`. */
+function RowMenu({ children, className, ...name }: RowMenuProps) {
+  return (
+    <Menu>
+      <MenuTrigger
+        render={
+          <Button
+            aria-label={
+              "label" in name ? `Actions for ${name.label}` : "Actions"
+            }
+            aria-labelledby={
+              "aria-labelledby" in name ? name["aria-labelledby"] : undefined
+            }
+            className={className}
+            size="icon-sm"
+            variant="ghost"
+          >
+            <EllipsisIcon />
+          </Button>
+        }
+      />
+      <MenuContent align="end">{children}</MenuContent>
+    </Menu>
+  );
+}
+
+export type { RowMenuProps };
 export {
   Menu,
   MenuCheckboxItem,
@@ -170,4 +213,5 @@ export {
   MenuSubTrigger,
   MenuTrigger,
   popupClass,
+  RowMenu,
 };

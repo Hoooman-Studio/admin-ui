@@ -145,6 +145,8 @@ export {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
+  RowMenu,
+  type RowMenuProps,
 } from "./components/menu";
 export {
   NavItem,

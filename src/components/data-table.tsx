@@ -3,7 +3,6 @@ import {
   ArrowDownIcon,
   ArrowUpDownIcon,
   ArrowUpIcon,
-  EllipsisIcon,
   XIcon,
 } from "lucide-react";
 import * as React from "react";
@@ -14,7 +13,7 @@ import { Checkbox } from "./checkbox";
 import { EmptyState } from "./empty-state";
 import { aboveRowLink, RowLink, type RowLinkElement } from "./list-row";
 import { Loader } from "./loader";
-import { Menu, MenuContent, MenuTrigger } from "./menu";
+import { RowMenu } from "./menu";
 
 /** Values a column can show without its own `cell`. */
 type Shown = string | number | null | undefined;
@@ -293,21 +292,9 @@ function DataTable<Row>({
               )}
             >
               {actions ? (
-                <Menu>
-                  <MenuTrigger
-                    render={
-                      <Button
-                        aria-label="Actions"
-                        aria-labelledby={`${baseId}-actions ${nameId}`}
-                        size="icon-sm"
-                        variant="ghost"
-                      >
-                        <EllipsisIcon />
-                      </Button>
-                    }
-                  />
-                  <MenuContent align="end">{actions}</MenuContent>
-                </Menu>
+                <RowMenu aria-labelledby={`${baseId}-actions ${nameId}`}>
+                  {actions}
+                </RowMenu>
               ) : null}
             </td>
           ) : null}

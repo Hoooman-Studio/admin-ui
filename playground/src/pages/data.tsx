@@ -4,6 +4,7 @@ import {
   MapPinIcon,
   PencilIcon,
   PlusIcon,
+  TrashIcon,
 } from "lucide-react";
 import type * as React from "react";
 import { useState } from "react";
@@ -30,6 +31,7 @@ import {
   MenuItem,
   MenuSeparator,
   MenuTrigger,
+  RowMenu,
 } from "../../../src/components/menu";
 import {
   PageBody,
@@ -555,13 +557,28 @@ function EnquiriesExample() {
         {enquiries.map((enquiry) => (
           <ListRow
             actions={
-              <Button
-                onClick={() => toast(`Replied to ${enquiry.name}`)}
-                size="sm"
-                variant="outline"
-              >
-                Reply
-              </Button>
+              <>
+                <Button
+                  onClick={() => toast(`Replied to ${enquiry.name}`)}
+                  size="sm"
+                  variant="outline"
+                >
+                  Reply
+                </Button>
+                <RowMenu label={enquiry.name}>
+                  <MenuItem onSelect={() => toast(`Archived ${enquiry.name}`)}>
+                    <ArchiveIcon />
+                    Archive
+                  </MenuItem>
+                  <MenuItem
+                    destructive
+                    onSelect={() => toast(`Deleted ${enquiry.name}`)}
+                  >
+                    <TrashIcon />
+                    Delete
+                  </MenuItem>
+                </RowMenu>
+              </>
             }
             key={enquiry.id}
             leading={<Avatar name={enquiry.name} size="lg" />}
@@ -613,13 +630,19 @@ function FaqOrderExample() {
         {(faq) => (
           <SortableListRow
             actions={
-              <Button
-                onClick={() => toast(`Editing "${faq.question}"`)}
-                size="sm"
-                variant="outline"
-              >
-                Edit
-              </Button>
+              <RowMenu label={faq.question}>
+                <MenuItem onSelect={() => toast(`Editing "${faq.question}"`)}>
+                  <PencilIcon />
+                  Edit
+                </MenuItem>
+                <MenuItem
+                  destructive
+                  onSelect={() => toast(`Deleted "${faq.question}"`)}
+                >
+                  <TrashIcon />
+                  Delete
+                </MenuItem>
+              </RowMenu>
             }
             meta={`${faq.views} views`}
             title={faq.question}
