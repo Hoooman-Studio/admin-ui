@@ -16,7 +16,7 @@ const buttonVariants = cva(
         subtle: "au:bg-alpha/5 au:hover:bg-alpha/10 au:text-gray-950",
         // The hover tint sits on the button's own surface, so it stays readable on a site page in another theme.
         outline:
-          "au:border-alpha/10 au:hover:bg-[color-mix(in_oklab,var(--au-alpha)_5%,var(--au-gray-50))] au:border au:bg-gray-50 au:text-gray-950",
+          "au:border-alpha/10 au:hover:bg-[color-mix(in_srgb,var(--au-alpha)_5%,var(--au-gray-50))] au:border au:bg-gray-50 au:text-gray-950",
         ghost: "au:hover:bg-alpha/5 au:bg-transparent au:text-gray-950",
         danger: "au:bg-red-500 au:text-gray-50 au:hover:bg-red-600",
         "danger-subtle":
