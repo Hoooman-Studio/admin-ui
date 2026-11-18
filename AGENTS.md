@@ -4,11 +4,23 @@
 
 ## Layout
 
-- `src/components/*.tsx`: one file per component family. Everything public is exported from `src/index.ts`; typed forms from `src/form.tsx` (`./form`); plain functions and types that servers may import from `src/utils.ts` (`./utils`) and `src/zod.ts` (`./zod`), both built without "use client".
+- `src/components/*.tsx`: primitives, one file per family. The only place that imports `@ui-sdk/*`.
+- `src/patterns/*.tsx`: patterns built from our components (AdminShell, DataTable, FilePreview…), no `@ui-sdk/*`. Layers: `lib` ← `components` ← `patterns` ← entries; Biome and fallow enforce them.
+- Entries: everything public is exported from `src/index.ts`; typed forms from `src/form.tsx` (`./form`); plain functions and types that servers may import from `src/utils.ts` (`./utils`) and `src/zod.ts` (`./zod`), both built without "use client".
 - `src/lib/`: shared helpers (`cn`) and pure logic.
+- `api/`: the public types of each entry, written by `bun run build`. Commit it; CI fails when it is stale.
 - `src/styles.css`: tokens, the scoped reset and fonts. Built with Tailwind into `dist/styles.css`, which apps import; they need no Tailwind.
 - `setup.md`: the one-time install guide that apps point their agent at. Keep it short: what code and types can't say (where to import the CSS, the AGENTS.md lines). Usage belongs in `README.md`, which ships in the package.
 - `playground/`: a Vite app posing as a client's website (`site.css`: its own Tailwind plus hostile global styles) with the admin inside. Not published.
+
+## What belongs here
+
+- Rule of two: add something only when two admin panels need it, or it's a gap every admin has.
+- If an app can't build it from our pieces, add the missing building block or export (like `bindField`), not the finished feature.
+- Prefer children or render props over config props, and exporting a building block over adding a variant.
+- No client or domain words (catalogue, coach…).
+- Before adding a prop, check whether something can be removed or worked out from what's there.
+- Public API changes show in `api/`; keep that diff small.
 
 ## Rules
 
@@ -23,10 +35,11 @@
 
 ## Done means
 
-- `bun run check` passes (typecheck, Biome/Ultracite, fallow, tests, build).
-- New or changed components are shown in the playground, and checked in a browser with the `verify` skill at desktop and phone sizes, with the playground's hostile site styles in place.
+- `bun run check` passes (typecheck, Biome/Ultracite, fallow, tests, build), and the `api/` it writes is committed.
+- New or changed components are shown in the playground (a test fails on an export it doesn't import), and checked in a browser with the `verify` skill at desktop and phone sizes, with the playground's hostile site styles in place.
 
 ## Never without asking
 
 - Publish to npm, create release tags, or change the package name.
 - Upgrade `@ui-sdk/*` (pinned exact; it is in beta).
+- Merge a PR that changes `api/`.
