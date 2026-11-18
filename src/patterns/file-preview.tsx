@@ -1,18 +1,12 @@
-import {
-  Slider,
-  SliderControl,
-  SliderIndicator,
-  SliderThumb,
-  SliderTrack,
-} from "@ui-sdk/react/slider";
 import { AlertTriangleIcon, FileIcon, PauseIcon, PlayIcon } from "lucide-react";
 import * as React from "react";
+import { Badge } from "../components/badge";
+import { Button } from "../components/button";
+import { Field } from "../components/field";
+import { Loader } from "../components/loader";
+import { Progress } from "../components/progress";
+import { Slider } from "../components/slider";
 import { cn } from "../lib/cn";
-import { Badge } from "./badge";
-import { Button } from "./button";
-import { Field } from "./field";
-import { Loader } from "./loader";
-import { Progress } from "./progress";
 
 type FileKind = "image" | "video" | "audio" | "file";
 
@@ -129,24 +123,15 @@ function AudioPlayer({ url, name }: { url: string; name: string }) {
         </div>
         {/* Its own field, so a FormField around the tile doesn't take the slider as its control. */}
         <Field className="au:gap-0">
-          <Slider<number>
+          <Slider
+            aria-label={`Position in ${name}`}
             disabled={duration === 0}
             format={formatTime}
             max={duration}
             onValueChange={seek}
             step={1}
             value={Math.min(time, duration)}
-          >
-            <SliderControl className="au:flex au:h-4 au:items-center">
-              <SliderTrack className="au:h-1 au:w-full au:rounded-full au:bg-alpha/10">
-                <SliderIndicator className="au:h-full au:rounded-full au:bg-accent" />
-                <SliderThumb
-                  aria-label={`Position in ${name}`}
-                  className="au:top-1/2 au:size-3 au:-translate-x-1/2 au:-translate-y-1/2 au:rounded-full au:bg-accent au:shadow-sm au:transition-transform au:has-focus-visible:outline-2 au:has-focus-visible:outline-accent au:has-focus-visible:outline-offset-2 au:data-dragging:scale-125"
-                />
-              </SliderTrack>
-            </SliderControl>
-          </Slider>
+          />
         </Field>
       </div>
     </div>

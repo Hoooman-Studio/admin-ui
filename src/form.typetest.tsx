@@ -1,6 +1,6 @@
 // Type tests for ./form: each @ts-expect-error is a misuse that must not compile.
 // Checked by `tsc --noEmit`; not built or run.
-import { FilePreview } from "./components/file-preview";
+
 import { Progress } from "./components/progress";
 import {
   AdminForm,
@@ -11,6 +11,7 @@ import {
   TextField,
   useAdminForm,
 } from "./form";
+import { FilePreview } from "./patterns/file-preview";
 
 type StorageId = string & { __table: "_storage" };
 

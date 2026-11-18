@@ -1,4 +1,3 @@
-import { CheckboxGroup } from "@ui-sdk/react/checkbox";
 import {
   ArrowDownIcon,
   ArrowUpDownIcon,
@@ -6,14 +5,18 @@ import {
   XIcon,
 } from "lucide-react";
 import * as React from "react";
+import { Button } from "../components/button";
+import { Checkbox, CheckboxGroup } from "../components/checkbox";
+import { EmptyState } from "../components/empty-state";
+import {
+  aboveRowLink,
+  RowLink,
+  type RowLinkElement,
+} from "../components/list-row";
+import { Loader } from "../components/loader";
+import { RowMenuBase } from "../components/menu";
 import { cn } from "../lib/cn";
 import type { SortState } from "../lib/sort-rows";
-import { Button } from "./button";
-import { Checkbox } from "./checkbox";
-import { EmptyState } from "./empty-state";
-import { aboveRowLink, RowLink, type RowLinkElement } from "./list-row";
-import { Loader } from "./loader";
-import { RowMenuBase } from "./menu";
 
 /** Values a column can show without its own `cell`. */
 type Shown = string | number | null | undefined;
@@ -385,6 +388,7 @@ function DataTable<Row>({
         <CheckboxGroup
           allValues={pageIds}
           aria-label={label}
+          className="au:block"
           onValueChange={selectOnPage}
           value={pageIds.filter((id) => selectedSet.has(id))}
         >

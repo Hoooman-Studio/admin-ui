@@ -37,7 +37,6 @@ import {
   FormField,
 } from "./components/field";
 import { FileInput, FileInputTrigger } from "./components/file-input";
-import { type FileKind, FilePreview } from "./components/file-preview";
 import { Input } from "./components/input";
 import { NumberInput } from "./components/number-input";
 import { RadioField, RadioGroup } from "./components/radio";
@@ -54,6 +53,7 @@ import { toast } from "./components/toast";
 import { cn } from "./lib/cn";
 import { errorText, formErrorText, hiddenFieldError } from "./lib/form-errors";
 import type { FormResult } from "./lib/form-result";
+import { type FileKind, FilePreview } from "./patterns/file-preview";
 
 const failedMessage = "Something went wrong. Try again.";
 

@@ -8,56 +8,43 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 import { useState } from "react";
-import { confirm } from "../../../src/components/alert-dialog";
-import { Avatar } from "../../../src/components/avatar";
-import { Badge } from "../../../src/components/badge";
-import { Button } from "../../../src/components/button";
-import { Card } from "../../../src/components/card";
 import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  CursorPagination,
+  confirm,
   DataTable,
   type DataTableColumn,
-} from "../../../src/components/data-table";
-import { EmptyState } from "../../../src/components/empty-state";
-import {
+  EmptyState,
   FilterChip,
   FilterChips,
-  SearchField,
-} from "../../../src/components/filter-bar";
-import { List, ListRow } from "../../../src/components/list-row";
-import {
+  List,
+  ListRow,
   Menu,
   MenuCheckboxItem,
   MenuContent,
   MenuItem,
   MenuSeparator,
   MenuTrigger,
-  RowMenu,
-} from "../../../src/components/menu";
-import {
   PageBody,
   PageHeader,
   PageSection,
   PageToolbar,
-} from "../../../src/components/page";
-import {
-  CursorPagination,
   Pagination,
-} from "../../../src/components/pagination";
-import {
+  RowMenu,
+  SearchField,
   SegmentedControl,
   SegmentedControlItem,
-} from "../../../src/components/segmented-control";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "../../../src/components/select";
-import {
   SortableList,
   SortableListRow,
-} from "../../../src/components/sortable-list";
-import { toast } from "../../../src/components/toast";
+  toast,
+} from "../../../src";
 import { paginate, type SortState, sortRows } from "../../../src/utils";
 
 const statuses = {

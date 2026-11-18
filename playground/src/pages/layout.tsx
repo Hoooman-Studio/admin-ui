@@ -6,33 +6,30 @@ import {
   SearchIcon,
   UserIcon,
 } from "lucide-react";
-import { Badge } from "../../../src/components/badge";
-import { Button } from "../../../src/components/button";
 import {
+  Badge,
+  Button,
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../src/components/card";
-import {
   DescriptionItem,
   DescriptionList,
-} from "../../../src/components/description-list";
-import { Input, InputGroup } from "../../../src/components/input";
-import { List, ListRow } from "../../../src/components/list-row";
-import {
   DetailLayout,
+  Input,
+  InputGroup,
+  List,
+  ListRow,
   PageBody,
   PageHeader,
   PageSection,
   PageToolbar,
-} from "../../../src/components/page";
-import {
   SegmentedControl,
   SegmentedControlItem,
-} from "../../../src/components/segmented-control";
-import { StatCard, StatGrid } from "../../../src/components/stat";
+  StatCard,
+  StatGrid,
+} from "../../../src";
 
 const listings = [
   {

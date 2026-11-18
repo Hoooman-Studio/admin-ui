@@ -11,8 +11,20 @@ import {
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "../lib/cn";
-import { useRail } from "./admin-shell";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+
+interface RailState {
+  collapsed: boolean;
+  /** Closes the phone drawer once a nav item is pressed. */
+  onNavigate?: () => void;
+}
+
+/** The rail the nav sits in. AdminShell and the phone menu provide it. */
+const RailContext = React.createContext<RailState>({ collapsed: false });
+
+function useRail() {
+  return React.use(RailContext);
+}
 
 interface NavSectionProps {
   children: React.ReactNode;
@@ -136,4 +148,4 @@ function NavItem({
 }
 
 export type { NavItemProps, NavSectionProps };
-export { NavItem, NavSection };
+export { NavItem, NavSection, RailContext };

@@ -4,10 +4,8 @@ import {
   MenuIcon,
 } from "lucide-react";
 import * as React from "react";
-import { cn } from "../lib/cn";
-import { RailContext, toggleCollapsed, useShell } from "./admin-shell";
-import { Avatar } from "./avatar";
-import { Button } from "./button";
+import { Avatar } from "../components/avatar";
+import { Button } from "../components/button";
 import {
   Drawer,
   DrawerBody,
@@ -15,10 +13,18 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "./drawer";
-import { Menu, MenuContent, MenuSeparator, MenuTrigger } from "./menu";
-import { ThemeMenuItems } from "./theme";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+} from "../components/drawer";
+import {
+  Menu,
+  MenuContent,
+  MenuSeparator,
+  MenuTrigger,
+} from "../components/menu";
+import { RailContext } from "../components/nav";
+import { ThemeMenuItems } from "../components/theme";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../components/tooltip";
+import { cn } from "../lib/cn";
+import { toggleCollapsed, useShell } from "./admin-shell";
 
 /** Each part is a cell; cells after the first get a hairline on their left. */
 const cellClass =

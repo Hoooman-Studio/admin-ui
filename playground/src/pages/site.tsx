@@ -1,3 +1,24 @@
+import {
+  AdminScope,
+  Button,
+  ConfirmDialog,
+  confirm,
+  Toaster,
+  toast,
+} from "../../../src";
+
+async function unpublish() {
+  if (
+    await confirm({
+      title: "Unpublish this page?",
+      confirmLabel: "Unpublish",
+      tone: "danger",
+    })
+  ) {
+    toast.success("Page unpublished.");
+  }
+}
+
 /** The client's own website around the admin, styled only by site.css. */
 function SitePage() {
   return (
@@ -18,6 +39,16 @@ function SitePage() {
         <code>text-gray-600</code> still mean what this site expects.
       </p>
       <button type="button">A site button</button>
+      {/* Admin pieces on the site's own page, outside AdminShell. */}
+      <div className="mt-8">
+        <AdminScope accent="hsl(20 100% 50%)">
+          <Button onClick={unpublish} variant="outline">
+            Unpublish page
+          </Button>
+          <Toaster />
+          <ConfirmDialog />
+        </AdminScope>
+      </div>
     </div>
   );
 }

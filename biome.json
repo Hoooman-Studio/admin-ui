@@ -47,6 +47,30 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**", "!src/components/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@ui-sdk/**"],
+                    "message": "Only src/components/ wraps UI SDK. Build patterns from our components."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["api/**"],
+      "linter": { "enabled": false }
     }
   ]
 }

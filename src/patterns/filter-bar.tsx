@@ -1,8 +1,8 @@
 import { SearchIcon, XIcon } from "lucide-react";
 import type * as React from "react";
+import { Button } from "../components/button";
+import { Input, InputClear, InputGroup } from "../components/input";
 import { cn } from "../lib/cn";
-import { Button } from "./button";
-import { Input, InputClear, InputGroup } from "./input";
 
 type SearchFieldProps = Omit<
   React.ComponentProps<typeof Input>,

@@ -1,13 +1,4 @@
-export {
-  AdminHeader,
-  AdminHeaderAccount,
-  type AdminHeaderAccountProps,
-  AdminHeaderActions,
-  AdminHeaderStudioLink,
-  AdminHeaderTitle,
-} from "./components/admin-header";
 export { AdminScope, type AdminScopeProps } from "./components/admin-scope";
-export { AdminShell, type AdminShellProps } from "./components/admin-shell";
 export {
   AlertDialog,
   AlertDialogClose,
@@ -64,11 +55,6 @@ export {
   CommandSeparator,
   CommandShortcut,
 } from "./components/command";
-export {
-  DataTable,
-  type DataTableColumn,
-  type DataTableProps,
-} from "./components/data-table";
 export { DatePicker, type DatePickerProps } from "./components/date-picker";
 export {
   DescriptionItem,
@@ -114,19 +100,6 @@ export {
   FileInputDropzone,
   FileInputList,
 } from "./components/file-input";
-export {
-  type FileKind,
-  FilePreview,
-  type FilePreviewProps,
-} from "./components/file-preview";
-export {
-  FilterChip,
-  type FilterChipProps,
-  FilterChips,
-  type FilterChipsProps,
-  SearchField,
-  type SearchFieldProps,
-} from "./components/filter-bar";
 export { Input, InputClear, InputGroup } from "./components/input";
 export { Kbd } from "./components/kbd";
 export {
@@ -160,18 +133,6 @@ export {
   type NavSectionProps,
 } from "./components/nav";
 export { NumberInput, type NumberInputProps } from "./components/number-input";
-export {
-  DetailLayout,
-  type DetailLayoutProps,
-  PageBody,
-  type PageBodyProps,
-  PageHeader,
-  type PageHeaderProps,
-  PageSection,
-  type PageSectionProps,
-  PageToolbar,
-  type PageToolbarProps,
-} from "./components/page";
 export {
   CursorPagination,
   type CursorPaginationProps,
@@ -237,3 +198,42 @@ export {
   TooltipTrigger,
 } from "./components/tooltip";
 export type { SortDirection, SortState } from "./lib/sort-rows";
+export {
+  AdminHeader,
+  AdminHeaderAccount,
+  type AdminHeaderAccountProps,
+  AdminHeaderActions,
+  AdminHeaderStudioLink,
+  AdminHeaderTitle,
+} from "./patterns/admin-header";
+export { AdminShell, type AdminShellProps } from "./patterns/admin-shell";
+export {
+  DataTable,
+  type DataTableColumn,
+  type DataTableProps,
+} from "./patterns/data-table";
+export {
+  type FileKind,
+  FilePreview,
+  type FilePreviewProps,
+} from "./patterns/file-preview";
+export {
+  FilterChip,
+  type FilterChipProps,
+  FilterChips,
+  type FilterChipsProps,
+  SearchField,
+  type SearchFieldProps,
+} from "./patterns/filter-bar";
+export {
+  DetailLayout,
+  type DetailLayoutProps,
+  PageBody,
+  type PageBodyProps,
+  PageHeader,
+  type PageHeaderProps,
+  PageSection,
+  type PageSectionProps,
+  PageToolbar,
+  type PageToolbarProps,
+} from "./patterns/page";
