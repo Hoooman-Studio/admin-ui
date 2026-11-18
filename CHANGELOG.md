@@ -4,7 +4,7 @@
 
 ### New
 
-- `FormDialog` and `FormDrawer` take `open` and `onOpenChange` instead of `trigger`, to open them from your own state, like the URL.
+- `FormDialog` and `FormDrawer` can take `open` and `onOpenChange` instead of a `trigger`, to open them from your own state, like the URL.
 - `ChecklistField`, `CheckboxGroup` and `RadioGroup` with more than 8 options flow into as many columns as fit.
 
 ## 0.3.0

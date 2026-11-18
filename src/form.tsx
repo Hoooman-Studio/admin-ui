@@ -1016,20 +1016,20 @@ function useFormOverlay(props: FormOverlayProps) {
     setState({ opening: open ? state.opening + 1 : state.opening, open });
   }
   const { opening } = state;
-  // A slow submit from an earlier opening must not close a newer one.
-  const latestOpening = React.useRef(opening);
-  React.useEffect(() => {
-    latestOpening.current = opening;
-  }, [opening]);
+  // Only the form of the opening that is open now may close it: not a slow submit from an earlier opening, nor one that ends after Escape.
+  const live = React.useRef({ opening: open ? opening : -1, onOpenChange });
+  React.useLayoutEffect(() => {
+    live.current = { opening: open ? opening : -1, onOpenChange };
+  });
   const context = React.useMemo(
     () => ({
       close: () => {
-        if (latestOpening.current === opening) {
-          onOpenChange(false);
+        if (live.current.opening === opening) {
+          live.current.onOpenChange(false);
         }
       },
     }),
-    [opening, onOpenChange]
+    [opening]
   );
   const content = (children: React.ReactNode) => (
     <FormOverlayContext key={opening} value={context}>
