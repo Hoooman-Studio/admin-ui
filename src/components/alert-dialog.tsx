@@ -97,8 +97,8 @@ interface ConfirmOptions {
 const ask = createConfirm<ConfirmOptions>();
 
 /**
- * Asks a question and resolves `true` when the person agrees. Needs one
- * `<ConfirmDialog />` mounted near the app's root. Questions asked at once wait their turn.
+ * Asks a question and resolves `true` when the person agrees. Works inside
+ * AdminProvider, which shows the questions. Questions asked at once wait their turn.
  *
  * `if (await confirm({ title: "Delete this listing?", confirmLabel: "Delete", tone: "danger" })) remove()`
  */
@@ -106,7 +106,7 @@ function confirm(options: ConfirmOptions): Promise<boolean> {
   return ask(options);
 }
 
-/** Shows the questions `confirm()` asks. Mount it once, near the app's root. */
+/** Shows the questions `confirm()` asks. AdminProvider mounts it. */
 function ConfirmDialog() {
   return (
     <AlertDialog controller={ask.controller}>

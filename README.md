@@ -19,11 +19,18 @@ import "@hooman-studio/admin-ui/styles.css";
 
 No Tailwind needed. If your site uses Tailwind (v3 or v4), it keeps working as before, even after someone navigates from the admin back to the site with the CSS still loaded: every class we ship is prefixed (`au:flex`), every theme variable is `--au-*`, our animation names are `au-*`, and nothing styles `html`, `body` or your site's elements. (Like any Tailwind v4 build, it registers Tailwind's internal `--tw-*` properties.) Our font, reset and dark mode only apply inside the admin.
 
-Render `AdminShell` as your admin route's whole page, without your site's header and footer (it fills the viewport):
+Put `AdminProvider` in your admin's layout route, around every admin page, login too. It gives everything inside the admin's font, theme and accent (`accent`, any CSS colour), and makes `toast()` and `confirm()` work. It adds no layout of its own.
+
+```tsx
+<AdminProvider accent="hsl(20 100% 50%)">
+  <Outlet />
+</AdminProvider>
+```
+
+On a normal admin page, render `AdminShell` as the whole page, without your site's header and footer (it fills the viewport):
 
 ```tsx
 <AdminShell
-  accent="hsl(20 100% 50%)"
   header={
     <AdminHeader>
       <AdminHeaderAccount name={user.name} email={user.email} image={user.image}>
@@ -40,13 +47,13 @@ Render `AdminShell` as your admin route's whole page, without your site's header
 </AdminShell>
 ```
 
-- **Next.js:** put the admin under its own layout (for example a route group whose layout has no site header) and render `AdminShell` from a `"use client"` component.
-- **TanStack Start / Vite:** render it from the admin route's component.
+- **Next.js:** put the admin under its own layout (for example a route group whose layout has no site header) and render `AdminProvider` and `AdminShell` from `"use client"` components.
+- **TanStack Start / Vite:** render `AdminProvider` from the admin layout route's component.
+- **Own layout** (login, a full-screen editor): skip `AdminShell` and build the page from our components; inside `AdminProvider` it has the admin's look.
 - **Links:** pass your router's link to `render` on `NavItem`, `Button` and `PageHeader`'s `back`.
-- **Outside the shell:** wrap admin components in `<AdminScope>` to give them the admin's font, theme and accent on any other page. Mount a `<Toaster />` (and `<ConfirmDialog />` if you use `confirm()`) inside it; `AdminShell` does that for you.
 - **Your own content inside the admin** (custom pages) keeps your site's classes and styles. Build it from our components where you can, so it matches.
 - **Overriding our styles:** your site's classes on our components lose to ours, because your site's CSS is on the admin page too and Tailwind v4 puts it in a cascade layer. Size components from a wrapper element, or use Tailwind's important modifier (`w-40!`).
-- **Brand colour:** `accent` on `AdminShell` (or `AdminScope`). **Theme:** System / Light / Dark in `AdminHeaderAccount`'s menu, applied to the admin only.
+- **Theme:** System / Light / Dark in `AdminHeaderAccount`'s menu, applied to the admin only.
 
 ### Command palette
 

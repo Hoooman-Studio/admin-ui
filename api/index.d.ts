@@ -123,7 +123,7 @@ import {
   TabsTab as TabsTab$1,
 } from "@ui-sdk/react/tabs";
 import { Textarea as Textarea$1 } from "@ui-sdk/react/textarea";
-import { ToastRegion, toast } from "@ui-sdk/react/toast";
+import { toast } from "@ui-sdk/react/toast";
 import {
   Tooltip,
   TooltipContent as TooltipContent$1,
@@ -133,20 +133,23 @@ import {
 import { VariantProps } from "class-variance-authority";
 import * as React from "react";
 
-type AdminScopeProps = React.ComponentProps<"div"> & {
+interface AdminProviderProps {
   /** The client's brand colour, any CSS colour. */
   accent?: string;
-};
+  children: React.ReactNode;
+}
 /**
- * Where the admin's styles apply: Hooman Studio's font, reset, theme and
- * accent, without touching the rest of the page. AdminShell is one. Use it on
- * its own to put admin components on any other page.
+ * Sets up the admin. Put it in the admin's layout route, around every admin
+ * page including login. Everything inside gets Hooman Studio's font, reset,
+ * theme and accent, and the rest of the page is left alone. It mounts the
+ * Toaster and ConfirmDialog, so `toast()` and `confirm()` work anywhere
+ * inside. It adds no box of its own (`display: contents`), so pages keep
+ * their layout.
  */
-declare function AdminScope({
+declare function AdminProvider({
   accent,
-  style,
-  ...props
-}: AdminScopeProps): React.JSX.Element;
+  children,
+}: AdminProviderProps): React.JSX.Element;
 /** UI SDK parts accept `className` as a function of state; ours take a plain string merged with `cn`. */
 type WithClass<T> = Omit<T, "className"> & {
   className?: string;
@@ -192,14 +195,12 @@ interface ConfirmOptions {
   tone?: "default" | "danger";
 }
 /**
- * Asks a question and resolves `true` when the person agrees. Needs one
- * `<ConfirmDialog />` mounted near the app's root. Questions asked at once wait their turn.
+ * Asks a question and resolves `true` when the person agrees. Works inside
+ * AdminProvider, which shows the questions. Questions asked at once wait their turn.
  *
  * `if (await confirm({ title: "Delete this listing?", confirmLabel: "Delete", tone: "danger" })) remove()`
  */
 declare function confirm(options: ConfirmOptions): Promise<boolean>;
-/** Shows the questions `confirm()` asks. Mount it once, near the app's root. */
-declare function ConfirmDialog(): React.JSX.Element;
 declare const sizes$2: {
   sm: string;
   md: string;
@@ -1296,23 +1297,6 @@ declare function useTheme(): {
 };
 /** The theme choice as menu items. AdminShell puts it in the account menu. */
 declare function ThemeMenuItems(): React.JSX.Element;
-type ToasterProps = Omit<
-  React.ComponentProps<typeof ToastRegion>,
-  "children" | "className" | "toaster"
-> & {
-  className?: string;
-};
-/**
- * Shows the toasts `toast()` adds. Mount it once, near the app's root, then call
- * `toast.success("Listing saved")`, `toast.error(...)`, `toast.info(...)` or
- * `toast.promise(save(), { loading, success, error })` from anywhere.
- */
-declare function Toaster({
-  className,
-  side,
-  align,
-  ...props
-}: ToasterProps): React.JSX.Element;
 /**
  * The hint. To explain why a button is disabled, keep the Button hoverable and
  * focusable: `<TooltipTrigger render={<Button disabled focusableWhenDisabled>Publish</Button>} />`.
@@ -1374,8 +1358,6 @@ declare function AdminHeaderStudioLink({
   href?: string;
 }): React.JSX.Element;
 interface AdminShellProps {
-  /** The client's brand colour, any CSS colour. Sets `--au-accent` for everything inside. */
-  accent?: string;
   /** The page: a PageHeader, PageToolbar and PageBody. */
   children: React.ReactNode;
   className?: string;
@@ -1388,12 +1370,10 @@ interface AdminShellProps {
  * The admin's frame: the header you compose, a nav rail that collapses to
  * icons (the choice is kept in localStorage) and the scrolling page. It covers
  * the viewport, whatever the site's body and wrappers do. On phones
- * the rail is a drawer opened from AdminHeaderTitle. It is an AdminScope, so the admin's styles apply inside it only. It
- * mounts the Toaster and ConfirmDialog, so `toast()` and `confirm()` work
- * anywhere inside.
+ * the rail is a drawer opened from AdminHeaderTitle. It must be inside
+ * AdminProvider.
  */
 declare function AdminShell({
-  accent,
   header,
   nav,
   children,
@@ -1652,8 +1632,8 @@ export {
   AdminHeaderActions,
   AdminHeaderStudioLink,
   AdminHeaderTitle,
-  AdminScope,
-  type AdminScopeProps,
+  AdminProvider,
+  type AdminProviderProps,
   AdminShell,
   type AdminShellProps,
   AlertDialog,
@@ -1703,7 +1683,6 @@ export {
   type CommandPaletteProps,
   CommandSeparator,
   CommandShortcut,
-  ConfirmDialog,
   type ConfirmOptions,
   CursorPagination,
   type CursorPaginationProps,
@@ -1849,8 +1828,6 @@ export {
   Textarea,
   type Theme,
   ThemeMenuItems,
-  Toaster,
-  type ToasterProps,
   Tooltip,
   TooltipContent,
   TooltipShortcut,

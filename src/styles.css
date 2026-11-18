@@ -4,7 +4,7 @@
  * Hooman Studio's look for admin panels inside any website.
  * Every class is prefixed (`au:flex`) and every variable is `--au-*`, and nothing here styles
  * `html`, `body` or the site's own elements. The reset, font and dark mode apply inside
- * `[data-admin-ui]` only (AdminShell and AdminScope set it).
+ * `[data-admin-ui]` only (AdminProvider sets it).
  */
 @import "tailwindcss/theme.css" prefix(au);
 @source "./components";

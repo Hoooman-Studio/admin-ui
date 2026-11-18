@@ -1,4 +1,7 @@
-export { AdminScope, type AdminScopeProps } from "./components/admin-scope";
+export {
+  AdminProvider,
+  type AdminProviderProps,
+} from "./components/admin-provider";
 export {
   AlertDialog,
   AlertDialogClose,
@@ -7,7 +10,6 @@ export {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger,
-  ConfirmDialog,
   type ConfirmOptions,
   confirm,
 } from "./components/alert-dialog";
@@ -190,7 +192,7 @@ export { Tabs, TabsList, TabsPanel, TabsTab } from "./components/tabs";
 export { TagInput, type TagInputProps } from "./components/tag-input";
 export { Textarea } from "./components/textarea";
 export { type Theme, ThemeMenuItems, useTheme } from "./components/theme";
-export { Toaster, type ToasterProps, toast } from "./components/toast";
+export { toast } from "./components/toast";
 export {
   Tooltip,
   TooltipContent,
