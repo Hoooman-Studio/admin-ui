@@ -72,6 +72,8 @@ const form = useAdminForm({
 
 Fields: `TextField`, `TextareaField`, `NumberField`, `DateField`, `SelectField`, `RadioGroupField`, `ChecklistField` (a `string[]`, like related IDs), `FormCheckboxField`, `FormSwitchField`, `TagsField`. Empty number, date and select fields are `null`; wrap their schema in `required(schema, message)` from `@hooman-studio/admin-ui/zod` so the parsed value isn't. A `SelectField` on a nullable field can take `emptyLabel="None"`, a choice that sets it back to `null`. Group fields under a heading with `FieldSet` and `FieldLegend`.
 
+`FileField` uploads a file as soon as it's picked and holds the ID your `upload(file, onProgress)` returns, so any storage works; it shows a progress bar meanwhile, a rejected upload as the field's error, and blocks the submit until it's done. `preview={(id) => <img src={urlFor(id)} alt="" />}` (or `<audio controls>`, `<video controls>`) shows the current file; `removable` adds Remove on a nullable field.
+
 `FormDialog` holds a form that starts fresh on every open and closes on `ok: true`; render `DialogBody` and `DialogFooter` in its `AdminForm`. `FormDrawer` is the same as a side sheet, with `DrawerBody` and `DrawerFooter`; put extra buttons before the `SubmitButton`.
 
 Your own field takes `FieldProps<Value>` and calls `bindField`, which gives the field's error and an `onChange` that also clears the server's error. Here `ColorPicker` stands for your own control:
