@@ -1,5 +1,6 @@
 // Type tests for ./form: each @ts-expect-error is a misuse that must not compile.
 // Checked by `tsc --noEmit`; not built or run.
+import { FilePreview } from "./components/file-preview";
 import { Progress } from "./components/progress";
 import {
   AdminForm,
@@ -95,6 +96,11 @@ function Misuses() {
       <Progress aria-label="Uploading" value={40} />
       {/* @ts-expect-error A progress bar needs a label or an aria-label. */}
       <Progress value={40} />
+      <FilePreview kind="audio" progress={0.4} status="uploading" />
+      {/* @ts-expect-error An uploading tile needs its progress. */}
+      <FilePreview kind="audio" status="uploading" />
+      {/* @ts-expect-error Only an uploading tile has progress. */}
+      <FilePreview kind="audio" progress={0.4} />
       <SubmitButton aria-label="Save" size="icon" />
       {/* @ts-expect-error An icon-only button needs an aria-label. */}
       <SubmitButton size="icon" />

@@ -115,6 +115,11 @@ export {
   FileInputList,
 } from "./components/file-input";
 export {
+  type FileKind,
+  FilePreview,
+  type FilePreviewProps,
+} from "./components/file-preview";
+export {
   FilterChip,
   type FilterChipProps,
   FilterChips,

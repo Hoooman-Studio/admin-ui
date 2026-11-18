@@ -37,9 +37,9 @@ import {
   FormField,
 } from "./components/field";
 import { FileInput, FileInputTrigger } from "./components/file-input";
+import { type FileKind, FilePreview } from "./components/file-preview";
 import { Input } from "./components/input";
 import { NumberInput } from "./components/number-input";
-import { Progress } from "./components/progress";
 import { RadioField, RadioGroup } from "./components/radio";
 import {
   Select,
@@ -483,22 +483,64 @@ function uploadErrorText(error: unknown) {
     : "The upload failed. Try again.";
 }
 
-/** What FileField tells screen readers, which don't follow the progress bar. */
-function uploadStatus(
-  pending: { name: string } | null,
-  error: string | null,
-  uploadedName: string | null
-) {
-  if (pending) {
-    return `Uploading ${pending.name}`;
+/** The tile for a file's MIME type, like "audio/mpeg". */
+function fileKind(type: string): FileKind {
+  const [group] = type.split("/");
+  return group === "image" || group === "video" || group === "audio"
+    ? group
+    : "file";
+}
+
+/** A file picked in this field, shown from the browser's copy while it uploads and after. */
+interface Picked<T> {
+  id: T | null;
+  kind: FileKind;
+  name: string;
+  progress: number | null;
+  status: "uploading" | "error" | "ready";
+  url: string;
+}
+
+function PickedPreview<T>({ picked }: { picked: Picked<T> }) {
+  const { url, name, kind } = picked;
+  if (picked.status === "uploading") {
+    return (
+      <FilePreview
+        kind={kind}
+        name={name}
+        progress={picked.progress}
+        status="uploading"
+        url={url}
+      />
+    );
   }
-  return error ?? (uploadedName ? `Uploaded ${uploadedName}` : "");
+  return (
+    <FilePreview kind={kind} name={name} status={picked.status} url={url} />
+  );
+}
+
+/** What FileField tells screen readers, which don't follow the progress bar. */
+function uploadStatus<T>(
+  picked: Picked<T> | null,
+  error: string | null,
+  value: T
+) {
+  if (picked?.status === "uploading") {
+    return `Uploading ${picked.name}`;
+  }
+  if (error) {
+    return error;
+  }
+  return picked?.status === "ready" && picked.id === value
+    ? `Uploaded ${picked.name}`
+    : "";
 }
 
 /**
  * One file, uploaded as soon as it's picked. The field holds the ID `upload`
- * returns, or null while empty. Inside an AdminForm, the form doesn't submit
- * while it uploads.
+ * returns, or null while empty. A picked file shows at once, with its
+ * progress; `preview` shows a saved one. Inside an AdminForm, the form
+ * doesn't submit while it uploads.
  */
 function FileField<T extends string | null>({
   field,
@@ -515,7 +557,7 @@ function FileField<T extends string | null>({
     file: File,
     onProgress: (fraction: number) => void
   ) => Promise<NonNullable<NoInfer<T>>>;
-  /** Shows the file with this ID, like an `<img>`, `<audio controls>` or `<video controls>`. */
+  /** Shows the saved file with this ID, usually as a `<FilePreview>`. Without it, a saved file shows as "Current file". */
   preview?: (id: NonNullable<NoInfer<T>>) => React.ReactNode;
   /** MIME types and extensions, like `"image/*"` or `[".mp3", ".wav"]`. */
   accept?: React.ComponentProps<typeof FileInput>["accept"];
@@ -524,14 +566,16 @@ function FileField<T extends string | null>({
   disabled?: boolean;
 }) {
   const { error, onChange } = bindField(field);
-  const [pending, setPending] = React.useState<{
-    name: string;
-    progress: number | null;
-  } | null>(null);
-  const [uploaded, setUploaded] = React.useState<{
-    id: T;
-    name: string;
-  } | null>(null);
+  const [picked, setPicked] = React.useState<Picked<T> | null>(null);
+  const pickedUrl = picked?.url;
+  React.useEffect(
+    () => () => {
+      if (pickedUrl) {
+        URL.revokeObjectURL(pickedUrl);
+      }
+    },
+    [pickedUrl]
+  );
   // Only the latest pick counts: picking again while one uploads replaces it, and unmounting drops it.
   const latest = React.useRef(0);
   React.useEffect(
@@ -542,7 +586,7 @@ function FileField<T extends string | null>({
   );
   const trigger = React.useRef<HTMLButtonElement>(null);
   const startUpload = React.use(FormContext)?.startUpload;
-  const uploading = pending !== null;
+  const uploading = picked?.status === "uploading";
   React.useEffect(
     () => (uploading ? startUpload?.() : undefined),
     [uploading, startUpload]
@@ -557,24 +601,28 @@ function FileField<T extends string | null>({
       latest.current += 1;
       const run = latest.current;
       setServerError(field, undefined);
-      setPending({ name: file.name, progress: null });
+      setPicked({
+        url: URL.createObjectURL(file),
+        name: file.name,
+        kind: fileKind(file.type),
+        status: "uploading",
+        progress: null,
+        id: null,
+      });
       try {
         const id = await upload(file, (progress) => {
           if (run === latest.current) {
-            setPending((prev) => prev && { ...prev, progress });
+            setPicked((prev) => prev && { ...prev, progress });
           }
         });
         if (run === latest.current) {
-          setUploaded({ id, name: file.name });
+          setPicked((prev) => prev && { ...prev, status: "ready", id });
           onChange(id);
         }
       } catch (reason) {
         if (run === latest.current) {
+          setPicked((prev) => prev && { ...prev, status: "error" });
           setServerError(field, uploadErrorText(reason));
-        }
-      } finally {
-        if (run === latest.current) {
-          setPending(null);
         }
       }
     },
@@ -585,14 +633,26 @@ function FileField<T extends string | null>({
     [field]
   );
   const remove = React.useCallback(() => {
+    setPicked(null);
     onChange(null as T);
     // The Remove button goes away, so keep focus in the field.
     trigger.current?.focus();
   }, [onChange]);
 
   const { value } = field.state;
-  // We know a file's name only when this field uploaded it.
-  const uploadedName = uploaded?.id === value ? uploaded.name : null;
+  // A picked file shows until a saved value that isn't it takes over, like after a reset.
+  const showPicked =
+    picked !== null && (picked.status !== "ready" || picked.id === value);
+  let tile: React.ReactNode = null;
+  if (showPicked) {
+    tile = <PickedPreview picked={picked} />;
+  } else if (value !== null) {
+    tile = preview ? (
+      preview(value)
+    ) : (
+      <FilePreview kind="file" name="Current file" />
+    );
+  }
   return (
     <FormField description={description} error={error} label={label}>
       <FileInput
@@ -604,11 +664,7 @@ function FileField<T extends string | null>({
         onValueChange={pick}
         value={noFiles}
       >
-        {value !== null && preview ? (
-          <div className="au:flex au:items-start au:[&>*]:max-w-full au:[&>audio]:w-full au:[&>img]:h-auto au:[&>img]:max-h-48 au:[&>img]:w-auto au:[&>img]:rounded-md au:[&>video]:h-auto au:[&>video]:max-h-48 au:[&>video]:w-auto au:[&>video]:rounded-md">
-            {preview(value)}
-          </div>
-        ) : null}
+        {tile}
         <div className="au:flex au:min-h-8 au:items-center au:gap-3">
           <FileInputTrigger
             className={buttonVariants({ variant: "outline", size: "sm" })}
@@ -617,19 +673,10 @@ function FileField<T extends string | null>({
           >
             {value === null ? "Choose file" : "Replace"}
           </FileInputTrigger>
-          {pending ? (
-            <Progress
-              className="au:flex-1"
-              label={pending.name}
-              max={1}
-              value={pending.progress}
-            />
-          ) : (
-            <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
-              {value === null ? "No file" : (uploadedName ?? "Current file")}
-            </span>
-          )}
-          {removable && value !== null && !pending ? (
+          <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
+            {tile ? null : "No file"}
+          </span>
+          {removable && value !== null && !uploading ? (
             <Button
               disabled={disabled}
               onClick={remove}
@@ -641,7 +688,7 @@ function FileField<T extends string | null>({
           ) : null}
         </div>
         <span aria-live="polite" className="au:sr-only">
-          {uploadStatus(pending, error, uploadedName)}
+          {uploadStatus(picked, error, value)}
         </span>
       </FileInput>
     </FormField>
