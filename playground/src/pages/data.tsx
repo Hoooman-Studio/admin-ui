@@ -186,7 +186,7 @@ function DataPage() {
           <PayoutsExample />
         </PageSection>
         <PageSection
-          description="ListRow, for lists that aren't tables."
+          description="ListRow, for lists that aren't tables. These rows wrap their text."
           title="Recent enquiries"
         >
           <EnquiriesExample />
@@ -530,19 +530,20 @@ const enquiries = [
   {
     id: "e1",
     name: "Lena Fischer",
-    listing: "Sunny loft by the Spree",
+    message: "Is the loft still free from January?",
     when: "2h ago",
   },
   {
     id: "e2",
     name: "Tom de Vries",
-    listing: "Canal house, top floor",
+    message:
+      "We're a family of four moving from Utrecht in March. Could we see the canal house on a weekday evening, and is the top floor reachable with a pram?",
     when: "5h ago",
   },
   {
     id: "e3",
     name: "Marta Ruiz",
-    listing: "Garden flat in Trastevere",
+    message: "Are pets allowed in the garden flat?",
     when: "Yesterday",
   },
 ];
@@ -570,8 +571,9 @@ function EnquiriesExample() {
               />
             }
             meta={enquiry.when}
-            subtitle={enquiry.listing}
+            subtitle={enquiry.message}
             title={enquiry.name}
+            wrap
           />
         ))}
       </List>

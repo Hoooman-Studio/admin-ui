@@ -53,7 +53,7 @@ function PageHeader({
           {title}
         </h1>
         {description ? (
-          <p className="au:truncate au:text-sm au:font-medium au:text-gray-500">
+          <p className="au:text-sm au:font-medium au:text-gray-500 au:sm:truncate">
             {description}
           </p>
         ) : null}
@@ -81,7 +81,7 @@ function PageToolbar({
   return (
     <div
       className={cn(
-        "au:border-alpha/10 au:flex au:min-h-14 au:flex-wrap au:items-center au:gap-3 au:border-b au:bg-gray-50 au:px-4 au:py-2 au:sm:min-h-19 au:sm:px-6",
+        "au:border-alpha/10 au:flex au:min-h-14 au:shrink-0 au:flex-wrap au:items-center au:gap-3 au:border-b au:bg-gray-50 au:px-4 au:py-2 au:sm:min-h-19 au:sm:px-6",
         className
       )}
       {...props}

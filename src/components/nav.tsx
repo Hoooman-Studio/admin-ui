@@ -94,7 +94,7 @@ function NavItem({
     "data-active": active ? "" : undefined,
     onClick: onNavigate,
     className: cn(
-      "au:touch-target au:ease-fluid au:hover:bg-alpha/3 au:focus-visible:outline-accent au:data-active:bg-alpha/5 au:flex au:w-full au:items-center au:gap-3 au:overflow-hidden au:rounded-xl au:py-2 au:text-left au:text-gray-600 au:transition-[background-color,color,padding] au:duration-250 au:hover:text-gray-950 au:focus-visible:outline-2 au:focus-visible:-outline-offset-2 au:data-active:text-gray-950",
+      "au:touch-target au:ease-fluid au:hover:bg-alpha/3 au:focus-visible:outline-accent au:data-active:bg-alpha/5 au:flex au:w-full au:shrink-0 au:items-center au:gap-3 au:overflow-hidden au:rounded-xl au:py-2 au:text-left au:text-gray-600 au:transition-[background-color,color,padding] au:duration-250 au:hover:text-gray-950 au:focus-visible:outline-2 au:focus-visible:-outline-offset-2 au:data-active:text-gray-950",
       collapsed ? "au:px-2" : "au:px-3",
       className
     ),

@@ -28,6 +28,10 @@ import {
   PageSection,
   PageToolbar,
 } from "../../../src/components/page";
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from "../../../src/components/segmented-control";
 import { StatCard, StatGrid } from "../../../src/components/stat";
 
 const listings = [
@@ -37,6 +41,7 @@ const listings = [
     city: "Berlin",
     price: "€1,850 / month",
     status: "Live",
+    updated: "2h ago",
   },
   {
     id: "l2",
@@ -44,6 +49,7 @@ const listings = [
     city: "Amsterdam",
     price: "€2,400 / month",
     status: "Live",
+    updated: "Yesterday",
   },
   {
     id: "l3",
@@ -51,6 +57,7 @@ const listings = [
     city: "Barcelona",
     price: "€1,150 / month",
     status: "Draft",
+    updated: "3 days ago",
   },
   {
     id: "l4",
@@ -58,6 +65,7 @@ const listings = [
     city: "Rome",
     price: "€1,700 / month",
     status: "Live",
+    updated: "Last week",
   },
 ] as const;
 
@@ -188,6 +196,7 @@ function ListingsPage() {
           </Button>
         }
         count={128}
+        description="Every place you rent out, live or in draft. Drafts stay hidden from the site."
         title="Listings"
       />
       <PageToolbar
@@ -203,6 +212,11 @@ function ListingsPage() {
             <Input aria-label="Search listings" placeholder="Search listings" />
           </InputGroup>
         </div>
+        <SegmentedControl defaultValue="all">
+          <SegmentedControlItem value="all">All</SegmentedControlItem>
+          <SegmentedControlItem value="live">Live</SegmentedControlItem>
+          <SegmentedControlItem value="draft">Draft</SegmentedControlItem>
+        </SegmentedControl>
       </PageToolbar>
       <PageBody>
         <Card variant="flush">
@@ -219,6 +233,7 @@ function ListingsPage() {
                 }
                 key={listing.id}
                 link={<a href="#/listing" />}
+                meta={listing.updated}
                 subtitle={`${listing.city} · ${listing.price}`}
                 title={listing.title}
               />
