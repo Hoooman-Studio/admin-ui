@@ -300,7 +300,8 @@ function ListingPage() {
             </Card>
           </PageSection>
           <PageSection title="Facts">
-            <Card>
+            {/* The rows bring their own vertical padding. */}
+            <Card className="au:py-3">
               <DescriptionList>
                 <DescriptionItem label="Size">68 m²</DescriptionItem>
                 <DescriptionItem label="Rooms">2</DescriptionItem>

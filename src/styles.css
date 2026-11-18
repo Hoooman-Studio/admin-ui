@@ -185,7 +185,8 @@
  * `au:` class inside `[data-admin-ui]`. At the specificity of one class it
  * beats the site's element styles (`h1 {}`, `button {}`) and loses to our
  * utilities, which come later in this file. The site's own content inside the
- * admin keeps the site's styles.
+ * admin keeps the site's styles. AdminProvider's own box gets the admin's
+ * colours but no reset, so the site can place it (`mt-8`).
  */
 [data-admin-ui] {
   color-scheme: light;
@@ -203,6 +204,7 @@
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   color: var(--au-gray-950);
+  background-color: var(--au-gray-50);
   text-align: start;
   letter-spacing: normal;
 }
@@ -212,7 +214,6 @@
   color-scheme: dark;
 }
 
-[data-admin-ui],
 [data-admin-ui] :where(*):where([class*="au:"]),
 [data-admin-ui] :where(*):where([class*="au:"])::before,
 [data-admin-ui] :where(*):where([class*="au:"])::after,

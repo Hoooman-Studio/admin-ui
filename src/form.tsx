@@ -296,7 +296,7 @@ function ChoiceGroup({
   return (
     <FieldSet className="au:gap-3" disabled={disabled} onBlur={onBlur}>
       <FieldLegend
-        className="au:mb-0 au:px-1 au:text-sm au:font-medium"
+        className="au:mb-0 au:px-1 au:text-xs au:font-medium au:text-gray-600"
         id={legendId}
       >
         {label}
@@ -585,11 +585,18 @@ function FileField<T extends string | null>({
     []
   );
   const trigger = React.useRef<HTMLButtonElement>(null);
-  const startUpload = React.use(FormContext)?.startUpload;
+  const formContext = React.use(FormContext);
+  const startUpload = formContext?.startUpload;
+  const holdFailed = formContext?.holdFailed;
   const uploading = picked?.status === "uploading";
+  const failed = picked?.status === "error";
   React.useEffect(
     () => (uploading ? startUpload?.() : undefined),
     [uploading, startUpload]
+  );
+  React.useEffect(
+    () => (failed ? holdFailed?.(() => trigger.current?.focus()) : undefined),
+    [failed, holdFailed]
   );
 
   const pick = React.useCallback<FileChange>(
@@ -680,7 +687,7 @@ function FileField<T extends string | null>({
           <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
             {tile ? null : "No file"}
           </span>
-          {removable && value !== null && !uploading ? (
+          {removable && (value !== null || failed) && !uploading ? (
             <Button
               disabled={disabled}
               onClick={remove}
@@ -795,6 +802,14 @@ function useAdminForm<
   >({
     defaultValues,
     validators,
+    // TanStack stops at the first invalid step: a field's own validator hides
+    // the form schema's errors. Check both, so one submit shows every error.
+    onSubmitInvalid: ({ formApi }) => {
+      formApi
+        .validateAllFields("submit")
+        .then(() => formApi.validate("submit"))
+        .catch(console.error);
+    },
     onSubmit: async ({ value, formApi }) => {
       try {
         const schema = validators?.onSubmit;
@@ -835,6 +850,8 @@ const FormContext = React.createContext<{
   uploading: boolean;
   /** Counts an upload as running; call what it returns once it's done. */
   startUpload: () => () => void;
+  /** Marks a failed upload, which blocks the submit; `focus` shows it. Call what it returns once it's resolved. */
+  holdFailed: (focus: () => void) => () => void;
 } | null>(null);
 
 function useFormContext() {
@@ -860,11 +877,25 @@ function AdminForm({
     setUploads((count) => count + 1);
     return () => setUploads((count) => count - 1);
   }, []);
+  // Focus callbacks of FileFields whose upload failed.
+  const failed = React.useRef(new Set<() => void>());
+  const holdFailed = React.useCallback((focus: () => void) => {
+    failed.current.add(focus);
+    return () => {
+      failed.current.delete(focus);
+    };
+  }, []);
   const submit = React.useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
       // Saving now would keep the file the upload replaces.
       if (uploads > 0) {
+        return;
+      }
+      // Saving would drop the failed file silently, and its error with it.
+      const [focusFailed] = failed.current;
+      if (focusFailed) {
+        focusFailed();
         return;
       }
       // The last submit's errors shouldn't block this one. TanStack skips the
@@ -881,8 +912,8 @@ function AdminForm({
     [form, uploads]
   );
   const context = React.useMemo(
-    () => ({ form, uploading: uploads > 0, startUpload }),
-    [form, uploads, startUpload]
+    () => ({ form, uploading: uploads > 0, startUpload, holdFailed }),
+    [form, uploads, startUpload, holdFailed]
   );
   // In a FormDialog or FormDrawer the form holds a scrolling body and a footer, which bring their own spacing; in a drawer it fills the height.
   const inOverlay = React.use(FormOverlayContext) !== null;
