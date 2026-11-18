@@ -58,7 +58,7 @@
   --au-red-50: hsl(0 100% 96%);
   --au-red-500: hsl(0 100% 65%);
   --au-red-600: hsl(0 70% 50%);
-  /* The client's brand colour. AdminShell's `accent` prop sets it. */
+  /* The client's brand colour. AdminProvider's `accent` prop sets it. */
   --au-accent: var(--au-blue-500);
   --au-accent-foreground: hsl(0 0% 100%);
 }

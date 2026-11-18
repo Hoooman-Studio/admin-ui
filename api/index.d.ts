@@ -141,10 +141,10 @@ interface AdminProviderProps {
 /**
  * Sets up the admin. Put it in the admin's layout route, around every admin
  * page including login. Everything inside gets Hooman Studio's font, reset,
- * theme and accent, and the rest of the page is left alone. It mounts the
- * Toaster and ConfirmDialog, so `toast()` and `confirm()` work anywhere
- * inside. It adds no box of its own (`display: contents`), so pages keep
- * their layout.
+ * theme and accent, and the rest of the page is left alone. It shows what
+ * `toast()` and `confirm()` ask for; a provider inside another leaves that to
+ * the outer one. It adds no box of its own (`display: contents`), so pages
+ * keep their layout.
  */
 declare function AdminProvider({
   accent,

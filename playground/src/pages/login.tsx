@@ -19,7 +19,7 @@ function signIn(event: React.FormEvent) {
 /** A page with its own layout instead of AdminShell, inside AdminProvider. */
 function LoginPage() {
   return (
-    <div className="au:flex au:min-h-dvh au:items-center au:justify-center au:bg-gray-50 au:p-6 au:text-gray-950">
+    <div className="au:flex au:min-h-dvh au:items-center au:justify-center au:bg-gray-50 au:p-6">
       <Card className="au:w-full au:max-w-sm">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>

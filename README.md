@@ -47,9 +47,10 @@ On a normal admin page, render `AdminShell` as the whole page, without your site
 </AdminShell>
 ```
 
-- **Next.js:** put the admin under its own layout (for example a route group whose layout has no site header) and render `AdminProvider` and `AdminShell` from `"use client"` components.
+- **Next.js:** put the admin under its own layout (for example a route group whose layout has no site header) with `AdminProvider` in it, and render `AdminShell` from a `"use client"` component.
 - **TanStack Start / Vite:** render `AdminProvider` from the admin layout route's component.
-- **Own layout** (login, a full-screen editor): skip `AdminShell` and build the page from our components; inside `AdminProvider` it has the admin's look.
+- **Own layout** (login, a full-screen editor): skip `AdminShell` and build the page from our components inside `AdminProvider`. Paint its background yourself (`au:bg-gray-50`); the provider adds no box.
+- **Admin pieces on a site page:** wrap them in `AdminProvider` too. Use one per page, or nest them, so toasts don't show twice.
 - **Links:** pass your router's link to `render` on `NavItem`, `Button` and `PageHeader`'s `back`.
 - **Your own content inside the admin** (custom pages) keeps your site's classes and styles. Build it from our components where you can, so it matches.
 - **Overriding our styles:** your site's classes on our components lose to ours, because your site's CSS is on the admin page too and Tailwind v4 puts it in a cascade layer. Size components from a wrapper element, or use Tailwind's important modifier (`w-40!`).
