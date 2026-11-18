@@ -156,38 +156,21 @@ function MenuSubContent({
   );
 }
 
-type RowMenuProps = {
+interface RowMenuBaseProps {
+  "aria-label": string;
+  "aria-labelledby"?: string;
   /** MenuItems. */
   children: React.ReactNode;
   className?: string;
-} & (
-  | {
-      /** The row's name. The button reads "Actions for {label}". */
-      label: string;
-    }
-  | {
-      /** Ids of the elements that name the button, when the row's name isn't plain text. */
-      "aria-labelledby": string;
-    }
-);
+}
 
-/** The "…" button and menu for a row's actions, as in DataTable. Put it in a ListRow's `actions`. */
-function RowMenu({ children, className, ...name }: RowMenuProps) {
+/** The row "…" menu. DataTable names it by ids, since its row names aren't plain text. */
+function RowMenuBase({ children, ...props }: RowMenuBaseProps) {
   return (
     <Menu>
       <MenuTrigger
         render={
-          <Button
-            aria-label={
-              "label" in name ? `Actions for ${name.label}` : "Actions"
-            }
-            aria-labelledby={
-              "aria-labelledby" in name ? name["aria-labelledby"] : undefined
-            }
-            className={className}
-            size="icon-sm"
-            variant="ghost"
-          >
+          <Button size="icon-sm" variant="ghost" {...props}>
             <EllipsisIcon />
           </Button>
         }
@@ -195,6 +178,16 @@ function RowMenu({ children, className, ...name }: RowMenuProps) {
       <MenuContent align="end">{children}</MenuContent>
     </Menu>
   );
+}
+
+type RowMenuProps = Omit<RowMenuBaseProps, "aria-label" | "aria-labelledby"> & {
+  /** The row's name. The button reads "Actions for {label}". */
+  label: string;
+};
+
+/** The "…" button and menu for a row's actions, as in DataTable. Put it in a ListRow's `actions`. */
+function RowMenu({ label, ...props }: RowMenuProps) {
+  return <RowMenuBase aria-label={`Actions for ${label}`} {...props} />;
 }
 
 export type { RowMenuProps };
@@ -214,4 +207,5 @@ export {
   MenuTrigger,
   popupClass,
   RowMenu,
+  RowMenuBase,
 };

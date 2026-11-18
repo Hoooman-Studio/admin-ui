@@ -13,7 +13,7 @@ import { Checkbox } from "./checkbox";
 import { EmptyState } from "./empty-state";
 import { aboveRowLink, RowLink, type RowLinkElement } from "./list-row";
 import { Loader } from "./loader";
-import { RowMenu } from "./menu";
+import { RowMenuBase } from "./menu";
 
 /** Values a column can show without its own `cell`. */
 type Shown = string | number | null | undefined;
@@ -292,9 +292,12 @@ function DataTable<Row>({
               )}
             >
               {actions ? (
-                <RowMenu aria-labelledby={`${baseId}-actions ${nameId}`}>
+                <RowMenuBase
+                  aria-label="Actions"
+                  aria-labelledby={`${baseId}-actions ${nameId}`}
+                >
                   {actions}
-                </RowMenu>
+                </RowMenuBase>
               ) : null}
             </td>
           ) : null}
