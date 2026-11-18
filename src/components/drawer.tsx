@@ -111,7 +111,7 @@ function DrawerBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "au:flex au:min-h-0 au:flex-1 au:flex-col au:gap-4 au:overflow-y-auto au:p-4",
+        "au:flex au:min-h-0 au:flex-1 au:flex-col au:gap-4 au:overflow-y-auto au:p-4 au:*:shrink-0",
         className
       )}
       {...props}
