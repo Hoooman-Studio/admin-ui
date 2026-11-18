@@ -137,18 +137,21 @@ interface AdminProviderProps {
   /** The client's brand colour, any CSS colour. */
   accent?: string;
   children: React.ReactNode;
+  /** Places the admin's box on a site page, like `mt-8`. */
+  className?: string;
 }
 /**
  * Sets up the admin. Put it in the admin's layout route, around every admin
  * page including login. Everything inside gets Hooman Studio's font, reset,
  * theme and accent, and the rest of the page is left alone. It shows what
  * `toast()` and `confirm()` ask for; a provider inside another leaves that to
- * the outer one. It adds no box of its own (`display: contents`), so pages
- * keep their layout.
+ * the outer one. It's a block with the admin's background and text colour,
+ * so admin pieces stay readable on a site page in either theme.
  */
 declare function AdminProvider({
   accent,
   children,
+  className,
 }: AdminProviderProps): React.JSX.Element;
 /** UI SDK parts accept `className` as a function of state; ours take a plain string merged with `cn`. */
 type WithClass<T> = Omit<T, "className"> & {

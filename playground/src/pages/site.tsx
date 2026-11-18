@@ -1,4 +1,4 @@
-import { AdminProvider, Button, confirm, toast } from "../../../src";
+import { AdminProvider, Badge, Button, confirm, toast } from "../../../src";
 
 async function unpublish() {
   if (
@@ -32,14 +32,23 @@ function SitePage() {
         <code>text-gray-600</code> still mean what this site expects.
       </p>
       <button type="button">A site button</button>
-      {/* Admin pieces on the site's own page, outside AdminShell. */}
-      <div className="mt-8">
-        <AdminProvider accent="hsl(20 100% 50%)">
-          <Button onClick={unpublish} variant="outline">
-            Unpublish page
-          </Button>
-        </AdminProvider>
-      </div>
+      {/* Admin pieces on the site's own page, outside AdminShell, placed by the site's classes. The transparent ones show the provider paints the admin's background in either theme. */}
+      <AdminProvider
+        accent="hsl(20 100% 50%)"
+        className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl p-4"
+      >
+        <Button onClick={unpublish} variant="outline">
+          Unpublish page
+        </Button>
+        <Button>Primary</Button>
+        <Button variant="subtle">Subtle</Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button disabled>Disabled</Button>
+        <Button disabled variant="outline">
+          Disabled outline
+        </Button>
+        <Badge>Draft</Badge>
+      </AdminProvider>
     </div>
   );
 }
