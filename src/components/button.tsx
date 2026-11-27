@@ -110,7 +110,7 @@ function Button({
     return button;
   }
   return (
-    <Tooltip toggleable>
+    <Tooltip>
       <TooltipTrigger render={button} />
       <TooltipContent>{disabledReason}</TooltipContent>
     </Tooltip>
