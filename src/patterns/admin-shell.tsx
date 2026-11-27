@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useAdminProvider } from "../components/admin-provider";
+import { useMessages } from "../components/messages";
 import { RailContext } from "../components/nav";
 import { cn } from "../lib/cn";
 import { readStorage, writeStorage } from "../lib/storage";
@@ -64,6 +65,7 @@ interface AdminShellProps {
 function AdminShell({ header, nav, children, className }: AdminShellProps) {
   useAdminProvider("AdminShell");
   const collapsed = useCollapsed();
+  const { mainNav } = useMessages();
 
   return (
     <div
@@ -83,7 +85,7 @@ function AdminShell({ header, nav, children, className }: AdminShellProps) {
         >
           <RailContext value={{ collapsed }}>
             <nav
-              aria-label="Main"
+              aria-label={mainNav}
               className={cn(
                 "au:scrollbar-hidden au:ease-fluid au:flex au:min-h-0 au:flex-1 au:flex-col au:gap-0.5 au:overflow-y-auto au:py-3 au:transition-[padding] au:duration-250",
                 collapsed ? "au:px-4" : "au:px-3"

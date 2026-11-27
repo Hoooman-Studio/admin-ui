@@ -12,6 +12,7 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 import { buttonVariants } from "./button";
+import { useMessages } from "./messages";
 
 /** Holds the chosen files. Put a FileInputDropzone and a FileInputList inside. */
 function FileInput({
@@ -41,10 +42,11 @@ type FileInputDropzoneProps = Omit<
 function FileInputDropzone({
   className,
   children,
-  title = "Drag files here",
-  browseLabel = "Browse files",
+  title,
+  browseLabel,
   ...props
 }: FileInputDropzoneProps) {
+  const messages = useMessages();
   return (
     <FileInputDropzonePart
       className={cn(
@@ -57,7 +59,9 @@ function FileInputDropzone({
         aria-hidden="true"
         className="au:mb-1 au:size-5 au:text-gray-500"
       />
-      <p className="au:text-sm au:font-medium au:text-gray-950">{title}</p>
+      <p className="au:text-sm au:font-medium au:text-gray-950">
+        {title ?? messages.dropFiles}
+      </p>
       {children ? (
         <p className="au:text-sm au:text-gray-600">{children}</p>
       ) : null}
@@ -67,7 +71,7 @@ function FileInputDropzone({
           "au:mt-2 au:in-data-invalid:border-red-500/70"
         )}
       >
-        {browseLabel}
+        {browseLabel ?? messages.browseFiles}
       </FileInputTrigger>
     </FileInputDropzonePart>
   );

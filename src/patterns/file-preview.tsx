@@ -4,6 +4,7 @@ import { Badge } from "../components/badge";
 import { Button } from "../components/button";
 import { Field } from "../components/field";
 import { Loader } from "../components/loader";
+import { useMessages } from "../components/messages";
 import { Progress } from "../components/progress";
 import { Slider } from "../components/slider";
 import { cn } from "../lib/cn";
@@ -26,13 +27,6 @@ type FilePreviewProps = {
     }
   | { status: "error"; progress?: never }
 );
-
-const kindNames: Record<FileKind, string> = {
-  image: "Image",
-  video: "Video",
-  audio: "Audio",
-  file: "File",
-};
 
 // Images keep their ratio at a fixed height; video plays inline, so it gets room; audio and files are rows.
 const frames: Record<FileKind, string> = {
@@ -57,6 +51,7 @@ function formatTime(seconds: number) {
 }
 
 function AudioPlayer({ url, name }: { url: string; name: string }) {
+  const messages = useMessages();
   const audio = React.useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = React.useState(false);
   const [time, setTime] = React.useState(0);
@@ -100,7 +95,9 @@ function AudioPlayer({ url, name }: { url: string; name: string }) {
         src={url}
       />
       <Button
-        aria-label={playing ? `Pause ${name}` : `Play ${name}`}
+        aria-label={
+          playing ? messages.pause({ name }) : messages.play({ name })
+        }
         onClick={toggle}
         rounded
         size="icon-lg"
@@ -124,7 +121,7 @@ function AudioPlayer({ url, name }: { url: string; name: string }) {
         {/* Its own field, so a FormField around the tile doesn't take the slider as its control. */}
         <Field className="au:gap-0">
           <Slider
-            aria-label={`Position in ${name}`}
+            aria-label={messages.playbackPosition({ name })}
             disabled={duration === 0}
             format={formatTime}
             max={duration}
@@ -139,6 +136,7 @@ function AudioPlayer({ url, name }: { url: string; name: string }) {
 }
 
 function VideoPlayer({ url, name }: { url: string; name: string }) {
+  const messages = useMessages();
   const video = React.useRef<HTMLVideoElement>(null);
   const [started, setStarted] = React.useState(false);
   const start = React.useCallback(() => {
@@ -168,7 +166,7 @@ function VideoPlayer({ url, name }: { url: string; name: string }) {
       />
       {started ? null : (
         <button
-          aria-label={`Play ${name}`}
+          aria-label={messages.play({ name })}
           className="au:group/play au:absolute au:inset-0 au:flex au:items-center au:justify-center au:outline-none"
           onClick={start}
           type="button"
@@ -229,6 +227,7 @@ function TileContent({
   name: string;
   failed: boolean;
 }) {
+  const messages = useMessages();
   if (failed) {
     return (
       <div className="au:flex au:size-full au:flex-col au:items-center au:justify-center au:gap-1 au:px-3 au:text-center">
@@ -246,7 +245,7 @@ function TileContent({
     return <FileRow name={name} url={url} />;
   }
   if (!url) {
-    return <Loader label={`Loading ${name}`} />;
+    return <Loader label={messages.loadingFile({ name })} />;
   }
   if (kind === "image") {
     return (
@@ -277,7 +276,8 @@ function FilePreview({
   className,
   ...state
 }: FilePreviewProps) {
-  const label = name ?? kindNames[kind];
+  const messages = useMessages();
+  const label = name ?? messages[kind];
   const failed = state.status === "error";
   return (
     <div

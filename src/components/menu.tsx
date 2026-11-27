@@ -21,6 +21,7 @@ import { useId } from "react";
 import { cn } from "../lib/cn";
 import type { WithClass, WithNodeChildren } from "../lib/types";
 import { Button } from "./button";
+import { useMessages } from "./messages";
 
 /** The floating surface shared by menus and popovers, and the bottom sheet they become on small touch screens. */
 const popupClass =
@@ -31,7 +32,13 @@ const itemClass =
 
 /** Small touch screens get a bottom sheet; everything else a dropdown. */
 function Menu(props: React.ComponentProps<typeof MenuPart>) {
-  return <MenuPart presentation="auto" {...props} />;
+  return (
+    <MenuPart
+      pendingAnnouncement={useMessages().loading}
+      presentation="auto"
+      {...props}
+    />
+  );
 }
 
 function MenuContent({
@@ -214,13 +221,14 @@ function RowMenuBase({ children, ...props }: RowMenuBaseProps) {
 }
 
 type RowMenuProps = Omit<RowMenuBaseProps, "aria-label" | "aria-labelledby"> & {
-  /** The row's name. The button reads "Actions for {label}". */
+  /** The row's name. The button reads it in the `actionsFor` message. */
   label: string;
 };
 
 /** The "…" button and menu for a row's actions, as in DataTable. Put it in a ListRow's `actions`. */
 function RowMenu({ label, ...props }: RowMenuProps) {
-  return <RowMenuBase aria-label={`Actions for ${label}`} {...props} />;
+  const { actionsFor } = useMessages();
+  return <RowMenuBase aria-label={actionsFor({ name: label })} {...props} />;
 }
 
 export type { RowMenuProps };

@@ -12,10 +12,17 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 import { Button } from "./button";
+import { useMessages } from "./messages";
 
 /** Small touch screens get a bottom sheet; everything else a centered dialog. */
 function Dialog(props: React.ComponentProps<typeof DialogPart>) {
-  return <DialogPart presentation="auto" {...props} />;
+  return (
+    <DialogPart
+      pendingAnnouncement={useMessages().loading}
+      presentation="auto"
+      {...props}
+    />
+  );
 }
 
 const backdropClass =
@@ -53,9 +60,10 @@ function DialogContent({
 function DialogHeader({
   className,
   children,
-  closeLabel = "Close",
+  closeLabel,
   ...props
 }: React.ComponentProps<"div"> & { closeLabel?: string | null }) {
+  const messages = useMessages();
   return (
     <div
       className={cn(
@@ -68,7 +76,11 @@ function DialogHeader({
       {closeLabel === null ? null : (
         <DialogClosePart
           render={
-            <Button aria-label={closeLabel} size="icon-sm" variant="outline">
+            <Button
+              aria-label={closeLabel ?? messages.close}
+              size="icon-sm"
+              variant="outline"
+            >
               <XIcon />
             </Button>
           }

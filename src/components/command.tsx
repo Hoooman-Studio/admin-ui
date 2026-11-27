@@ -17,6 +17,7 @@ import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 import { Button } from "./button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./dialog";
+import { useMessages } from "./messages";
 
 const keysClass =
   "au:ms-auto au:flex au:shrink-0 au:gap-0.5 au:font-sans au:text-gray-500 au:text-xs au:tracking-widest";
@@ -29,6 +30,7 @@ function Command({
   return (
     <CommandPart
       className={cn("au:flex au:min-h-0 au:flex-col", className)}
+      pendingAnnouncement={useMessages().loading}
       {...props}
     />
   );
@@ -175,11 +177,13 @@ interface CommandPaletteProps {
 /** A command palette in a dialog, opened with ⌘K / Ctrl+K from anywhere on the page or with its trigger. */
 function CommandPalette({
   children,
-  title = "Command palette",
-  placeholder = "Search or jump to…",
-  emptyText = "Nothing found.",
+  title,
+  placeholder,
+  emptyText,
   trigger,
 }: CommandPaletteProps) {
+  const messages = useMessages();
+  const name = title ?? messages.commandPalette;
   const [open, setOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
   return (
@@ -199,17 +203,20 @@ function CommandPalette({
           <>
             <SearchIcon />
             <span className="au:sr-only au:sm:not-sr-only au:sm:font-normal">
-              Search…
+              {messages.openSearch}
             </span>
             <DialogShortcut className={cn(keysClass, "au:hidden au:sm:flex")} />
           </>
         )}
       </DialogTrigger>
       <DialogContent className="au:top-[12dvh] au:bottom-auto" size="md">
-        <DialogTitle className="au:sr-only">{title}</DialogTitle>
+        <DialogTitle className="au:sr-only">{name}</DialogTitle>
         <Command loop onAction={close}>
-          <CommandInput aria-label={title} placeholder={placeholder} />
-          <CommandEmpty>{emptyText}</CommandEmpty>
+          <CommandInput
+            aria-label={name}
+            placeholder={placeholder ?? messages.commandPlaceholder}
+          />
+          <CommandEmpty>{emptyText ?? messages.nothingFound}</CommandEmpty>
           <CommandList>{children}</CommandList>
         </Command>
       </DialogContent>

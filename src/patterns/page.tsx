@@ -1,6 +1,7 @@
 import { ArrowLeftIcon } from "lucide-react";
 import type * as React from "react";
 import { Button } from "../components/button";
+import { useMessages } from "../components/messages";
 import { cn } from "../lib/cn";
 
 type PageHeaderProps = Omit<React.ComponentProps<"header">, "title"> & {
@@ -20,11 +21,12 @@ function PageHeader({
   count,
   description,
   back,
-  backLabel = "Back",
+  backLabel,
   actions,
   className,
   ...props
 }: PageHeaderProps) {
+  const messages = useMessages();
   return (
     <header
       className={cn(
@@ -35,7 +37,7 @@ function PageHeader({
     >
       {back ? (
         <Button
-          aria-label={backLabel}
+          aria-label={backLabel ?? messages.back}
           className="au:touch-target"
           render={back}
           rounded

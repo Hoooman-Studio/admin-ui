@@ -16,6 +16,7 @@ import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
 import { buttonVariants } from "./button";
+import { useMessages } from "./messages";
 import { controlBoxClass } from "./select";
 
 type DatePickerProps = Omit<
@@ -49,13 +50,14 @@ const dayClass =
  */
 function DatePicker({
   className,
-  triggerLabel = "Choose date",
-  endLabel = "End date",
+  triggerLabel,
+  endLabel,
   mode,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledby,
   ...props
 }: DatePickerProps) {
+  const messages = useMessages();
   // The name belongs on the text input, not the wrapper. Inside a Field, its label names it.
   const name = { "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby };
   return (
@@ -78,7 +80,7 @@ function DatePicker({
             –
           </span>
           <DatePickerInput
-            aria-label={endLabel}
+            aria-label={endLabel ?? messages.endDate}
             className={cn(inputClass, rangeInputClass)}
             end
           />
@@ -88,7 +90,7 @@ function DatePicker({
         <DatePickerInput {...name} className={inputClass} />
       )}
       <DatePickerTrigger
-        aria-label={triggerLabel}
+        aria-label={triggerLabel ?? messages.chooseDate}
         className="au:hover:bg-alpha/5 au:focus-visible:outline-accent au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:focus-visible:outline-2 au:disabled:pointer-events-none au:in-data-[slot=form-field-box]:size-5"
       >
         <CalendarIcon aria-hidden="true" className="au:size-4" />
@@ -99,11 +101,14 @@ function DatePicker({
         sideOffset={4}
       >
         <div className="au:flex au:items-center au:justify-between au:gap-2">
-          <CalendarPrevious className={navClass}>
+          <CalendarPrevious
+            aria-label={messages.previousMonth}
+            className={navClass}
+          >
             <ChevronLeftIcon aria-hidden="true" />
           </CalendarPrevious>
           <CalendarHeading className="au:text-sm au:font-semibold" />
-          <CalendarNext className={navClass}>
+          <CalendarNext aria-label={messages.nextMonth} className={navClass}>
             <ChevronRightIcon aria-hidden="true" />
           </CalendarNext>
         </div>

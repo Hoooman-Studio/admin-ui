@@ -14,6 +14,7 @@ import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
+import { useMessages } from "./messages";
 import {
   controlBoxClass,
   listCheckClass,
@@ -34,9 +35,10 @@ type ComboboxInputProps = WithClass<
  */
 function ComboboxInput({
   className,
-  triggerLabel = "Show options",
+  triggerLabel,
   ...props
 }: ComboboxInputProps) {
+  const messages = useMessages();
   return (
     <div
       className={cn(
@@ -51,7 +53,7 @@ function ComboboxInput({
         {...props}
       />
       <ComboboxTrigger
-        aria-label={triggerLabel}
+        aria-label={triggerLabel ?? messages.showOptions}
         className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950 au:in-data-[slot=form-field-box]:size-5"
       >
         <ChevronDownIcon aria-hidden="true" className="au:size-4" />

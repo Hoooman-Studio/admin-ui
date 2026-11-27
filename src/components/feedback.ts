@@ -1,9 +1,10 @@
 import { createAlertDialogController } from "@ui-sdk/react/alert-dialog";
 import { toast } from "@ui-sdk/react/toast";
-import { type FormResult, failedMessage } from "../lib/form-result";
+import type { FormResult } from "../lib/form-result";
 
 interface Refusal {
-  message: string;
+  /** Without one, the generic failure message. */
+  message?: string;
   /** The refused action, like the button's name. */
   title: string;
 }
@@ -17,7 +18,8 @@ function toastDone({ message, warning }: Extract<FormResult, { ok: true }>) {
   if (warning) {
     toast.warning(warning, {
       duration: Number.POSITIVE_INFINITY,
-      cancel: { label: "Dismiss" },
+      // The Toaster names a cancel button without a label.
+      cancel: { label: undefined },
     });
   }
   if (message) {
@@ -32,7 +34,7 @@ function showResult(title: string, result: FormResult) {
     return;
   }
   refusals.open({
-    payload: { title, message: result.message || failedMessage },
+    payload: { title, message: result.message },
   });
 }
 

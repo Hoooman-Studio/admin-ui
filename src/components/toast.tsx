@@ -15,6 +15,7 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { buttonVariants } from "./button";
+import { useMessages } from "./messages";
 
 const icons = {
   success: <CircleCheckIcon className="au:text-green-500" />,
@@ -31,9 +32,11 @@ const icons = {
  * `toast.promise(save(), { loading, success, error })` from anywhere inside.
  */
 function Toaster() {
+  const messages = useMessages();
   return (
     <ToastRegion
       align="center"
+      aria-label={messages.notifications}
       className="au:fixed au:inset-auto au:top-0 au:left-1/2 au:m-4 au:mx-0 au:w-[22rem] au:max-w-[calc(100vw-2rem)] au:-translate-x-1/2 au:overflow-visible au:bg-transparent au:p-0 au:*:data-[slot=toast-list]:flex au:*:data-[slot=toast-list]:flex-col au:*:data-[slot=toast-list]:gap-2"
       side="top"
     >
@@ -49,7 +52,7 @@ function Toaster() {
               action={data.cancel.onCancel}
               className={buttonVariants({ size: "sm", variant: "subtle" })}
             >
-              {data.cancel.label}
+              {data.cancel.label ?? messages.dismiss}
             </ToastClose>
           ) : null}
           <ToastAction

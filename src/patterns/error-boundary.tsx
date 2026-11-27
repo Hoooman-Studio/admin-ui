@@ -2,6 +2,7 @@ import * as React from "react";
 import { useFailureText } from "../components/admin-provider";
 import { Button } from "../components/button";
 import { EmptyState } from "../components/empty-state";
+import { useMessages } from "../components/messages";
 
 /**
  * Routers throw these for their own boundaries above: Next.js redirect() and
@@ -40,6 +41,7 @@ class Boundary extends React.Component<
 
 function Fallback({ error, onReset }: { error: unknown; onReset: () => void }) {
   const failureText = useFailureText();
+  const messages = useMessages();
   React.useEffect(() => {
     window.navigation?.addEventListener("currententrychange", onReset);
     return () =>
@@ -50,10 +52,10 @@ function Fallback({ error, onReset }: { error: unknown; onReset: () => void }) {
     <EmptyState
       action={
         <Button onClick={onReset} variant="outline">
-          Try again
+          {messages.tryAgain}
         </Button>
       }
-      title={failureText(error, "Something went wrong")}
+      title={failureText(error, messages.pageFailed)}
     />
   );
 }

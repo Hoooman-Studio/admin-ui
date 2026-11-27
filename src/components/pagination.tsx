@@ -12,6 +12,7 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import { pageBounds } from "../lib/paging";
 import { Button, buttonVariants } from "./button";
+import { useMessages } from "./messages";
 
 const barClass =
   "au:@container/pagination au:flex au:min-h-14 au:items-center au:justify-between au:gap-4 au:px-4 au:sm:px-6";
@@ -41,14 +42,15 @@ function Pagination({
   onPageChange,
   className,
 }: PaginationProps) {
+  const messages = useMessages();
   const { first, last } = pageBounds(page, pageSize, total);
   return (
     <div className={cn(barClass, className)}>
       <p className={summaryClass}>
-        {first}–{last} of {total}
+        {messages.pageRange({ first, last, total })}
       </p>
       <PaginationPart
-        aria-label="Pagination"
+        aria-label={messages.pagination}
         onPageChange={onPageChange}
         page={page}
         pageSize={pageSize}
@@ -59,7 +61,7 @@ function Pagination({
             <>
               <PaginationItem>
                 <PaginationPrevious
-                  aria-label="Previous page"
+                  aria-label={messages.previousPage}
                   className={stepClass}
                 >
                   <ChevronLeftIcon aria-hidden="true" />
@@ -81,7 +83,10 @@ function Pagination({
                 </PaginationItem>
               ))}
               <PaginationItem>
-                <PaginationNext aria-label="Next page" className={stepClass}>
+                <PaginationNext
+                  aria-label={messages.nextPage}
+                  className={stepClass}
+                >
                   <ChevronRightIcon aria-hidden="true" />
                 </PaginationNext>
               </PaginationItem>
@@ -112,10 +117,14 @@ function CursorPagination({
   summary,
   className,
 }: CursorPaginationProps) {
+  const messages = useMessages();
   return (
     <div className={cn(barClass, className)}>
       <p className={summaryClass}>{summary}</p>
-      <nav aria-label="Pagination" className="au:flex au:items-center au:gap-2">
+      <nav
+        aria-label={messages.pagination}
+        className="au:flex au:items-center au:gap-2"
+      >
         <Button
           disabled={!hasPrevious}
           focusableWhenDisabled
@@ -124,7 +133,7 @@ function CursorPagination({
           variant="outline"
         >
           <ChevronLeftIcon aria-hidden="true" />
-          Previous
+          {messages.previous}
         </Button>
         <Button
           disabled={!hasNext}
@@ -133,7 +142,7 @@ function CursorPagination({
           size="sm"
           variant="outline"
         >
-          Next
+          {messages.next}
           <ChevronRightIcon aria-hidden="true" />
         </Button>
       </nav>

@@ -2,6 +2,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 import type * as React from "react";
 import { Button } from "../components/button";
 import { Input, InputClear, InputGroup } from "../components/input";
+import { useMessages } from "../components/messages";
 import { cn } from "../lib/cn";
 
 type SearchFieldProps = Omit<
@@ -19,21 +20,23 @@ type SearchFieldProps = Omit<
  */
 function SearchField({
   className,
-  placeholder = "Search",
+  placeholder,
   "aria-label": label,
   ...props
 }: SearchFieldProps) {
+  const messages = useMessages();
+  const search = placeholder ?? messages.search;
   return (
     <InputGroup className={cn("au:w-full au:max-w-xs", className)}>
       <SearchIcon aria-hidden="true" />
       <Input
-        aria-label={label ?? placeholder}
+        aria-label={label ?? search}
         className="au:[&::-webkit-search-cancel-button]:appearance-none"
-        placeholder={placeholder}
+        placeholder={search}
         type="search"
         {...props}
       />
-      <InputClear aria-label="Clear search" />
+      <InputClear aria-label={messages.clearSearch} />
     </InputGroup>
   );
 }
@@ -91,6 +94,7 @@ function FilterChips({
   className,
   ...props
 }: FilterChipsProps) {
+  const messages = useMessages();
   return (
     <div
       className={cn(
@@ -107,7 +111,7 @@ function FilterChips({
           size="sm"
           variant="ghost"
         >
-          Clear all
+          {messages.clearAll}
         </Button>
       ) : null}
     </div>

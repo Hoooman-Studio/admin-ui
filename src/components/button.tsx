@@ -5,6 +5,7 @@ import { cn } from "../lib/cn";
 import { isFormResult } from "../lib/form-result";
 import { showResult } from "./feedback";
 import { Loader } from "./loader";
+import { useMessages } from "./messages";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const disabledLook =
@@ -107,6 +108,7 @@ function Button({
   onClick,
   ...props
 }: ButtonProps) {
+  const { loading } = useMessages();
   const small = size === "icon-xs" || size === "icon-sm";
   const content = (state: ButtonState) =>
     typeof children === "function" ? children(state) : children;
@@ -116,6 +118,7 @@ function Button({
       disabled={disabled || Boolean(disabledReason)}
       focusableWhenDisabled={focusableWhenDisabled || Boolean(disabledReason)}
       onClick={onClick && withResult(onClick)}
+      pendingAnnouncement={loading}
       {...props}
     >
       {(state) => (
