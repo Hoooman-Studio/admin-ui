@@ -142,8 +142,9 @@ interface AdminProviderProps {
   /**
    * Whether a thrown error means the person's session expired, like
    * `(error) => error instanceof ConvexError && error.data === "Unauthenticated"`.
-   * Forms, uploads and `confirm()` actions then ask them to sign in again
-   * instead of showing a generic error. Applies to every provider it's nested with.
+   * Forms, uploads, `confirm()` actions and ErrorBoundary then ask them to
+   * sign in again instead of showing a generic error. Applies to every
+   * provider it's nested with.
    */
   isSessionError?: (error: unknown) => boolean;
 }
@@ -1527,7 +1528,8 @@ declare function DataTable<Row>({
 }: DataTableProps<Row>): React.JSX.Element;
 /**
  * Shows "Something went wrong" with "Try again" when its children throw while
- * rendering, so the rest of the admin keeps working. It tries again by itself
+ * rendering (the session message for a session error, see AdminProvider),
+ * so the rest of the admin keeps working. It tries again by itself
  * when the URL changes. AdminShell wraps the page in one.
  */
 declare function ErrorBoundary({

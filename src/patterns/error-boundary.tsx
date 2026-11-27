@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useFailureText } from "../components/admin-provider";
 import { Button } from "../components/button";
 import { EmptyState } from "../components/empty-state";
 
@@ -15,29 +16,30 @@ const isRouterSignal = (error: unknown) =>
 // biome-ignore lint/style/useReactFunctionComponents: React has no hook to catch render errors.
 class Boundary extends React.Component<
   { children: React.ReactNode },
-  { failed: boolean }
+  { failed: boolean; error?: unknown }
 > {
   static getDerivedStateFromError(error: unknown) {
     if (isRouterSignal(error)) {
       throw error;
     }
-    return { failed: true };
+    return { failed: true, error };
   }
 
-  state: { failed: boolean } = { failed: false };
+  state: { failed: boolean; error?: unknown } = { failed: false };
 
-  reset = () => this.setState({ failed: false });
+  reset = () => this.setState({ failed: false, error: undefined });
 
   render() {
     return this.state.failed ? (
-      <Fallback onReset={this.reset} />
+      <Fallback error={this.state.error} onReset={this.reset} />
     ) : (
       this.props.children
     );
   }
 }
 
-function Fallback({ onReset }: { onReset: () => void }) {
+function Fallback({ error, onReset }: { error: unknown; onReset: () => void }) {
+  const failureText = useFailureText();
   React.useEffect(() => {
     window.navigation?.addEventListener("currententrychange", onReset);
     return () =>
@@ -51,14 +53,15 @@ function Fallback({ onReset }: { onReset: () => void }) {
           Try again
         </Button>
       }
-      title="Something went wrong"
+      title={failureText(error, "Something went wrong")}
     />
   );
 }
 
 /**
  * Shows "Something went wrong" with "Try again" when its children throw while
- * rendering, so the rest of the admin keeps working. It tries again by itself
+ * rendering (the session message for a session error, see AdminProvider),
+ * so the rest of the admin keeps working. It tries again by itself
  * when the URL changes. AdminShell wraps the page in one.
  */
 function ErrorBoundary({ children }: { children: React.ReactNode }) {

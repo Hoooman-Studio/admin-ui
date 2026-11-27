@@ -13,8 +13,9 @@ interface AdminProviderProps {
   /**
    * Whether a thrown error means the person's session expired, like
    * `(error) => error instanceof ConvexError && error.data === "Unauthenticated"`.
-   * Forms, uploads and `confirm()` actions then ask them to sign in again
-   * instead of showing a generic error. Applies to every provider it's nested with.
+   * Forms, uploads, `confirm()` actions and ErrorBoundary then ask them to
+   * sign in again instead of showing a generic error. Applies to every
+   * provider it's nested with.
    */
   isSessionError?: (error: unknown) => boolean;
 }

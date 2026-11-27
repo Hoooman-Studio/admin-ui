@@ -48,6 +48,7 @@ import {
   toast,
   useTheme,
 } from "../../../src";
+import { SessionExpiredError } from "../session";
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -97,11 +98,13 @@ function PendingButtons() {
   );
 }
 
-/** A button that makes it throw while rendering, until it remounts. */
-function Breakable({ label }: { label: string }) {
+/** A button that makes it throw while rendering, until it remounts. `expired` throws a session error. */
+function Breakable({ label, expired }: { label: string; expired?: boolean }) {
   const [broken, setBroken] = useState(false);
   if (broken) {
-    throw new Error("Listing 42 has no price.");
+    throw expired
+      ? new SessionExpiredError("Unauthenticated")
+      : new Error("Listing 42 has no price.");
   }
   return (
     <Button onClick={() => setBroken(true)} size="sm" variant="outline">
@@ -117,7 +120,10 @@ function Crashes() {
       <Breakable label="Break this page" />
       <Card className="flex-1">
         <ErrorBoundary>
-          <Breakable label="Break this card" />
+          <div className="flex flex-wrap gap-3">
+            <Breakable label="Break this card" />
+            <Breakable expired label="Expire the session" />
+          </div>
         </ErrorBoundary>
       </Card>
     </section>
