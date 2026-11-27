@@ -149,6 +149,13 @@ async function saveListing(value: Listing): Promise<FormResult> {
       message: "Listings above €5,000 need a manager's approval to go live.",
     };
   }
+  if (value.title.toLowerCase().includes("email")) {
+    return {
+      ok: true,
+      message: `Saved ${value.title}.`,
+      warning: "The owner wasn't emailed: their address bounced.",
+    };
+  }
   return { ok: true, message: `Saved ${value.title}.` };
 }
 
@@ -190,7 +197,7 @@ function EditListingForm() {
       <form.Field name="title" validators={{ onBlur: titleSchema }}>
         {(field) => (
           <TextField
-            description="Checked when you leave it. Try a title with “taken” or “crash”, or Live above €5,000."
+            description="Checked when you leave it. Try a title with “taken”, “crash” or “email”, or Live above €5,000."
             field={field}
             label="Title"
           />

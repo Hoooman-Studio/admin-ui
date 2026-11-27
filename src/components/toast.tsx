@@ -1,5 +1,6 @@
 import {
   ToastAction,
+  ToastClose,
   ToastDescription,
   Toast as ToastPart,
   ToastRegion,
@@ -13,6 +14,7 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react";
+import type { FormResult } from "../lib/form-result";
 import { buttonVariants } from "./button";
 
 const icons = {
@@ -43,6 +45,14 @@ function Toaster() {
             <ToastTitle className="au:text-sm au:font-medium" />
             <ToastDescription className="au:text-sm au:text-gray-600" />
           </div>
+          {data.cancel ? (
+            <ToastClose
+              action={data.cancel.onCancel}
+              className={buttonVariants({ size: "sm", variant: "subtle" })}
+            >
+              {data.cancel.label}
+            </ToastClose>
+          ) : null}
           <ToastAction
             className={buttonVariants({ size: "sm", variant: "primary" })}
           />
@@ -52,4 +62,18 @@ function Toaster() {
   );
 }
 
-export { Toaster, toast };
+/** Shows a done FormResult: `message` as a success toast, `warning` as a warning toast that stays until dismissed. */
+function toastDone({ message, warning }: Extract<FormResult, { ok: true }>) {
+  // Newest shows on top: the warning goes first, so `message` reads above it.
+  if (warning) {
+    toast.warning(warning, {
+      duration: Number.POSITIVE_INFINITY,
+      cancel: { label: "Dismiss" },
+    });
+  }
+  if (message) {
+    toast.success(message);
+  }
+}
+
+export { Toaster, toast, toastDone };
