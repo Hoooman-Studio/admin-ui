@@ -15,7 +15,7 @@ import type { WithClass } from "../lib/types";
 import { Banner } from "./banner";
 import { Button } from "./button";
 import { backdropClass } from "./dialog";
-import { toastDone } from "./toast";
+import { type Refusal, refusals, toastDone } from "./feedback";
 
 const contentClass =
   "au:fixed au:inset-0 au:m-auto au:flex au:h-fit au:max-h-[calc(100dvh-2rem)] au:w-[calc(100%-2rem)] au:max-w-sm au:flex-col au:overflow-hidden au:rounded-3xl au:border au:border-alpha/10 au:bg-gray-50 au:p-0 au:text-center au:text-gray-950 au:shadow-floating au:outline-none au:transition-[opacity,scale,translate] au:duration-200 au:ease-fluid au:data-ending-style:translate-y-2 au:data-starting-style:translate-y-2 au:data-ending-style:scale-[0.98] au:data-starting-style:scale-[0.98] au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";
@@ -184,6 +184,33 @@ function ConfirmDialog() {
   );
 }
 
+/** Shows why an action was refused, like a Button whose `onClick` returned `ok: false`. AdminProvider mounts it. */
+function RefusalDialog() {
+  return (
+    <AlertDialog controller={refusals}>
+      <AlertDialogBackdrop className={backdropClass} />
+      <AlertDialogContentPart<Refusal> className={contentClass}>
+        {({ payload }) => (
+          <>
+            <AlertDialogTitle>{payload?.title}</AlertDialogTitle>
+            <AlertDialogDescriptionPart
+              className="au:mx-5 au:mt-6 au:text-left"
+              render={<div />}
+            >
+              <Banner title={payload?.message} tone="danger" />
+            </AlertDialogDescriptionPart>
+            <AlertDialogFooter>
+              <AlertDialogClose render={<Button size="lg" variant="subtle" />}>
+                Close
+              </AlertDialogClose>
+            </AlertDialogFooter>
+          </>
+        )}
+      </AlertDialogContentPart>
+    </AlertDialog>
+  );
+}
+
 export type { ConfirmOptions };
 export {
   AlertDialog,
@@ -195,4 +222,5 @@ export {
   AlertDialogTrigger,
   ConfirmDialog,
   confirm,
+  RefusalDialog,
 };

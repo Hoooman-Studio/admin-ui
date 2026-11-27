@@ -364,6 +364,9 @@ type ButtonProps =
 /**
  * A button, or a link through `render={<a href="…" />}`.
  * Return a Promise from `onClick` and it shows as pending until it settles.
+ * Return or resolve to a FormResult and `ok: false` opens an alert dialog
+ * named after the button with `message`, while `ok: true` shows `message`
+ * and `warning` as toasts.
  */
 declare function Button({
   className,
@@ -374,6 +377,7 @@ declare function Button({
   disabled,
   focusableWhenDisabled,
   disabledReason,
+  onClick,
   ...props
 }: ButtonProps): React.JSX.Element;
 declare const variants: {

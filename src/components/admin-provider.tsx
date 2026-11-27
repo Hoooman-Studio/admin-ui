@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ConfirmDialog } from "./alert-dialog";
+import { ConfirmDialog, RefusalDialog } from "./alert-dialog";
 import { useResolvedTheme } from "./theme";
 import { Toaster } from "./toast";
 
@@ -71,6 +71,7 @@ function AdminProvider({ accent, children, className }: AdminProviderProps) {
           <>
             <Toaster />
             <ConfirmDialog />
+            <RefusalDialog />
           </>
         )}
       </ProviderContext>

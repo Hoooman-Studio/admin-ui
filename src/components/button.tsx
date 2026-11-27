@@ -2,6 +2,8 @@ import { Button as ButtonPart, type ButtonState } from "@ui-sdk/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import { isFormResult } from "../lib/form-result";
+import { showResult } from "./feedback";
 import { Loader } from "./loader";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
@@ -45,6 +47,28 @@ const buttonVariants = cva(
   }
 );
 
+type ClickHandler = NonNullable<
+  React.ComponentProps<typeof ButtonPart>["onClick"]
+>;
+
+/** Shows a FormResult that `onClick` returns or resolves to, named after the button. Anything else passes through as is. */
+function withResult(onClick: ClickHandler): ClickHandler {
+  return (event, details) => {
+    const button = event.currentTarget;
+    const show = (value: unknown) => {
+      if (isFormResult(value)) {
+        showResult(
+          button.getAttribute("aria-label") ?? button.textContent.trim(),
+          value
+        );
+      }
+      return value;
+    };
+    const returned = onClick(event, details);
+    return returned instanceof Promise ? returned.then(show) : show(returned);
+  };
+}
+
 type ButtonVariants = VariantProps<typeof buttonVariants>;
 type ButtonSize = NonNullable<ButtonVariants["size"]>;
 type IconSize = Extract<ButtonSize, `icon${string}`>;
@@ -64,6 +88,9 @@ type ButtonProps =
 /**
  * A button, or a link through `render={<a href="…" />}`.
  * Return a Promise from `onClick` and it shows as pending until it settles.
+ * Return or resolve to a FormResult and `ok: false` opens an alert dialog
+ * named after the button with `message`, while `ok: true` shows `message`
+ * and `warning` as toasts.
  */
 function Button({
   className,
@@ -74,6 +101,7 @@ function Button({
   disabled,
   focusableWhenDisabled,
   disabledReason,
+  onClick,
   ...props
 }: ButtonProps) {
   const small = size === "icon-xs" || size === "icon-sm";
@@ -84,6 +112,7 @@ function Button({
       className={cn(buttonVariants({ variant, size, rounded }), className)}
       disabled={disabled || Boolean(disabledReason)}
       focusableWhenDisabled={focusableWhenDisabled || Boolean(disabledReason)}
+      onClick={onClick && withResult(onClick)}
       {...props}
     >
       {(state) => (

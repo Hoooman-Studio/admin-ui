@@ -424,6 +424,54 @@ function ToastsSection() {
   );
 }
 
+function ButtonResultsSection() {
+  return (
+    <PageSection title="Button results">
+      <div className="flex flex-wrap gap-2">
+        <Button
+          onClick={async () => {
+            await wait(800);
+            return { ok: false, message: "Add a homepage before publishing." };
+          }}
+          variant="outline"
+        >
+          Publish site
+        </Button>
+        <Button
+          onClick={async () => {
+            await wait(800);
+            return { ok: true, message: "Cache cleared" };
+          }}
+          variant="outline"
+        >
+          Clear cache
+        </Button>
+        <Button
+          onClick={async () => {
+            await wait(800);
+            return {
+              ok: true,
+              message: "Newsletter sent",
+              warning: "12 addresses bounced.",
+            };
+          }}
+          variant="outline"
+        >
+          Send newsletter
+        </Button>
+        <Button
+          aria-label="Sync listings"
+          onClick={() => ({ ok: false })}
+          size="icon"
+          variant="outline"
+        >
+          <RefreshCwIcon />
+        </Button>
+      </div>
+    </PageSection>
+  );
+}
+
 function BannersSection() {
   return (
     <PageSection title="Result banners">
@@ -597,6 +645,7 @@ function OverlaysPage() {
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 p-6 sm:p-10">
       <ListingsSection />
       <ToastsSection />
+      <ButtonResultsSection />
       <BannersSection />
       <SmallThingsSection />
     </div>

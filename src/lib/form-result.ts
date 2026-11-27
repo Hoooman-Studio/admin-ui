@@ -13,5 +13,14 @@ type FormResult =
 
 const failedMessage = "Something went wrong. Try again.";
 
+function isFormResult(value: unknown): value is FormResult {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "ok" in value &&
+    typeof value.ok === "boolean"
+  );
+}
+
 export type { FormResult };
-export { failedMessage };
+export { failedMessage, isFormResult };
