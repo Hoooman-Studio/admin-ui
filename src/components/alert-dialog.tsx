@@ -1,21 +1,28 @@
 import {
-  AlertDialog,
   AlertDialogBackdrop,
   AlertDialogClose,
   AlertDialogContent as AlertDialogContentPart,
   AlertDialogDescription as AlertDialogDescriptionPart,
+  AlertDialog as AlertDialogPart,
   AlertDialogTitle as AlertDialogTitlePart,
   AlertDialogTrigger,
   createConfirm,
 } from "@ui-sdk/react/alert-dialog";
 import * as React from "react";
 import { cn } from "../lib/cn";
-import { type FormResult, failedMessage } from "../lib/form-result";
+import type { FormResult } from "../lib/form-result";
 import type { WithClass } from "../lib/types";
 import { Banner } from "./banner";
 import { Button } from "./button";
 import { backdropClass } from "./dialog";
 import { type Refusal, refusals, toastDone } from "./feedback";
+import { useMessages } from "./messages";
+
+function AlertDialog(props: React.ComponentProps<typeof AlertDialogPart>) {
+  return (
+    <AlertDialogPart pendingAnnouncement={useMessages().loading} {...props} />
+  );
+}
 
 const contentClass =
   "au:fixed au:inset-0 au:m-auto au:flex au:h-fit au:max-h-[calc(100dvh-2rem)] au:w-[calc(100%-2rem)] au:max-w-sm au:flex-col au:overflow-hidden au:rounded-3xl au:border au:border-alpha/10 au:bg-gray-50 au:p-0 au:text-center au:text-gray-950 au:shadow-floating au:outline-none au:transition-[opacity,scale,translate] au:duration-200 au:ease-fluid au:data-ending-style:translate-y-2 au:data-starting-style:translate-y-2 au:data-ending-style:scale-[0.98] au:data-starting-style:scale-[0.98] au:data-ending-style:opacity-0 au:data-starting-style:opacity-0";
@@ -95,7 +102,7 @@ interface ConfirmOptions {
   // biome-ignore lint/suspicious/noConfusingVoidType: an action may return nothing.
   action?: () => FormResult | void | Promise<FormResult | void>;
   cancelLabel?: string;
-  /** The agreeing button's text. Defaults to "Confirm". */
+  /** The agreeing button's text. Defaults to the `confirm` message. */
   confirmLabel?: string;
   /** What agreeing does. */
   description?: React.ReactNode;
@@ -123,6 +130,7 @@ function ConfirmDialog({
 }: {
   failureText: (error: unknown) => string;
 }) {
+  const messages = useMessages();
   const [refusal, setRefusal] = React.useState<string | null>(null);
   const clearRefusal = React.useCallback(() => setRefusal(null), []);
 
@@ -136,7 +144,7 @@ function ConfirmDialog({
       result = { ok: false, message: failureText(error) };
     }
     if (result?.ok === false) {
-      const message = result.message || failedMessage;
+      const message = result.message || messages.failed;
       setRefusal(message);
       throw new Error(message);
     }
@@ -166,7 +174,7 @@ function ConfirmDialog({
             ) : null}
             <AlertDialogFooter>
               <AlertDialogClose render={<Button size="lg" variant="subtle" />}>
-                {payload?.cancelLabel ?? "Cancel"}
+                {payload?.cancelLabel ?? messages.cancel}
               </AlertDialogClose>
               <AlertDialogClose
                 action={payload?.action ? run(payload.action) : undefined}
@@ -178,7 +186,7 @@ function ConfirmDialog({
                 }
                 value="confirm"
               >
-                {payload?.confirmLabel ?? "Confirm"}
+                {payload?.confirmLabel ?? messages.confirm}
               </AlertDialogClose>
             </AlertDialogFooter>
           </>
@@ -190,6 +198,7 @@ function ConfirmDialog({
 
 /** Shows why an action was refused, like a Button whose `onClick` returned `ok: false`. AdminProvider mounts it. */
 function RefusalDialog() {
+  const messages = useMessages();
   return (
     <AlertDialog controller={refusals}>
       <AlertDialogBackdrop className={backdropClass} />
@@ -201,11 +210,14 @@ function RefusalDialog() {
               className="au:mx-5 au:mt-6 au:text-left"
               render={<div />}
             >
-              <Banner title={payload?.message} tone="danger" />
+              <Banner
+                title={payload?.message || messages.failed}
+                tone="danger"
+              />
             </AlertDialogDescriptionPart>
             <AlertDialogFooter>
               <AlertDialogClose render={<Button size="lg" variant="subtle" />}>
-                Close
+                {messages.close}
               </AlertDialogClose>
             </AlertDialogFooter>
           </>

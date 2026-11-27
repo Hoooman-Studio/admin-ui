@@ -2,6 +2,7 @@ import {
   BoxIcon,
   BuildingIcon,
   FileCheckIcon,
+  LanguagesIcon,
   LayersIcon,
   LayoutDashboardIcon,
   LogOutIcon,
@@ -30,6 +31,7 @@ import {
   NavSection,
   toast,
 } from "../../src";
+import { dutch, isDutch } from "./dutch";
 import { BasicsPage } from "./pages/basics";
 import { DataPage } from "./pages/data";
 import { FormsPage } from "./pages/forms";
@@ -93,7 +95,11 @@ function App() {
     return <SitePage />;
   }
   return (
-    <AdminProvider accent="hsl(20 100% 50%)" isSessionError={isSessionError}>
+    <AdminProvider
+      accent="hsl(20 100% 50%)"
+      isSessionError={isSessionError}
+      messages={isDutch ? dutch : undefined}
+    >
       {page === "login" ? <LoginPage /> : <Shell page={page} />}
     </AdminProvider>
   );
@@ -126,6 +132,14 @@ function Shell({ page }: { page: PageName | "listing" }) {
             <MenuItem>
               <UserIcon />
               Profile
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                window.location.search = isDutch ? "" : "lang=nl";
+              }}
+            >
+              <LanguagesIcon />
+              {isDutch ? "English" : "Nederlands"}
             </MenuItem>
             <MenuItem onClick={() => go("login")}>
               <LogOutIcon />

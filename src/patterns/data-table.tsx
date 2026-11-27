@@ -15,6 +15,7 @@ import {
 } from "../components/list-row";
 import { Loader } from "../components/loader";
 import { RowMenuBase } from "../components/menu";
+import { useMessages } from "../components/messages";
 import { cn } from "../lib/cn";
 import type { SortState } from "../lib/sort-rows";
 
@@ -190,6 +191,7 @@ function DataTable<Row>({
   className,
 }: DataTableProps<Row>) {
   const baseId = React.useId();
+  const messages = useMessages();
   const selectable = selected !== undefined;
   const pageIds = React.useMemo(
     () => rows?.map(getRowId) ?? [],
@@ -214,7 +216,7 @@ function DataTable<Row>({
   if (error) {
     body = (
       <StateRow columnCount={columnCount}>
-        <EmptyState description={error} title="This list couldn't load" />
+        <EmptyState description={error} title={messages.listFailed} />
       </StateRow>
     );
   } else if (rows === undefined) {
@@ -228,7 +230,7 @@ function DataTable<Row>({
   } else if (rows.length === 0) {
     body = (
       <StateRow columnCount={columnCount}>
-        {empty ?? <EmptyState title="Nothing here yet" />}
+        {empty ?? <EmptyState title={messages.listEmpty} />}
       </StateRow>
     );
   } else {
@@ -296,7 +298,7 @@ function DataTable<Row>({
             >
               {actions ? (
                 <RowMenuBase
-                  aria-label="Actions"
+                  aria-label={messages.actions}
                   aria-labelledby={`${baseId}-actions ${nameId}`}
                 >
                   {actions}
@@ -322,7 +324,7 @@ function DataTable<Row>({
               style={{ top: stickyTop }}
             >
               <Checkbox
-                aria-label="Select all rows"
+                aria-label={messages.selectAllRows}
                 className="au:flex"
                 disabled={pageIds.length === 0}
                 parent
@@ -365,7 +367,7 @@ function DataTable<Row>({
               className={cn(thClass, "au:w-px", edgeEnd)}
               style={{ top: stickyTop }}
             >
-              <span className="au:sr-only">Actions</span>
+              <span className="au:sr-only">{messages.actions}</span>
             </th>
           ) : null}
         </tr>
@@ -379,10 +381,10 @@ function DataTable<Row>({
       className={cn("au:@container/data-table au:isolate au:w-full", className)}
     >
       <span hidden id={`${baseId}-select`}>
-        Select
+        {messages.selectRow}
       </span>
       <span hidden id={`${baseId}-actions`}>
-        Actions for
+        {messages.actionsForRow}
       </span>
       {selectable ? (
         <CheckboxGroup
@@ -434,6 +436,7 @@ function BulkBar({
   onSelectedChange: (ids: string[]) => void;
   children: React.ReactNode;
 }) {
+  const messages = useMessages();
   const clear = React.useCallback(
     () => onSelectedChange([]),
     [onSelectedChange]
@@ -442,11 +445,11 @@ function BulkBar({
     <div className="au:pointer-events-none au:sticky au:bottom-4 au:z-30 au:flex au:justify-center au:px-4 au:py-3">
       <div className="au:border-alpha/10 au:shadow-floating au:pointer-events-auto au:flex au:items-center au:gap-2 au:rounded-2xl au:border au:bg-gray-50 au:p-2 au:ps-4">
         <span className="au:tabular au:me-2 au:text-sm au:font-medium au:whitespace-nowrap au:text-gray-950">
-          {count} selected
+          {messages.selectedCount({ count })}
         </span>
         {children}
         <Button
-          aria-label="Clear selection"
+          aria-label={messages.clearSelection}
           onClick={clear}
           size="icon"
           variant="ghost"

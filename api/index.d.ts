@@ -1,5 +1,5 @@
 import {
-  AlertDialog,
+  AlertDialog as AlertDialog$1,
   AlertDialogClose,
   AlertDialogContent as AlertDialogContent$1,
   AlertDialogDescription as AlertDialogDescription$1,
@@ -133,6 +133,110 @@ import {
 import { VariantProps } from "class-variance-authority";
 import * as React from "react";
 
+/** Where a moving row is, for what screen readers hear while reordering. */
+interface Place {
+  name: string;
+  position: number;
+  total: number;
+}
+/**
+ * Every word admin-ui shows by itself, in English. AdminProvider's `messages`
+ * replaces any of them: a string, or a function of the values in braces.
+ */
+declare const englishMessages: {
+  cancel: string;
+  confirm: string;
+  close: string;
+  dismiss: string;
+  back: string;
+  remove: string;
+  tryAgain: string;
+  clearAll: string;
+  discardChanges: string;
+  keepEditing: string;
+  discard: string;
+  failed: string;
+  sessionExpired: string;
+  pageFailed: string;
+  listFailed: string;
+  listEmpty: string;
+  /** What screen readers hear while something loads or an action is pending. */
+  loading: string;
+  loadingFile: ({ name }: { name: string }) => string;
+  /** The region toasts show in, for screen readers. */
+  notifications: string;
+  mainNav: string;
+  openMenu: string;
+  expandMenu: string;
+  collapseMenu: string;
+  openAccountMenu: string;
+  openStudio: string;
+  theme: string;
+  themeSystem: string;
+  themeLight: string;
+  themeDark: string;
+  pagination: string;
+  previous: string;
+  next: string;
+  previousPage: string;
+  nextPage: string;
+  pageRange: ({
+    first,
+    last,
+    total,
+  }: {
+    first: number;
+    last: number;
+    total: number;
+  }) => string;
+  search: string;
+  clearSearch: string;
+  openSearch: string;
+  commandPalette: string;
+  commandPlaceholder: string;
+  nothingFound: string;
+  showOptions: string;
+  removeItem: ({ name }: { name: string }) => string;
+  chooseDate: string;
+  endDate: string;
+  previousMonth: string;
+  nextMonth: string;
+  decrease: string;
+  increase: string;
+  actions: string;
+  actionsFor: ({ name }: { name: string }) => string;
+  /** Read before a DataTable row's name, which may not be plain text, for its "…" button. */
+  actionsForRow: string;
+  /** Read before a DataTable row's name for its checkbox. */
+  selectRow: string;
+  selectAllRows: string;
+  selectedCount: ({ count }: { count: number }) => string;
+  clearSelection: string;
+  reorder: ({ name }: { name: string }) => string;
+  reorderInstructions: string;
+  pickedUp: ({ name, position, total }: Place) => string;
+  moved: ({ name, position, total }: Place) => string;
+  dropped: ({ name, position, total }: Place) => string;
+  movedBack: ({ name, position, total }: Place) => string;
+  dropFiles: string;
+  browseFiles: string;
+  chooseFile: string;
+  replaceFile: string;
+  noFile: string;
+  currentFile: string;
+  fileNotAccepted: string;
+  uploadFailed: string;
+  uploading: ({ name }: { name: string }) => string;
+  uploaded: ({ name }: { name: string }) => string;
+  image: string;
+  video: string;
+  audio: string;
+  file: string;
+  play: ({ name }: { name: string }) => string;
+  pause: ({ name }: { name: string }) => string;
+  playbackPosition: ({ name }: { name: string }) => string;
+};
+type Messages = typeof englishMessages;
 interface AdminProviderProps {
   /** The client's brand colour, any CSS colour. */
   accent?: string;
@@ -147,6 +251,13 @@ interface AdminProviderProps {
    * provider it's nested with.
    */
   isSessionError?: (error: unknown) => boolean;
+  /**
+   * Your words for any text admin-ui shows by itself, like
+   * `{ cancel: m.cancel(), selectedCount: ({ count }) => m.selected({ count }) }`.
+   * The rest comes from a provider around this one, or stays English. Label
+   * props like `cancelLabel` still win.
+   */
+  messages?: Partial<Messages>;
 }
 /**
  * Sets up the admin. Put it in the admin's layout route, around every admin
@@ -161,6 +272,7 @@ declare function AdminProvider({
   children,
   className,
   isSessionError,
+  messages,
 }: AdminProviderProps): React.JSX.Element;
 /**
  * What a form submit returns. `ok: false` keeps the form as typed: `message`
@@ -190,6 +302,9 @@ type WithClass<T> = Omit<T, "className"> & {
 type WithNodeChildren<T> = Omit<WithClass<T>, "children"> & {
   children?: React.ReactNode;
 };
+declare function AlertDialog(
+  props: React.ComponentProps<typeof AlertDialog$1>
+): React.JSX.Element;
 /** The question, with its backdrop. Put an AlertDialogTitle, an AlertDialogDescription and an AlertDialogFooter inside. */
 declare function AlertDialogContent({
   className,
@@ -224,7 +339,7 @@ interface ConfirmOptions {
    */
   action?: () => FormResult | void | Promise<FormResult | void>;
   cancelLabel?: string;
-  /** The agreeing button's text. Defaults to "Confirm". */
+  /** The agreeing button's text. Defaults to the `confirm` message. */
   confirmLabel?: string;
   /** What agreeing does. */
   description?: React.ReactNode;
@@ -568,13 +683,7 @@ interface CommandPaletteProps {
   trigger?: React.ReactElement<Record<string, unknown>>;
 }
 /** A command palette in a dialog, opened with ⌘K / Ctrl+K from anywhere on the page or with its trigger. */
-declare function CommandPalette({
-  children,
-  title,
-  placeholder,
-  emptyText,
-  trigger,
-}: CommandPaletteProps): React.JSX.Element;
+declare function CommandPalette(props: CommandPaletteProps): React.JSX.Element;
 type DatePickerProps = Omit<
   React.ComponentProps<typeof DatePicker$1>,
   "className" | "children"
@@ -798,13 +907,9 @@ type FileInputDropzoneProps = Omit<
   browseLabel?: React.ReactNode;
 };
 /** Drop or paste files here, or press the button to browse. */
-declare function FileInputDropzone({
-  className,
-  children,
-  title,
-  browseLabel,
-  ...props
-}: FileInputDropzoneProps): React.JSX.Element;
+declare function FileInputDropzone(
+  dropzoneProps: FileInputDropzoneProps
+): React.JSX.Element;
 /** The chosen files, each with its size and a remove button. Name it with `aria-label`. */
 declare function FileInputList({
   className,
@@ -964,7 +1069,7 @@ interface RowMenuBaseProps {
   className?: string;
 }
 type RowMenuProps = Omit<RowMenuBaseProps, "aria-label" | "aria-labelledby"> & {
-  /** The row's name. The button reads "Actions for {label}". */
+  /** The row's name. The button reads it in the `actionsFor` message. */
   label: string;
 };
 /** The "…" button and menu for a row's actions, as in DataTable. Put it in a ListRow's `actions`. */

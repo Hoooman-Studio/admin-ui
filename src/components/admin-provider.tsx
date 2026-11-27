@@ -1,6 +1,6 @@
 import * as React from "react";
-import { failedMessage, sessionMessage } from "../lib/form-result";
 import { ConfirmDialog, RefusalDialog } from "./alert-dialog";
+import { type Messages, MessagesContext, useMessages } from "./messages";
 import { useResolvedTheme } from "./theme";
 import { Toaster } from "./toast";
 
@@ -18,6 +18,13 @@ interface AdminProviderProps {
    * provider it's nested with.
    */
   isSessionError?: (error: unknown) => boolean;
+  /**
+   * Your words for any text admin-ui shows by itself, like
+   * `{ cancel: m.cancel(), selectedCount: ({ count }) => m.selected({ count }) }`.
+   * The rest comes from a provider around this one, or stays English. Label
+   * props like `cancelLabel` still win.
+   */
+  messages?: Partial<Messages>;
 }
 
 type SessionCheck = NonNullable<AdminProviderProps["isSessionError"]>;
@@ -39,10 +46,11 @@ function useAdminProvider(name: string) {
 /** What to show for an error thrown at the admin: the session message when an AdminProvider's `isSessionError` matches it, else `fallback`. */
 function useFailureText() {
   const isSessionError = React.use(ProviderContext)?.isSessionError;
+  const { failed, sessionExpired } = useMessages();
   return React.useCallback(
-    (error: unknown, fallback = failedMessage) =>
-      isSessionError?.(error) ? sessionMessage : fallback,
-    [isSessionError]
+    (error: unknown, fallback = failed) =>
+      isSessionError?.(error) ? sessionExpired : fallback,
+    [isSessionError, failed, sessionExpired]
   );
 }
 
@@ -79,6 +87,7 @@ function AdminProvider({
   children,
   className,
   isSessionError,
+  messages,
 }: AdminProviderProps) {
   const outer = React.use(ProviderContext);
   const nested = outer !== null;
@@ -101,10 +110,22 @@ function AdminProvider({
     }),
     [checks, isSessionError, outer]
   );
+  const outerMessages = useMessages();
+  const ownMessages = React.useMemo(
+    () => ({
+      ...outerMessages,
+      // An `undefined` message keeps the one around it.
+      ...Object.fromEntries(
+        Object.entries(messages ?? {}).filter(([, text]) => text !== undefined)
+      ),
+    }),
+    [outerMessages, messages]
+  );
+  const { failed, sessionExpired } = ownMessages;
   const confirmFailureText = React.useCallback(
     (error: unknown) =>
-      checks.some((check) => check(error)) ? sessionMessage : failedMessage,
-    [checks]
+      checks.some((check) => check(error)) ? sessionExpired : failed,
+    [checks, failed, sessionExpired]
   );
   const theme = useResolvedTheme();
   useStylesCheck();
@@ -122,14 +143,16 @@ function AdminProvider({
       }
     >
       <ProviderContext value={value}>
-        {children}
-        {nested ? null : (
-          <>
-            <Toaster />
-            <ConfirmDialog failureText={confirmFailureText} />
-            <RefusalDialog />
-          </>
-        )}
+        <MessagesContext value={ownMessages}>
+          {children}
+          {nested ? null : (
+            <>
+              <Toaster />
+              <ConfirmDialog failureText={confirmFailureText} />
+              <RefusalDialog />
+            </>
+          )}
+        </MessagesContext>
       </ProviderContext>
     </div>
   );

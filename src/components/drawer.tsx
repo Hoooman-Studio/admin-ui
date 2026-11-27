@@ -12,13 +12,20 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 import { Button } from "./button";
+import { useMessages } from "./messages";
 
 /** A side sheet. Opens from the right by default; pass `side="left"` for mobile navigation. */
 function Drawer({
   side = "right",
   ...props
 }: React.ComponentProps<typeof DrawerPart>) {
-  return <DrawerPart side={side} {...props} />;
+  return (
+    <DrawerPart
+      pendingAnnouncement={useMessages().loading}
+      side={side}
+      {...props}
+    />
+  );
 }
 
 const sizes = {
@@ -58,9 +65,10 @@ function DrawerContent({
 function DrawerHeader({
   className,
   children,
-  closeLabel = "Close",
+  closeLabel,
   ...props
 }: React.ComponentProps<"div"> & { closeLabel?: string | null }) {
+  const messages = useMessages();
   return (
     <div
       className={cn(
@@ -73,7 +81,11 @@ function DrawerHeader({
       {closeLabel === null ? null : (
         <DrawerClosePart
           render={
-            <Button aria-label={closeLabel} size="icon-sm" variant="outline">
+            <Button
+              aria-label={closeLabel ?? messages.close}
+              size="icon-sm"
+              variant="outline"
+            >
               <XIcon />
             </Button>
           }

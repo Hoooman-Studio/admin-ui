@@ -12,6 +12,7 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 import { buttonVariants } from "./button";
+import { useMessages } from "./messages";
 
 /** Holds the chosen files. Put a FileInputDropzone and a FileInputList inside. */
 function FileInput({
@@ -38,13 +39,15 @@ type FileInputDropzoneProps = Omit<
 };
 
 /** Drop or paste files here, or press the button to browse. */
-function FileInputDropzone({
-  className,
-  children,
-  title = "Drag files here",
-  browseLabel = "Browse files",
-  ...props
-}: FileInputDropzoneProps) {
+function FileInputDropzone(dropzoneProps: FileInputDropzoneProps) {
+  const messages = useMessages();
+  const {
+    className,
+    children,
+    title = messages.dropFiles,
+    browseLabel = messages.browseFiles,
+    ...props
+  } = dropzoneProps;
   return (
     <FileInputDropzonePart
       className={cn(
@@ -80,6 +83,7 @@ function FileInputList({
 }: WithClass<
   Omit<React.ComponentProps<typeof FileInputListPart>, "children">
 >) {
+  const messages = useMessages();
   return (
     <FileInputListPart
       className={cn(
@@ -101,7 +105,10 @@ function FileInputList({
             <span className="au:tabular au:shrink-0 au:text-gray-500">
               {formatFileSize(file.size)}
             </span>
-            <FileInputItemRemove className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950">
+            <FileInputItemRemove
+              aria-label={messages.removeItem({ name: file.name })}
+              className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950"
+            >
               <XIcon aria-hidden="true" className="au:size-4" />
             </FileInputItemRemove>
           </>

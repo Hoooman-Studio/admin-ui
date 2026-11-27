@@ -11,6 +11,7 @@ import {
 import { XIcon } from "lucide-react";
 import { cn } from "../lib/cn";
 import { ComboboxContent, ComboboxItem } from "./combobox";
+import { useMessages } from "./messages";
 import { controlBoxClass } from "./select";
 
 type TagInputProps = Pick<
@@ -40,6 +41,7 @@ function TagInput({
   suggestions = [],
   ...props
 }: TagInputProps) {
+  const messages = useMessages();
   return (
     <Combobox<string, true> allowCustomValue multiple {...props}>
       <ComboboxChips
@@ -59,7 +61,7 @@ function TagInput({
               >
                 {label}
                 <ComboboxChipRemove
-                  aria-label={`Remove ${label}`}
+                  aria-label={messages.removeItem({ name: label })}
                   className="au:hover:bg-alpha/10 au:flex au:size-5 au:items-center au:justify-center au:rounded au:text-gray-500 au:hover:text-gray-950 au:data-disabled:hidden"
                 >
                   <XIcon aria-hidden="true" className="au:size-3.5" />

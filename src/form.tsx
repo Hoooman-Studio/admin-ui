@@ -41,6 +41,7 @@ import {
 } from "./components/field";
 import { FileInput, FileInputTrigger } from "./components/file-input";
 import { Input } from "./components/input";
+import { type Messages, useMessages } from "./components/messages";
 import { NumberInput } from "./components/number-input";
 import { RadioField, RadioGroup } from "./components/radio";
 import {
@@ -54,7 +55,7 @@ import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
 import { cn } from "./lib/cn";
 import { errorText, formErrorText, hiddenFieldError } from "./lib/form-errors";
-import { type FormResult, failedMessage } from "./lib/form-result";
+import type { FormResult } from "./lib/form-result";
 import { type FileKind, FilePreview } from "./patterns/file-preview";
 
 /**
@@ -477,10 +478,8 @@ type FileChange = NonNullable<
 >;
 
 /** Why an upload failed, as the field's error. */
-function uploadErrorText(error: unknown) {
-  return error instanceof Error && error.message
-    ? error.message
-    : "The upload failed. Try again.";
+function uploadErrorText(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback;
 }
 
 /** The tile for a file's MIME type, like "audio/mpeg". */
@@ -523,16 +522,17 @@ function PickedPreview<T>({ picked }: { picked: Picked<T> }) {
 function uploadStatus<T>(
   picked: Picked<T> | null,
   error: string | null,
-  value: T
+  value: T,
+  messages: Messages
 ) {
   if (picked?.status === "uploading") {
-    return `Uploading ${picked.name}`;
+    return messages.uploading({ name: picked.name });
   }
   if (error) {
     return error;
   }
   return picked?.status === "ready" && picked.id === value
-    ? `Uploaded ${picked.name}`
+    ? messages.uploaded({ name: picked.name })
     : "";
 }
 
@@ -589,6 +589,7 @@ function FileField<T extends string | null>({
   const startUpload = formContext?.startUpload;
   const holdFailed = formContext?.holdFailed;
   const failureText = useFailureText();
+  const messages = useMessages();
   const uploading = picked?.status === "uploading";
   const failed = picked?.status === "error";
   React.useEffect(
@@ -630,15 +631,18 @@ function FileField<T extends string | null>({
       } catch (reason) {
         if (run === latest.current) {
           setPicked((prev) => prev && { ...prev, status: "error" });
-          setServerError(field, failureText(reason, uploadErrorText(reason)));
+          setServerError(
+            field,
+            failureText(reason, uploadErrorText(reason, messages.uploadFailed))
+          );
         }
       }
     },
-    [field, upload, onChange, failureText]
+    [field, upload, onChange, failureText, messages]
   );
   const reject = React.useCallback(
-    () => setServerError(field, "This type of file isn't accepted."),
-    [field]
+    () => setServerError(field, messages.fileNotAccepted),
+    [field, messages]
   );
   const remove = React.useCallback(() => {
     setPicked(null);
@@ -662,7 +666,7 @@ function FileField<T extends string | null>({
     tile = preview ? (
       preview(value)
     ) : (
-      <FilePreview kind="file" name="Current file" />
+      <FilePreview kind="file" name={messages.currentFile} />
     );
   }
   return (
@@ -683,10 +687,10 @@ function FileField<T extends string | null>({
             onBlur={field.handleBlur}
             ref={trigger}
           >
-            {value === null ? "Choose file" : "Replace"}
+            {value === null ? messages.chooseFile : messages.replaceFile}
           </FileInputTrigger>
           <span className="au:min-w-0 au:flex-1 au:truncate au:text-sm au:text-gray-600">
-            {tile ? null : "No file"}
+            {tile ? null : messages.noFile}
           </span>
           {removable && (value !== null || failed) && !uploading ? (
             <Button
@@ -695,12 +699,12 @@ function FileField<T extends string | null>({
               size="sm"
               variant="ghost"
             >
-              Remove
+              {messages.remove}
             </Button>
           ) : null}
         </div>
         <span aria-live="polite" className="au:sr-only">
-          {uploadStatus(picked, error, value)}
+          {uploadStatus(picked, error, value, messages)}
         </span>
       </FileInput>
     </FormField>
@@ -708,7 +712,11 @@ function FileField<T extends string | null>({
 }
 
 /** Shows a refused submit on the form: its message above the submit button, its field errors under the fields. */
-function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
+function refuse(
+  form: AnyFormApi,
+  result: Extract<FormResult, { ok: false }>,
+  failed: string
+) {
   // An empty message would mark its field invalid without saying why.
   const fieldErrors = Object.fromEntries(
     Object.entries(result.fieldErrors ?? {}).filter(([, text]) => text)
@@ -718,7 +726,7 @@ function refuse(form: AnyFormApi, result: Extract<FormResult, { ok: false }>) {
   const message =
     result.message ||
     hiddenFieldError(fieldErrors, isRendered) ||
-    (Object.keys(fieldErrors).length > 0 ? undefined : failedMessage);
+    (Object.keys(fieldErrors).length > 0 ? undefined : failed);
   form.setErrorMap({ onServer: { form: message, fields: fieldErrors } });
 }
 
@@ -789,6 +797,7 @@ function useAdminForm<
 > {
   const overlay = React.use(FormOverlayContext);
   const failureText = useFailureText();
+  const messages = useMessages();
   return useForm<
     TFormData,
     undefined,
@@ -832,14 +841,18 @@ function useAdminForm<
           return;
         }
         if (!result.ok) {
-          refuse(formApi, result);
+          refuse(formApi, result, messages.failed);
           return;
         }
         toastDone(result);
         overlay?.close();
       } catch (error) {
         console.error(error);
-        refuse(formApi, { ok: false, message: failureText(error) });
+        refuse(
+          formApi,
+          { ok: false, message: failureText(error) },
+          messages.failed
+        );
       }
     },
   });
@@ -875,6 +888,7 @@ function AdminForm({
 }) {
   const [uploads, setUploads] = React.useState(0);
   const failureText = useFailureText();
+  const messages = useMessages();
   const startUpload = React.useCallback(() => {
     setUploads((count) => count + 1);
     return () => setUploads((count) => count - 1);
@@ -908,10 +922,14 @@ function AdminForm({
       });
       form.handleSubmit().catch((error: unknown) => {
         console.error(error);
-        refuse(form, { ok: false, message: failureText(error) });
+        refuse(
+          form,
+          { ok: false, message: failureText(error) },
+          messages.failed
+        );
       });
     },
-    [form, uploads, failureText]
+    [form, uploads, failureText, messages]
   );
   const context = React.useMemo(
     () => ({ form, uploading: uploads > 0, startUpload, holdFailed }),
@@ -1018,6 +1036,7 @@ type FormOverlayProps = {
 
 /** Open state for a FormDialog or FormDrawer, and `content` to wrap the form so it starts fresh on each opening. */
 function useFormOverlay(props: FormOverlayProps) {
+  const messages = useMessages();
   const [ownOpen, setOwnOpen] = React.useState(false);
   const open = props.open ?? ownOpen;
   const onOpenChange = props.onOpenChange ?? setOwnOpen;
@@ -1054,9 +1073,9 @@ function useFormOverlay(props: FormOverlayProps) {
     }
     details.cancel();
     confirm({
-      title: "Discard changes?",
-      cancelLabel: "Keep editing",
-      confirmLabel: "Discard",
+      title: messages.discardChanges,
+      cancelLabel: messages.keepEditing,
+      confirmLabel: messages.discard,
       tone: "danger",
     })
       .then((discard) => {

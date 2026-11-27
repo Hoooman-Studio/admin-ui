@@ -4,6 +4,7 @@ import {
   createReorder,
   definePrimitive,
   type ReorderDraft,
+  type ReorderMessage,
   type ReorderReason,
   sourceOf,
 } from "@ui-sdk/core";
@@ -12,8 +13,10 @@ import { GripVerticalIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "../lib/cn";
 import { ListRow, type ListRowProps } from "./list-row";
+import { useMessages } from "./messages";
 
 interface SortableListOptions {
+  message: (message: ReorderMessage) => string;
   onValueChange?: (
     value: string[],
     details: ChangeDetails<ReorderReason> & { key: string }
@@ -26,6 +29,7 @@ const sortableList = definePrimitive({
   options: {
     value: "list",
     onValueChange: "callback",
+    message: "value",
   },
   controlled: ["value"],
   state: (options: SortableListOptions) => ({
@@ -47,6 +51,7 @@ const sortableList = definePrimitive({
           key: context.store.get().moving?.key ?? "",
         }),
       label: (key) => context.props<{ label: string }>("item", key)?.label,
+      message: (message) => context.options().message(message),
     });
     return { reorder };
   },
@@ -182,9 +187,22 @@ function SortableList<Row>({
     },
     [ids, byId, onReorder]
   );
+  const messages = useMessages();
+  const message = React.useCallback(
+    ({ type, label, position, total }: ReorderMessage) => {
+      const say = {
+        grab: messages.pickedUp,
+        move: messages.moved,
+        drop: messages.dropped,
+        cancel: messages.movedBack,
+      }[type];
+      return say({ name: label, position, total });
+    },
+    [messages]
+  );
 
   return (
-    <parts.Root onValueChange={change} value={value}>
+    <parts.Root message={message} onValueChange={change} value={value}>
       <parts.List className={cn("au:flex au:flex-col", className)} {...props}>
         {({ order }) =>
           order.map((id) => {
@@ -197,10 +215,7 @@ function SortableList<Row>({
           })
         }
       </parts.List>
-      <parts.Instructions>
-        Press Space or Enter to pick it up, the arrow keys to move it, then
-        Space or Enter to drop it. Escape puts it back.
-      </parts.Instructions>
+      <parts.Instructions>{messages.reorderInstructions}</parts.Instructions>
     </parts.Root>
   );
 }
@@ -218,6 +233,7 @@ function SortableListRow({
   ...props
 }: SortableListRowProps) {
   const id = React.use(RowIdContext);
+  const messages = useMessages();
   return (
     <parts.Item
       label={title}
@@ -230,7 +246,7 @@ function SortableListRow({
           leading={
             <div className="au:flex au:items-center au:gap-3 au:sm:gap-4">
               <parts.Handle
-                aria-label={`Reorder ${title}`}
+                aria-label={messages.reorder({ name: title })}
                 className="au:focus-visible:outline-accent au:aria-pressed:text-gray-950 au:-ms-1.5 au:flex au:size-6 au:cursor-grab au:touch-none au:items-center au:justify-center au:rounded au:text-gray-500 au:transition-colors au:hover:text-gray-950 au:focus-visible:outline-2 au:in-data-dragging:cursor-grabbing"
                 value={id}
               >

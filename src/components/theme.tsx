@@ -2,6 +2,7 @@ import { LaptopIcon, MoonIcon, SunIcon } from "lucide-react";
 import * as React from "react";
 import { readStorage, writeStorage } from "../lib/storage";
 import { MenuGroupLabel, MenuRadioGroup, MenuRadioItem } from "./menu";
+import { useMessages } from "./messages";
 
 const themes = ["system", "light", "dark"] as const;
 type Theme = (typeof themes)[number];
@@ -73,14 +74,20 @@ function useResolvedTheme() {
 }
 
 const options = [
-  { value: "system", label: "System", icon: <LaptopIcon /> },
-  { value: "light", label: "Light", icon: <SunIcon /> },
-  { value: "dark", label: "Dark", icon: <MoonIcon /> },
-] satisfies { value: Theme; label: string; icon: React.ReactNode }[];
+  { value: "system", icon: <LaptopIcon /> },
+  { value: "light", icon: <SunIcon /> },
+  { value: "dark", icon: <MoonIcon /> },
+] satisfies { value: Theme; icon: React.ReactNode }[];
 
 /** The theme choice as menu items. AdminShell puts it in the account menu. */
 function ThemeMenuItems() {
   const { theme } = useTheme();
+  const messages = useMessages();
+  const labels = {
+    system: messages.themeSystem,
+    light: messages.themeLight,
+    dark: messages.themeDark,
+  };
   const change = React.useCallback((value: string) => {
     if (isTheme(value)) {
       setTheme(value);
@@ -88,11 +95,11 @@ function ThemeMenuItems() {
   }, []);
   return (
     <MenuRadioGroup onValueChange={change} value={theme}>
-      <MenuGroupLabel>Theme</MenuGroupLabel>
+      <MenuGroupLabel>{messages.theme}</MenuGroupLabel>
       {options.map((option) => (
         <MenuRadioItem key={option.value} value={option.value}>
           {option.icon}
-          {option.label}
+          {labels[option.value]}
         </MenuRadioItem>
       ))}
     </MenuRadioGroup>

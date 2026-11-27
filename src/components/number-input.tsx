@@ -8,6 +8,7 @@ import {
 import { MinusIcon, PlusIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import { useMessages } from "./messages";
 import { controlBoxClass } from "./select";
 
 type NumberInputProps = Omit<
@@ -31,12 +32,13 @@ const stepClass =
 function NumberInput({
   className,
   placeholder,
-  decrementLabel = "Decrease",
-  incrementLabel = "Increase",
+  decrementLabel,
+  incrementLabel,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledby,
   ...props
 }: NumberInputProps) {
+  const messages = useMessages();
   return (
     <NumberInputPart className={cn("au:w-full", className)} {...props}>
       <NumberInputGroup
@@ -51,10 +53,16 @@ function NumberInput({
           className="au:text-input au:tabular au:h-full au:min-w-0 au:flex-1 au:bg-transparent au:outline-none au:placeholder:text-gray-500 au:disabled:cursor-not-allowed"
           placeholder={placeholder}
         />
-        <NumberInputDecrement aria-label={decrementLabel} className={stepClass}>
+        <NumberInputDecrement
+          aria-label={decrementLabel ?? messages.decrease}
+          className={stepClass}
+        >
           <MinusIcon aria-hidden="true" />
         </NumberInputDecrement>
-        <NumberInputIncrement aria-label={incrementLabel} className={stepClass}>
+        <NumberInputIncrement
+          aria-label={incrementLabel ?? messages.increase}
+          className={stepClass}
+        >
           <PlusIcon aria-hidden="true" />
         </NumberInputIncrement>
       </NumberInputGroup>

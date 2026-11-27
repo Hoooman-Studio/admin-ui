@@ -20,6 +20,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "../components/menu";
+import { useMessages } from "../components/messages";
 import { RailContext } from "../components/nav";
 import { ThemeMenuItems } from "../components/theme";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../components/tooltip";
@@ -66,11 +67,12 @@ function AdminHeaderAccount({
   image,
   children,
 }: AdminHeaderAccountProps) {
+  const messages = useMessages();
   return (
     <div className={cn(cellClass, squareClass)}>
       <Menu>
         <MenuTrigger
-          aria-label="Open account menu"
+          aria-label={messages.openAccountMenu}
           className={cn(
             "au:touch-target au:hover:bg-alpha/5 au:flex au:size-full au:items-center au:justify-center",
             focusClass
@@ -143,6 +145,7 @@ function AdminHeaderStudioLink({
 }: {
   href?: string;
 }) {
+  const messages = useMessages();
   return (
     <a
       className={cn(
@@ -164,13 +167,14 @@ function AdminHeaderStudioLink({
           fill="currentColor"
         />
       </svg>
-      <span className="au:sr-only">Open Hooman Studio</span>
+      <span className="au:sr-only">{messages.openStudio}</span>
     </a>
   );
 }
 
 function RailToggle({ collapsed }: { collapsed: boolean }) {
-  const label = collapsed ? "Expand menu" : "Collapse menu";
+  const messages = useMessages();
+  const label = collapsed ? messages.expandMenu : messages.collapseMenu;
   return (
     <Tooltip>
       <TooltipTrigger
@@ -199,6 +203,7 @@ function MobileNav({
   nav: React.ReactNode;
   title: React.ReactNode;
 }) {
+  const messages = useMessages();
   const [open, setOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
   return (
@@ -206,7 +211,7 @@ function MobileNav({
       <DrawerTrigger
         render={
           <Button
-            aria-label="Open menu"
+            aria-label={messages.openMenu}
             className="au:md:hidden"
             rounded
             size="icon"
@@ -222,7 +227,10 @@ function MobileNav({
         </DrawerHeader>
         <DrawerBody className="au:px-3 au:py-3">
           <RailContext value={{ collapsed: false, onNavigate: close }}>
-            <nav aria-label="Main" className="au:flex au:flex-col au:gap-0.5">
+            <nav
+              aria-label={messages.mainNav}
+              className="au:flex au:flex-col au:gap-0.5"
+            >
               {nav}
             </nav>
           </RailContext>

@@ -1,4 +1,5 @@
 import { cn } from "../lib/cn";
+import { useMessages } from "./messages";
 
 const sizes = {
   sm: { dot: "au:size-1.5", gap: "au:gap-1" },
@@ -17,10 +18,11 @@ interface LoaderProps {
 }
 
 /** The Hooman Studio three-dot loader. */
-function Loader({ size = "md", label = "Loading", className }: LoaderProps) {
+function Loader({ size = "md", label, className }: LoaderProps) {
+  const messages = useMessages();
   return (
     <span
-      aria-label={label}
+      aria-label={label ?? messages.loading}
       className={cn(
         "au:inline-flex au:items-center",
         sizes[size].gap,
