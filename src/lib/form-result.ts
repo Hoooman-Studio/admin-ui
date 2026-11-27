@@ -9,4 +9,7 @@ type FormResult =
   | { ok: true; message?: string }
   | { ok: false; message?: string; fieldErrors?: Record<string, string> };
 
+const failedMessage = "Something went wrong. Try again.";
+
 export type { FormResult };
+export { failedMessage };

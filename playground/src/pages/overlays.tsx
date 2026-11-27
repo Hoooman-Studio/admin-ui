@@ -268,6 +268,12 @@ function ListingsSection() {
         "The listing and its photos are removed for everyone. This can't be undone.",
       confirmLabel: "Delete",
       tone: "danger",
+      action: async () => {
+        await wait(1000);
+        if (listing.status === "published") {
+          return { ok: false, message: "Unpublish this listing first." };
+        }
+      },
     });
     if (!yes) {
       return;

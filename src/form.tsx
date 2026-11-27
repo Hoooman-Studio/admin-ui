@@ -52,10 +52,8 @@ import { Textarea } from "./components/textarea";
 import { toast } from "./components/toast";
 import { cn } from "./lib/cn";
 import { errorText, formErrorText, hiddenFieldError } from "./lib/form-errors";
-import type { FormResult } from "./lib/form-result";
+import { type FormResult, failedMessage } from "./lib/form-result";
 import { type FileKind, FilePreview } from "./patterns/file-preview";
-
-const failedMessage = "Something went wrong. Try again.";
 
 /**
  * The parts of a TanStack field (from `<form.Field>`) that our fields use.
