@@ -1,4 +1,5 @@
-import { SearchIcon } from "lucide-react";
+import { PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
+import { useRef } from "react";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -49,6 +50,52 @@ import {
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Buttons of each shape, to press at once and compare pending with idle. */
+function PendingButtons() {
+  const row = useRef<HTMLDivElement>(null);
+  const release = useRef<() => void>(() => undefined);
+  const hold = useRef<Promise<void>>(Promise.resolve());
+
+  const pressAll = () => {
+    hold.current = new Promise((resolve) => {
+      release.current = resolve;
+    });
+    for (const button of row.current?.querySelectorAll("button") ?? []) {
+      button.click();
+    }
+  };
+  const held = () => hold.current;
+
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex gap-2">
+        <Button onClick={pressAll} size="sm" variant="outline">
+          Press all
+        </Button>
+        <Button onClick={() => release.current()} size="sm" variant="outline">
+          Release
+        </Button>
+      </div>
+      <div className="flex flex-wrap items-center gap-2" ref={row}>
+        <Button onClick={held}>Save</Button>
+        <Button onClick={held} variant="outline">
+          <PlusIcon />
+          New listing
+        </Button>
+        <Button onClick={held} size="lg" variant="accent">
+          Publish changes
+        </Button>
+        <Button aria-label="Delete" onClick={held} size="icon" variant="danger">
+          <TrashIcon />
+        </Button>
+        <Button aria-label="Add" onClick={held} size="icon-sm" variant="ghost">
+          <PlusIcon />
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 /** The admin's theme choice, outside the account menu. */
 function ThemeMenu() {
   const { theme } = useTheme();
@@ -81,6 +128,7 @@ function BasicsPage() {
           A link as a button
         </a>
       </div>
+      <PendingButtons />
       <div className="flex flex-wrap items-center gap-4">
         <Checkbox aria-label="Select row" />
         <Switch aria-label="Published" defaultChecked />
@@ -153,7 +201,10 @@ function BasicsPage() {
                 Cancel
               </AlertDialogClose>
               <AlertDialogClose
-                onClick={() => toast.success("Client deleted")}
+                action={async () => {
+                  await wait(1500);
+                  toast.success("Client deleted");
+                }}
                 render={<Button variant="danger" />}
               >
                 Delete

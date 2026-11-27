@@ -31,7 +31,7 @@ function Loader({ size = "md", label = "Loading", className }: LoaderProps) {
       {delays.map((delay) => (
         <span
           className={cn(
-            "au:motion-safe:animate-loader-dot au:bg-gray-950 au:opacity-10",
+            "au:motion-safe:animate-loader-dot au:bg-gray-950 au:opacity-10 au:motion-reduce:opacity-60",
             sizes[size].dot
           )}
           key={delay}
