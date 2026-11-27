@@ -69,6 +69,19 @@
       }
     },
     {
+      "includes": ["src/components/**", "src/patterns/**", "src/form.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noJsxLiterals": {
+              "level": "error",
+              "options": { "allowedStrings": ["–", "/", ":"] }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["api/**"],
       "linter": { "enabled": false }
     }
