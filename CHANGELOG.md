@@ -10,6 +10,7 @@
 - `Button` and `MenuItem` take a `disabledReason`: it disables them and says why, in a tooltip on the button or under the item's label. Both stay focusable, so keyboard and screen reader users get the reason too.
 - Closing a `FormDialog` or `FormDrawer` with unsaved changes or a file still uploading (Escape, the backdrop, the close button or Cancel) first asks "Discard changes?". Saving closes it without asking.
 - A pending `Button` looks disabled and shows the loader in place of its content, at the same size. This includes `DialogClose` and `AlertDialogClose` rendered as a Button.
+- A page that throws while rendering no longer takes down the admin: `AdminShell` shows "Something went wrong" with "Try again" in the page area, and the header and nav keep working. Going to another page tries again too. Wrap a part of a page in `ErrorBoundary` to catch its errors in place. Your router's own error page still wins when it sits closer to the page (like a Next.js `error.tsx` inside the admin's folder), and `redirect()` and `notFound()` pass through.
 
 ### Fixed
 

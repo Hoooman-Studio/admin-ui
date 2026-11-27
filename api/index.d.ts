@@ -1410,8 +1410,8 @@ interface AdminShellProps {
  * The admin's frame: the header you compose, a nav rail that collapses to
  * icons (the choice is kept in localStorage) and the scrolling page. It covers
  * the viewport, whatever the site's body and wrappers do. On phones
- * the rail is a drawer opened from AdminHeaderTitle. It must be inside
- * AdminProvider.
+ * the rail is a drawer opened from AdminHeaderTitle. A page that throws shows
+ * an ErrorBoundary in its place. It must be inside AdminProvider.
  */
 declare function AdminShell({
   header,
@@ -1513,6 +1513,16 @@ declare function DataTable<Row>({
   stickyTop,
   className,
 }: DataTableProps<Row>): React.JSX.Element;
+/**
+ * Shows "Something went wrong" with "Try again" when its children throw while
+ * rendering, so the rest of the admin keeps working. It tries again by itself
+ * when the URL changes. AdminShell wraps the page in one.
+ */
+declare function ErrorBoundary({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.JSX.Element;
 type FileKind = "image" | "video" | "audio" | "file";
 type FilePreviewProps = {
   kind: FileKind;
@@ -1757,6 +1767,7 @@ export {
   DrawerTrigger,
   EmptyState,
   type EmptyStateProps,
+  ErrorBoundary,
   Field,
   FieldDescription,
   FieldError,
