@@ -132,7 +132,7 @@ function ConfirmDialog() {
       result = { ok: false };
     }
     if (result?.ok === false) {
-      const message = result.message ?? failedMessage;
+      const message = result.message || failedMessage;
       setRefusal(message);
       throw new Error(message);
     }
