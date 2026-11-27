@@ -8,6 +8,7 @@
 - `FormResult`'s `ok: true` takes a `warning`, for an action that worked but had a side effect fail ("Saved, but the welcome email failed."). It shows as a warning toast that stays until dismissed, next to `message`'s success toast, from `useAdminForm`, `FormDialog`, `FormDrawer` and `confirm({ action })`.
 - Toasts show their `cancel` button, like `toast("…", { cancel: { label: "Dismiss" } })`.
 - `Button` and `MenuItem` take a `disabledReason`: it disables them and says why, in a tooltip on the button or under the item's label. Both stay focusable, so keyboard and screen reader users get the reason too.
+- Closing a `FormDialog` or `FormDrawer` with unsaved changes or a file still uploading (Escape, the backdrop, the close button or Cancel) first asks "Discard changes?". Saving closes it without asking.
 - A pending `Button` looks disabled and shows the loader in place of its content, at the same size. This includes `DialogClose` and `AlertDialogClose` rendered as a Button.
 
 ### Fixed

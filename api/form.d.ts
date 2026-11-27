@@ -469,7 +469,7 @@ type FormOverlayProps = {
   | {
       trigger?: never;
       open: boolean;
-      /** Called with `false` on Escape, Cancel or a submit that returns `ok: true`. */
+      /** Called with `false` on Escape, Cancel or a submit that returns `ok: true`. With unsaved changes, only once the person agrees to discard them. */
       onOpenChange: (open: boolean) => void;
     }
 );

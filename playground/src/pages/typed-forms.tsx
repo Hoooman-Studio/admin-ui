@@ -577,7 +577,7 @@ function TypedFormsPage() {
               <PlanViewingForm />
             </FormDrawer>
             <FormDialog
-              description="It starts empty each time it opens, and closes once saved."
+              description="It starts empty each time it opens, closes once saved, and asks before discarding changes."
               title="New listing"
               trigger={
                 <Button variant="accent">
