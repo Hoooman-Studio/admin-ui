@@ -1,4 +1,5 @@
 import * as React from "react";
+import { failedMessage, sessionMessage } from "../lib/form-result";
 import { ConfirmDialog, RefusalDialog } from "./alert-dialog";
 import { useResolvedTheme } from "./theme";
 import { Toaster } from "./toast";
@@ -9,15 +10,40 @@ interface AdminProviderProps {
   children: React.ReactNode;
   /** Spacing and layout for the admin's box on a site page, like `mt-8`. */
   className?: string;
+  /**
+   * Whether a thrown error means the person's session expired, like
+   * `(error) => error instanceof ConvexError && error.data === "Unauthenticated"`.
+   * Forms, uploads, `confirm()` actions and ErrorBoundary then ask them to
+   * sign in again instead of showing a generic error. Applies to every
+   * provider it's nested with.
+   */
+  isSessionError?: (error: unknown) => boolean;
 }
 
-const ProviderContext = React.createContext(false);
+type SessionCheck = NonNullable<AdminProviderProps["isSessionError"]>;
+
+const ProviderContext = React.createContext<{
+  /** This provider's check or one around it, ready on the first render. */
+  isSessionError: SessionCheck;
+  /** Every provider's check, kept by the outermost one for the dialogs it shows. */
+  checks: SessionCheck[];
+} | null>(null);
 
 /** Throws outside AdminProvider, so a missing provider isn't silent. */
 function useAdminProvider(name: string) {
   if (!React.use(ProviderContext)) {
     throw new Error(`${name} must be inside AdminProvider.`);
   }
+}
+
+/** What to show for an error thrown at the admin: the session message when an AdminProvider's `isSessionError` matches it, else `fallback`. */
+function useFailureText() {
+  const isSessionError = React.use(ProviderContext)?.isSessionError;
+  return React.useCallback(
+    (error: unknown, fallback = failedMessage) =>
+      isSessionError?.(error) ? sessionMessage : fallback,
+    [isSessionError]
+  );
 }
 
 let checkedStyles = false;
@@ -48,8 +74,38 @@ function useStylesCheck() {
  * the outer one. It's a block with the admin's background and text colour,
  * so admin pieces stay readable on a site page in either theme.
  */
-function AdminProvider({ accent, children, className }: AdminProviderProps) {
-  const nested = React.use(ProviderContext);
+function AdminProvider({
+  accent,
+  children,
+  className,
+  isSessionError,
+}: AdminProviderProps) {
+  const outer = React.use(ProviderContext);
+  const nested = outer !== null;
+  const [own] = React.useState<SessionCheck[]>([]);
+  const checks = outer?.checks ?? own;
+  React.useEffect(() => {
+    if (!isSessionError) {
+      return;
+    }
+    checks.push(isSessionError);
+    return () => {
+      checks.splice(checks.indexOf(isSessionError), 1);
+    };
+  }, [checks, isSessionError]);
+  const value = React.useMemo(
+    () => ({
+      checks,
+      isSessionError: (error: unknown) =>
+        Boolean(isSessionError?.(error) || outer?.isSessionError(error)),
+    }),
+    [checks, isSessionError, outer]
+  );
+  const confirmFailureText = React.useCallback(
+    (error: unknown) =>
+      checks.some((check) => check(error)) ? sessionMessage : failedMessage,
+    [checks]
+  );
   const theme = useResolvedTheme();
   useStylesCheck();
   return (
@@ -65,12 +121,12 @@ function AdminProvider({ accent, children, className }: AdminProviderProps) {
         } as React.CSSProperties
       }
     >
-      <ProviderContext value>
+      <ProviderContext value={value}>
         {children}
         {nested ? null : (
           <>
             <Toaster />
-            <ConfirmDialog />
+            <ConfirmDialog failureText={confirmFailureText} />
             <RefusalDialog />
           </>
         )}
@@ -80,4 +136,4 @@ function AdminProvider({ accent, children, className }: AdminProviderProps) {
 }
 
 export type { AdminProviderProps };
-export { AdminProvider, useAdminProvider };
+export { AdminProvider, useAdminProvider, useFailureText };

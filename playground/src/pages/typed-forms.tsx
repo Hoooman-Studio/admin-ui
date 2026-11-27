@@ -42,6 +42,7 @@ import {
   useAdminForm,
 } from "../../../src/form";
 import { required } from "../../../src/zod";
+import { SessionExpiredError } from "../session";
 
 const titleSchema = z.string().min(3, "Use at least 3 characters.");
 
@@ -110,7 +111,7 @@ function StoredFile({ id, kind }: { id: string; kind: FileKind }) {
   return <FilePreview kind={kind} name={storage.get(id)?.name} url={url} />;
 }
 
-/** Stands in for the app's upload, like an upload URL and XMLHttpRequest. A file with "fail" in its name fails halfway. */
+/** Stands in for the app's upload, like an upload URL and XMLHttpRequest. A file with "fail" or "expired" in its name fails halfway. */
 function fakeUpload(file: File, onProgress: (fraction: number) => void) {
   return new Promise<string>((resolve, reject) => {
     let step = 0;
@@ -120,6 +121,9 @@ function fakeUpload(file: File, onProgress: (fraction: number) => void) {
       if (step === 5 && file.name.includes("fail")) {
         clearInterval(timer);
         reject(new Error("The storage server refused the file."));
+      } else if (step === 5 && file.name.includes("expired")) {
+        clearInterval(timer);
+        reject(new SessionExpiredError("Unauthenticated"));
       } else if (step === 10) {
         clearInterval(timer);
         const id = `file_${crypto.randomUUID()}`;
@@ -142,6 +146,9 @@ async function saveListing(value: Listing): Promise<FormResult> {
   }
   if (value.title.toLowerCase().includes("crash")) {
     throw new Error("The backend crashed.");
+  }
+  if (value.title.toLowerCase().includes("expired")) {
+    throw new SessionExpiredError("Unauthenticated");
   }
   if (value.status === "live" && value.rent > 5000) {
     return {
@@ -197,7 +204,7 @@ function EditListingForm() {
       <form.Field name="title" validators={{ onBlur: titleSchema }}>
         {(field) => (
           <TextField
-            description="Checked when you leave it. Try a title with “taken”, “crash” or “email”, or Live above €5,000."
+            description="Checked when you leave it. Try a title with “taken”, “crash”, “expired” or “email”, or Live above €5,000."
             field={field}
             label="Title"
           />
@@ -207,7 +214,7 @@ function EditListingForm() {
         {(field) => (
           <FileField
             accept="image/*"
-            description="Uploads as soon as you pick it. Try a file with “fail” in its name."
+            description="Uploads as soon as you pick it. Try a file with “fail” or “expired” in its name."
             field={field}
             label="Cover photo"
             preview={(id) => <StoredFile id={id} kind="image" />}

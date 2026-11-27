@@ -9,6 +9,7 @@ import {
   useStore,
 } from "@tanstack/react-form";
 import * as React from "react";
+import { useFailureText } from "./components/admin-provider";
 import { confirm } from "./components/alert-dialog";
 import { Banner } from "./components/banner";
 import { Button, type ButtonProps, buttonVariants } from "./components/button";
@@ -587,6 +588,7 @@ function FileField<T extends string | null>({
   const formContext = React.use(FormContext);
   const startUpload = formContext?.startUpload;
   const holdFailed = formContext?.holdFailed;
+  const failureText = useFailureText();
   const uploading = picked?.status === "uploading";
   const failed = picked?.status === "error";
   React.useEffect(
@@ -628,11 +630,11 @@ function FileField<T extends string | null>({
       } catch (reason) {
         if (run === latest.current) {
           setPicked((prev) => prev && { ...prev, status: "error" });
-          setServerError(field, uploadErrorText(reason));
+          setServerError(field, failureText(reason, uploadErrorText(reason)));
         }
       }
     },
-    [field, upload, onChange]
+    [field, upload, onChange, failureText]
   );
   const reject = React.useCallback(
     () => setServerError(field, "This type of file isn't accepted."),
@@ -751,7 +753,8 @@ interface AdminFormOptions<
 /**
  * TanStack Form's `useForm`, with our submit handling. `onSubmit` receives
  * the parsed output of the `validators.onSubmit` schema and may return a
- * FormResult. A thrown error is logged and shown as a generic form error.
+ * FormResult. A thrown error is logged and shown as a generic form error, or
+ * a session one (see AdminProvider).
  * Inside a FormDialog or FormDrawer, `ok: true` closes it. The onSubmit schema runs
  * twice per submit (TanStack's check, then the parse), so keep slow async
  * checks, like a uniqueness lookup, in the save itself.
@@ -785,6 +788,7 @@ function useAdminForm<
   undefined
 > {
   const overlay = React.use(FormOverlayContext);
+  const failureText = useFailureText();
   return useForm<
     TFormData,
     undefined,
@@ -835,7 +839,7 @@ function useAdminForm<
         overlay?.close();
       } catch (error) {
         console.error(error);
-        refuse(formApi, { ok: false, message: failedMessage });
+        refuse(formApi, { ok: false, message: failureText(error) });
       }
     },
   });
@@ -870,6 +874,7 @@ function AdminForm({
   children: React.ReactNode;
 }) {
   const [uploads, setUploads] = React.useState(0);
+  const failureText = useFailureText();
   const startUpload = React.useCallback(() => {
     setUploads((count) => count + 1);
     return () => setUploads((count) => count - 1);
@@ -903,10 +908,10 @@ function AdminForm({
       });
       form.handleSubmit().catch((error: unknown) => {
         console.error(error);
-        refuse(form, { ok: false, message: failedMessage });
+        refuse(form, { ok: false, message: failureText(error) });
       });
     },
-    [form, uploads]
+    [form, uploads, failureText]
   );
   const context = React.useMemo(
     () => ({ form, uploading: uploads > 0, startUpload, holdFailed }),

@@ -73,6 +73,7 @@ import {
   TooltipTrigger,
   toast,
 } from "../../../src";
+import { SessionExpiredError } from "../session";
 
 const drawerNav = [
   { label: "Listings", icon: <BuildingIcon /> },
@@ -280,6 +281,9 @@ function ListingsSection() {
         }
         if (listing.status === "review") {
           return { ok: true, warning: "The reviewer wasn't told it's gone." };
+        }
+        if (listing.status === "rejected") {
+          throw new SessionExpiredError("Unauthenticated");
         }
       },
     });

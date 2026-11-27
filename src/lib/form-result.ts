@@ -12,6 +12,7 @@ type FormResult =
   | { ok: false; message?: string; fieldErrors?: Record<string, string> };
 
 const failedMessage = "Something went wrong. Try again.";
+const sessionMessage = "Your session expired. Sign in again.";
 
 /** A plain object with a boolean `ok`, so a fetch Response isn't one. */
 function isFormResult(value: unknown): value is FormResult {
@@ -25,4 +26,4 @@ function isFormResult(value: unknown): value is FormResult {
 }
 
 export type { FormResult };
-export { failedMessage, isFormResult };
+export { failedMessage, isFormResult, sessionMessage };
