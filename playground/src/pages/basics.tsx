@@ -1,5 +1,5 @@
 import { PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -28,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  ErrorBoundary,
   Field,
   FieldError,
   FieldGroup,
@@ -96,6 +97,33 @@ function PendingButtons() {
   );
 }
 
+/** A button that makes it throw while rendering, until it remounts. */
+function Breakable({ label }: { label: string }) {
+  const [broken, setBroken] = useState(false);
+  if (broken) {
+    throw new Error("Listing 42 has no price.");
+  }
+  return (
+    <Button onClick={() => setBroken(true)} size="sm" variant="outline">
+      {label}
+    </Button>
+  );
+}
+
+/** The card is caught by its own ErrorBoundary, the page by AdminShell's. */
+function Crashes() {
+  return (
+    <section className="flex flex-wrap items-center gap-3">
+      <Breakable label="Break this page" />
+      <Card className="flex-1">
+        <ErrorBoundary>
+          <Breakable label="Break this card" />
+        </ErrorBoundary>
+      </Card>
+    </section>
+  );
+}
+
 /** The admin's theme choice, outside the account menu. */
 function ThemeMenu() {
   const { theme } = useTheme();
@@ -129,6 +157,7 @@ function BasicsPage() {
         </a>
       </div>
       <PendingButtons />
+      <Crashes />
       <div className="flex flex-wrap items-center gap-4">
         <Checkbox aria-label="Select row" />
         <Switch aria-label="Published" defaultChecked />

@@ -214,6 +214,7 @@ export {
   type DataTableColumn,
   type DataTableProps,
 } from "./patterns/data-table";
+export { ErrorBoundary } from "./patterns/error-boundary";
 export {
   type FileKind,
   FilePreview,
