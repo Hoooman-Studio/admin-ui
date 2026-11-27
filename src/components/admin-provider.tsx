@@ -22,8 +22,12 @@ interface AdminProviderProps {
 
 type SessionCheck = NonNullable<AdminProviderProps["isSessionError"]>;
 
-/** The outermost provider's session checks, which every provider inside adds to. */
-const ProviderContext = React.createContext<SessionCheck[] | null>(null);
+const ProviderContext = React.createContext<{
+  /** This provider's check or one around it, ready on the first render. */
+  isSessionError: SessionCheck;
+  /** Every provider's check, kept by the outermost one for the dialogs it shows. */
+  checks: SessionCheck[];
+} | null>(null);
 
 /** Throws outside AdminProvider, so a missing provider isn't silent. */
 function useAdminProvider(name: string) {
@@ -33,20 +37,12 @@ function useAdminProvider(name: string) {
 }
 
 /** What to show for an error thrown at the admin: the session message when an AdminProvider's `isSessionError` matches it, else `fallback`. */
-function failureText(
-  checks: SessionCheck[] | null,
-  error: unknown,
-  fallback = failedMessage
-) {
-  return checks?.some((check) => check(error)) ? sessionMessage : fallback;
-}
-
-/** `failureText` for the providers around the caller. */
 function useFailureText() {
-  const checks = React.use(ProviderContext);
+  const isSessionError = React.use(ProviderContext)?.isSessionError;
   return React.useCallback(
-    (error: unknown, fallback?: string) => failureText(checks, error, fallback),
-    [checks]
+    (error: unknown, fallback = failedMessage) =>
+      isSessionError?.(error) ? sessionMessage : fallback,
+    [isSessionError]
   );
 }
 
@@ -87,7 +83,7 @@ function AdminProvider({
   const outer = React.use(ProviderContext);
   const nested = outer !== null;
   const [own] = React.useState<SessionCheck[]>([]);
-  const checks = outer ?? own;
+  const checks = outer?.checks ?? own;
   React.useEffect(() => {
     if (!isSessionError) {
       return;
@@ -97,8 +93,17 @@ function AdminProvider({
       checks.splice(checks.indexOf(isSessionError), 1);
     };
   }, [checks, isSessionError]);
+  const value = React.useMemo(
+    () => ({
+      checks,
+      isSessionError: (error: unknown) =>
+        Boolean(isSessionError?.(error) || outer?.isSessionError(error)),
+    }),
+    [checks, isSessionError, outer]
+  );
   const confirmFailureText = React.useCallback(
-    (error: unknown) => failureText(checks, error),
+    (error: unknown) =>
+      checks.some((check) => check(error)) ? sessionMessage : failedMessage,
     [checks]
   );
   const theme = useResolvedTheme();
@@ -116,7 +121,7 @@ function AdminProvider({
         } as React.CSSProperties
       }
     >
-      <ProviderContext value={checks}>
+      <ProviderContext value={value}>
         {children}
         {nested ? null : (
           <>
