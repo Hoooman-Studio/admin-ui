@@ -341,6 +341,7 @@ declare function Button({
   variant,
   size,
   rounded,
+  children,
   ...props
 }: ButtonProps): React.JSX.Element;
 declare const variants: {

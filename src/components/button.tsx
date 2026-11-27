@@ -1,13 +1,17 @@
-import { Button as ButtonPart } from "@ui-sdk/react/button";
+import { Button as ButtonPart, type ButtonState } from "@ui-sdk/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "../lib/cn";
+import { Loader } from "./loader";
 
 const disabledLook =
   "au:data-disabled:opacity-40 au:data-disabled:bg-alpha/5 au:data-disabled:text-gray-950 au:data-disabled:border-transparent";
 
+const pendingLook =
+  "au:data-pending:cursor-progress au:data-pending:bg-alpha/2 au:data-pending:text-gray-950 au:data-pending:border-transparent au:data-pending:[-webkit-text-fill-color:transparent] au:data-pending:*:not-data-[slot=button-loader]:opacity-0 au:data-pending:[&>[data-slot=button-loader]]:flex";
+
 const buttonVariants = cva(
-  `au:focus-visible:outline-accent au:relative au:inline-flex au:shrink-0 au:items-center au:justify-center au:font-medium au:whitespace-nowrap au:transition-colors au:duration-100 au:select-none au:focus-visible:outline-2 au:focus-visible:outline-offset-2 au:data-pending:cursor-progress au:[&_svg]:pointer-events-none au:[&_svg]:shrink-0 ${disabledLook}`,
+  `au:focus-visible:outline-accent au:relative au:inline-flex au:shrink-0 au:items-center au:justify-center au:font-medium au:whitespace-nowrap au:transition-colors au:duration-100 au:select-none au:focus-visible:outline-2 au:focus-visible:outline-offset-2 au:[&_svg]:pointer-events-none au:[&_svg]:shrink-0 ${pendingLook} ${disabledLook}`,
   {
     variants: {
       variant: {
@@ -56,12 +60,41 @@ type ButtonProps =
  * A button, or a link through `render={<a href="…" />}`.
  * Return a Promise from `onClick` and it shows as pending until it settles.
  */
-function Button({ className, variant, size, rounded, ...props }: ButtonProps) {
+function Button({
+  className,
+  variant,
+  size,
+  rounded,
+  children,
+  ...props
+}: ButtonProps) {
+  const small = size === "icon-xs" || size === "icon-sm";
+  const content = (state: ButtonState) =>
+    typeof children === "function" ? children(state) : children;
   return (
     <ButtonPart
       className={cn(buttonVariants({ variant, size, rounded }), className)}
       {...props}
-    />
+    >
+      {(state) => (
+        <>
+          {content(state)}
+          <span
+            aria-hidden="true"
+            className="au:absolute au:inset-0 au:hidden au:items-center au:justify-center"
+            data-slot="button-loader"
+          >
+            <Loader
+              className={cn(
+                "au:[&>span]:bg-current",
+                small && "au:gap-0.5 au:[&>span]:size-1"
+              )}
+              size={size === "lg" || size === "icon-lg" ? "md" : "sm"}
+            />
+          </span>
+        </>
+      )}
+    </ButtonPart>
   );
 }
 

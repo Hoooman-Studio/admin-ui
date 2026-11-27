@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### New
+
+- A pending `Button` looks disabled and shows the loader in place of its content, at the same size. This includes `DialogClose` and `AlertDialogClose` rendered as a Button.
+
+### Fixed
+
+- `Loader` stays visible when the device asks for reduced motion: its dots hold still instead of fading to almost nothing.
+
 ## 0.3.1
 
 ### New
