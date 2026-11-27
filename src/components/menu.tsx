@@ -5,6 +5,7 @@ import {
   MenuGroupLabel as MenuGroupLabelPart,
   MenuItemIndicator,
   MenuItem as MenuItemPart,
+  type MenuItemState,
   Menu as MenuPart,
   MenuRadioGroup,
   MenuRadioItem as MenuRadioItemPart,
@@ -16,6 +17,7 @@ import {
 } from "@ui-sdk/react/menu";
 import { CheckIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 import type * as React from "react";
+import { useId } from "react";
 import { cn } from "../lib/cn";
 import type { WithClass, WithNodeChildren } from "../lib/types";
 import { Button } from "./button";
@@ -50,20 +52,51 @@ function MenuContent({
   );
 }
 
+type MenuItemProps = WithClass<React.ComponentProps<typeof MenuItemPart>> & {
+  /** Disables the item and shows this under its label. */
+  disabledReason?: string;
+};
+
 /** A command. Pass `destructive` for actions like Delete. */
 function MenuItem({
   className,
+  children,
+  disabled,
+  disabledReason,
   ...props
-}: WithClass<React.ComponentProps<typeof MenuItemPart>>) {
+}: MenuItemProps) {
+  const reasonId = useId();
+  const content = (state: MenuItemState) =>
+    typeof children === "function" ? children(state) : children;
   return (
     <MenuItemPart
+      aria-describedby={disabledReason ? reasonId : undefined}
       className={cn(
         itemClass,
         "au:data-destructive:text-red-500 au:data-destructive:data-highlighted:bg-red-500/10 au:data-destructive:[&_svg]:text-red-500",
+        disabledReason &&
+          "au:h-auto au:flex-wrap au:gap-y-0.5 au:py-1.5 au:has-[>svg]:[&>[data-slot=menu-item-reason]]:ps-6 au:pointer-coarse:h-auto",
         className
       )}
+      disabled={disabled || Boolean(disabledReason)}
       {...props}
-    />
+    >
+      {(state) => (
+        <>
+          {content(state)}
+          {disabledReason ? (
+            <span
+              aria-hidden="true"
+              className="au:basis-full au:text-xs au:font-normal"
+              data-slot="menu-item-reason"
+              id={reasonId}
+            >
+              {disabledReason}
+            </span>
+          ) : null}
+        </>
+      )}
+    </MenuItemPart>
   );
 }
 

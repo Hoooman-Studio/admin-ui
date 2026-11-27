@@ -2,6 +2,7 @@ import {
   ArchiveIcon,
   BuildingIcon,
   CalendarIcon,
+  CheckIcon,
   CopyIcon,
   ExternalLinkIcon,
   ListFilterIcon,
@@ -176,6 +177,10 @@ function RowActions({
           </MenuRadioGroup>
         </MenuSubContent>
       </MenuSub>
+      <MenuItem disabledReason="Only curators can approve listings.">
+        <CheckIcon />
+        Approve
+      </MenuItem>
       <MenuSeparator />
       <MenuItem destructive onSelect={onDelete}>
         <TrashIcon />
@@ -474,16 +479,14 @@ function SmallThingsSection() {
             <TooltipShortcut />
           </TooltipContent>
         </Tooltip>
-        <Tooltip disabled={hasTitle}>
-          <TooltipTrigger
-            render={
-              <Button disabled={!hasTitle} focusableWhenDisabled>
-                Publish
-              </Button>
-            }
-          />
-          <TooltipContent>Add a title before publishing</TooltipContent>
-        </Tooltip>
+        <Button
+          disabledReason={
+            hasTitle ? undefined : "Add a title before publishing"
+          }
+          onClick={() => toast.success("Published")}
+        >
+          Publish
+        </Button>
         <Button onClick={() => setHasTitle(!hasTitle)} variant="ghost">
           {hasTitle ? "Remove title" : "Add title"}
         </Button>
