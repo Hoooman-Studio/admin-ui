@@ -61,7 +61,7 @@ function TagInput({
               >
                 {label}
                 <ComboboxChipRemove
-                  aria-label={messages.removeTag({ tag: label })}
+                  aria-label={messages.removeItem({ name: label })}
                   className="au:hover:bg-alpha/10 au:flex au:size-5 au:items-center au:justify-center au:rounded au:text-gray-500 au:hover:text-gray-950 au:data-disabled:hidden"
                 >
                   <XIcon aria-hidden="true" className="au:size-3.5" />

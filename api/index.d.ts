@@ -196,7 +196,7 @@ declare const englishMessages: {
   commandPlaceholder: string;
   nothingFound: string;
   showOptions: string;
-  removeTag: ({ tag }: { tag: string }) => string;
+  removeItem: ({ name }: { name: string }) => string;
   chooseDate: string;
   endDate: string;
   previousMonth: string;
@@ -683,13 +683,7 @@ interface CommandPaletteProps {
   trigger?: React.ReactElement<Record<string, unknown>>;
 }
 /** A command palette in a dialog, opened with ⌘K / Ctrl+K from anywhere on the page or with its trigger. */
-declare function CommandPalette({
-  children,
-  title,
-  placeholder,
-  emptyText,
-  trigger,
-}: CommandPaletteProps): React.JSX.Element;
+declare function CommandPalette(props: CommandPaletteProps): React.JSX.Element;
 type DatePickerProps = Omit<
   React.ComponentProps<typeof DatePicker$1>,
   "className" | "children"
@@ -913,13 +907,9 @@ type FileInputDropzoneProps = Omit<
   browseLabel?: React.ReactNode;
 };
 /** Drop or paste files here, or press the button to browse. */
-declare function FileInputDropzone({
-  className,
-  children,
-  title,
-  browseLabel,
-  ...props
-}: FileInputDropzoneProps): React.JSX.Element;
+declare function FileInputDropzone(
+  dropzoneProps: FileInputDropzoneProps
+): React.JSX.Element;
 /** The chosen files, each with its size and a remove button. Name it with `aria-label`. */
 declare function FileInputList({
   className,

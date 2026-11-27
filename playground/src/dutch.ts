@@ -8,6 +8,7 @@ const dutch: AdminProviderProps["messages"] = {
   dismiss: "Sluiten",
   back: "Terug",
   remove: "Verwijderen",
+  removeItem: ({ name }) => `${name} verwijderen`,
   tryAgain: "Opnieuw proberen",
   clearAll: "Alles wissen",
   discardChanges: "Wijzigingen weggooien?",

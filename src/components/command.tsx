@@ -175,15 +175,15 @@ interface CommandPaletteProps {
 }
 
 /** A command palette in a dialog, opened with ⌘K / Ctrl+K from anywhere on the page or with its trigger. */
-function CommandPalette({
-  children,
-  title,
-  placeholder,
-  emptyText,
-  trigger,
-}: CommandPaletteProps) {
+function CommandPalette(props: CommandPaletteProps) {
   const messages = useMessages();
-  const name = title ?? messages.commandPalette;
+  const {
+    children,
+    title = messages.commandPalette,
+    placeholder = messages.commandPlaceholder,
+    emptyText = messages.nothingFound,
+    trigger,
+  } = props;
   const [open, setOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
   return (
@@ -210,13 +210,10 @@ function CommandPalette({
         )}
       </DialogTrigger>
       <DialogContent className="au:top-[12dvh] au:bottom-auto" size="md">
-        <DialogTitle className="au:sr-only">{name}</DialogTitle>
+        <DialogTitle className="au:sr-only">{title}</DialogTitle>
         <Command loop onAction={close}>
-          <CommandInput
-            aria-label={name}
-            placeholder={placeholder ?? messages.commandPlaceholder}
-          />
-          <CommandEmpty>{emptyText ?? messages.nothingFound}</CommandEmpty>
+          <CommandInput aria-label={title} placeholder={placeholder} />
+          <CommandEmpty>{emptyText}</CommandEmpty>
           <CommandList>{children}</CommandList>
         </Command>
       </DialogContent>

@@ -39,14 +39,15 @@ type FileInputDropzoneProps = Omit<
 };
 
 /** Drop or paste files here, or press the button to browse. */
-function FileInputDropzone({
-  className,
-  children,
-  title,
-  browseLabel,
-  ...props
-}: FileInputDropzoneProps) {
+function FileInputDropzone(dropzoneProps: FileInputDropzoneProps) {
   const messages = useMessages();
+  const {
+    className,
+    children,
+    title = messages.dropFiles,
+    browseLabel = messages.browseFiles,
+    ...props
+  } = dropzoneProps;
   return (
     <FileInputDropzonePart
       className={cn(
@@ -59,9 +60,7 @@ function FileInputDropzone({
         aria-hidden="true"
         className="au:mb-1 au:size-5 au:text-gray-500"
       />
-      <p className="au:text-sm au:font-medium au:text-gray-950">
-        {title ?? messages.dropFiles}
-      </p>
+      <p className="au:text-sm au:font-medium au:text-gray-950">{title}</p>
       {children ? (
         <p className="au:text-sm au:text-gray-600">{children}</p>
       ) : null}
@@ -71,7 +70,7 @@ function FileInputDropzone({
           "au:mt-2 au:in-data-invalid:border-red-500/70"
         )}
       >
-        {browseLabel ?? messages.browseFiles}
+        {browseLabel}
       </FileInputTrigger>
     </FileInputDropzonePart>
   );
@@ -84,6 +83,7 @@ function FileInputList({
 }: WithClass<
   Omit<React.ComponentProps<typeof FileInputListPart>, "children">
 >) {
+  const messages = useMessages();
   return (
     <FileInputListPart
       className={cn(
@@ -105,7 +105,10 @@ function FileInputList({
             <span className="au:tabular au:shrink-0 au:text-gray-500">
               {formatFileSize(file.size)}
             </span>
-            <FileInputItemRemove className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950">
+            <FileInputItemRemove
+              aria-label={messages.removeItem({ name: file.name })}
+              className="au:hover:bg-alpha/5 au:flex au:size-6 au:shrink-0 au:items-center au:justify-center au:rounded-md au:text-gray-500 au:hover:text-gray-950"
+            >
               <XIcon aria-hidden="true" className="au:size-4" />
             </FileInputItemRemove>
           </>

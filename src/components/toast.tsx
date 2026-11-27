@@ -38,6 +38,7 @@ function Toaster() {
       align="center"
       aria-label={messages.notifications}
       className="au:fixed au:inset-auto au:top-0 au:left-1/2 au:m-4 au:mx-0 au:w-[22rem] au:max-w-[calc(100vw-2rem)] au:-translate-x-1/2 au:overflow-visible au:bg-transparent au:p-0 au:*:data-[slot=toast-list]:flex au:*:data-[slot=toast-list]:flex-col au:*:data-[slot=toast-list]:gap-2"
+      pendingAnnouncement={messages.loading}
       side="top"
     >
       {(data) => (

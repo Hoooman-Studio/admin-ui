@@ -73,7 +73,7 @@ const englishMessages = {
 
   // Fields
   showOptions: "Show options",
-  removeTag: ({ tag }: { tag: string }) => `Remove ${tag}`,
+  removeItem: ({ name }: { name: string }) => `Remove ${name}`,
   chooseDate: "Choose date",
   endDate: "End date",
   previousMonth: "Previous month",

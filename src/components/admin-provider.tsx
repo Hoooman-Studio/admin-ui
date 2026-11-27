@@ -112,7 +112,13 @@ function AdminProvider({
   );
   const outerMessages = useMessages();
   const ownMessages = React.useMemo(
-    () => ({ ...outerMessages, ...messages }),
+    () => ({
+      ...outerMessages,
+      // An `undefined` message keeps the one around it.
+      ...Object.fromEntries(
+        Object.entries(messages ?? {}).filter(([, text]) => text !== undefined)
+      ),
+    }),
     [outerMessages, messages]
   );
   const { failed, sessionExpired } = ownMessages;
