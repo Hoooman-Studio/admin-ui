@@ -9,6 +9,7 @@ import {
   useStore,
 } from "@tanstack/react-form";
 import * as React from "react";
+import { confirm } from "./components/alert-dialog";
 import { Banner } from "./components/banner";
 import { Button, type ButtonProps, buttonVariants } from "./components/button";
 import { CheckboxField, CheckboxGroup } from "./components/checkbox";
@@ -911,8 +912,15 @@ function AdminForm({
     () => ({ form, uploading: uploads > 0, startUpload, holdFailed }),
     [form, uploads, startUpload, holdFailed]
   );
+  const overlay = React.use(FormOverlayContext);
+  React.useLayoutEffect(() => {
+    if (overlay) {
+      overlay.hasChanges.current = () =>
+        uploads > 0 || !form.state.isDefaultValue;
+    }
+  }, [overlay, form, uploads]);
   // In a FormDialog or FormDrawer the form holds a scrolling body and a footer, which bring their own spacing; in a drawer it fills the height.
-  const inOverlay = React.use(FormOverlayContext) !== null;
+  const inOverlay = overlay !== null;
   return (
     <FormContext value={context}>
       <form
@@ -976,10 +984,12 @@ function FormError({ className }: { className?: string }) {
   return <Banner className={className} title={error} tone="danger" />;
 }
 
-/** Closes the FormDialog or FormDrawer, but only for the opening its form belongs to. */
-const FormOverlayContext = React.createContext<{ close: () => void } | null>(
-  null
-);
+const FormOverlayContext = React.createContext<{
+  /** Closes the FormDialog or FormDrawer, but only for the opening its form belongs to. */
+  close: () => void;
+  /** Whether the form inside has unsaved changes, which closing asks about. Set by its AdminForm. */
+  hasChanges: React.RefObject<(() => boolean) | null>;
+} | null>(null);
 
 /** Either a `trigger` that opens it, or `open` and `onOpenChange` from your own state, like the URL. */
 type FormOverlayProps = {
@@ -996,7 +1006,7 @@ type FormOverlayProps = {
   | {
       trigger?: never;
       open: boolean;
-      /** Called with `false` on Escape, Cancel or a submit that returns `ok: true`. */
+      /** Called with `false` on Escape, Cancel or a submit that returns `ok: true`. With unsaved changes, only once the person agrees to discard them. */
       onOpenChange: (open: boolean) => void;
     }
 );
@@ -1024,15 +1034,39 @@ function useFormOverlay(props: FormOverlayProps) {
           live.current.onOpenChange(false);
         }
       },
+      hasChanges: React.createRef<() => boolean>(),
     }),
     [opening]
   );
+  // A submit closes through `context.close`; every other way of closing comes here.
+  const requestOpenChange = (
+    next: boolean,
+    details: { cancel: () => void }
+  ) => {
+    if (next || !context.hasChanges.current?.()) {
+      onOpenChange(next);
+      return;
+    }
+    details.cancel();
+    confirm({
+      title: "Discard changes?",
+      cancelLabel: "Keep editing",
+      confirmLabel: "Discard",
+      tone: "danger",
+    })
+      .then((discard) => {
+        if (discard) {
+          context.close();
+        }
+      })
+      .catch(console.error);
+  };
   const content = (children: React.ReactNode) => (
     <FormOverlayContext key={opening} value={context}>
       {children}
     </FormOverlayContext>
   );
-  return { open, onOpenChange, content };
+  return { open, onOpenChange: requestOpenChange, content };
 }
 
 /**
