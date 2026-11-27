@@ -2,44 +2,42 @@ import * as React from "react";
 import { Button } from "../components/button";
 import { EmptyState } from "../components/empty-state";
 
-/** Next.js redirect() and notFound() throw these for its own boundaries above. */
-const isNextSignal = (error: unknown) =>
-  error instanceof Error &&
-  "digest" in error &&
-  typeof error.digest === "string" &&
-  error.digest.startsWith("NEXT_");
-
-interface BoundaryState {
-  error: unknown;
-  failed: boolean;
-}
+/**
+ * Routers throw these for their own boundaries above: Next.js redirect() and
+ * notFound() as errors with a NEXT_ digest, TanStack Router as plain objects.
+ */
+const isRouterSignal = (error: unknown) =>
+  !(error instanceof Error) ||
+  ("digest" in error &&
+    typeof error.digest === "string" &&
+    error.digest.startsWith("NEXT_"));
 
 // biome-ignore lint/style/useReactFunctionComponents: React has no hook to catch render errors.
 class Boundary extends React.Component<
   { children: React.ReactNode },
-  BoundaryState
+  { failed: boolean }
 > {
-  static getDerivedStateFromError(error: unknown): BoundaryState {
-    if (isNextSignal(error)) {
+  static getDerivedStateFromError(error: unknown) {
+    if (isRouterSignal(error)) {
       throw error;
     }
-    return { error, failed: true };
+    return { failed: true };
   }
 
-  state: BoundaryState = { error: null, failed: false };
+  state: { failed: boolean } = { failed: false };
 
-  reset = () => this.setState({ error: null, failed: false });
+  reset = () => this.setState({ failed: false });
 
   render() {
     return this.state.failed ? (
-      <Fallback error={this.state.error} onReset={this.reset} />
+      <Fallback onReset={this.reset} />
     ) : (
       this.props.children
     );
   }
 }
 
-function Fallback({ error, onReset }: { error: unknown; onReset: () => void }) {
+function Fallback({ onReset }: { onReset: () => void }) {
   React.useEffect(() => {
     window.navigation?.addEventListener("currententrychange", onReset);
     return () =>
@@ -53,7 +51,6 @@ function Fallback({ error, onReset }: { error: unknown; onReset: () => void }) {
           Try again
         </Button>
       }
-      description={error instanceof Error ? error.message : undefined}
       title="Something went wrong"
     />
   );
