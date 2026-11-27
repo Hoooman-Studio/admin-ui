@@ -4,6 +4,7 @@
 
 ### New
 
+- `confirm()` takes an `action`. The dialog stays open with the button pending while it runs; return `{ ok: false, message }` to show the message in the dialog, or `{ ok: true, message }` to close it with a toast. `confirm()` still resolves `true` or `false`.
 - A pending `Button` looks disabled and shows the loader in place of its content, at the same size. This includes `DialogClose` and `AlertDialogClose` rendered as a Button.
 
 ### Fixed

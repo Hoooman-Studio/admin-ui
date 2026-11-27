@@ -153,6 +153,23 @@ declare function AdminProvider({
   children,
   className,
 }: AdminProviderProps): React.JSX.Element;
+/**
+ * What a form submit returns. `ok: false` keeps the form as typed: `message`
+ * shows above the submit button and `fieldErrors` under their fields. Without
+ * a `message`, an error for a field the form doesn't render shows above the
+ * submit button instead.
+ * `ok: true` shows `message` as a toast and closes a FormDialog.
+ */
+type FormResult =
+  | {
+      ok: true;
+      message?: string;
+    }
+  | {
+      ok: false;
+      message?: string;
+      fieldErrors?: Record<string, string>;
+    };
 /** UI SDK parts accept `className` as a function of state; ours take a plain string merged with `cn`. */
 type WithClass<T> = Omit<T, "className"> & {
   className?: string;
@@ -187,6 +204,13 @@ declare function AlertDialogFooter({
   ...props
 }: React.ComponentProps<"div">): React.JSX.Element;
 interface ConfirmOptions {
+  /**
+   * Runs when the person agrees, with the dialog open and the button pending.
+   * `ok: false` keeps it open with `message` above the buttons; `ok: true`
+   * closes it and shows `message` as a toast. A thrown error is logged and
+   * shown as a generic message.
+   */
+  action?: () => FormResult | void | Promise<FormResult | void>;
   cancelLabel?: string;
   /** The agreeing button's text. Defaults to "Confirm". */
   confirmLabel?: string;
@@ -201,7 +225,7 @@ interface ConfirmOptions {
  * Asks a question and resolves `true` when the person agrees. Works inside
  * AdminProvider, which shows the questions. Questions asked at once wait their turn.
  *
- * `if (await confirm({ title: "Delete this listing?", confirmLabel: "Delete", tone: "danger" })) remove()`
+ * `await confirm({ title: "Delete this listing?", confirmLabel: "Delete", tone: "danger", action: remove })`
  */
 declare function confirm(options: ConfirmOptions): Promise<boolean>;
 declare const sizes$2: {
