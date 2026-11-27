@@ -273,6 +273,9 @@ function ListingsSection() {
         if (listing.status === "published") {
           return { ok: false, message: "Unpublish this listing first." };
         }
+        if (listing.status === "review") {
+          return { ok: true, warning: "The reviewer wasn't told it's gone." };
+        }
       },
     });
     if (!yes) {
