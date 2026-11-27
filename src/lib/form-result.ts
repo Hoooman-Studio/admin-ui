@@ -13,5 +13,16 @@ type FormResult =
 
 const failedMessage = "Something went wrong. Try again.";
 
+/** A plain object with a boolean `ok`, so a fetch Response isn't one. */
+function isFormResult(value: unknown): value is FormResult {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    Object.getPrototypeOf(value) === Object.prototype &&
+    "ok" in value &&
+    typeof value.ok === "boolean"
+  );
+}
+
 export type { FormResult };
-export { failedMessage };
+export { failedMessage, isFormResult };
