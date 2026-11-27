@@ -51,6 +51,8 @@ type IconSize = Extract<ButtonSize, `icon${string}`>;
 type BaseProps = Omit<React.ComponentProps<typeof Button>, "className"> &
   Omit<ButtonVariants, "size"> & {
     className?: string;
+    /** Disables the button, keeps it focusable and shows this in a tooltip. */
+    disabledReason?: string;
   };
 /** Icon-only buttons have no text, so the type requires an `aria-label`. */
 type ButtonProps =

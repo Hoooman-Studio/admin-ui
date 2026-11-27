@@ -3,6 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "../lib/cn";
 import { Loader } from "./loader";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const disabledLook =
   "au:data-disabled:opacity-40 au:data-disabled:bg-alpha/5 au:data-disabled:text-gray-950 au:data-disabled:border-transparent";
@@ -49,7 +50,11 @@ type ButtonSize = NonNullable<ButtonVariants["size"]>;
 type IconSize = Extract<ButtonSize, `icon${string}`>;
 
 type BaseProps = Omit<React.ComponentProps<typeof ButtonPart>, "className"> &
-  Omit<ButtonVariants, "size"> & { className?: string };
+  Omit<ButtonVariants, "size"> & {
+    className?: string;
+    /** Disables the button, keeps it focusable and shows this in a tooltip. */
+    disabledReason?: string;
+  };
 
 /** Icon-only buttons have no text, so the type requires an `aria-label`. */
 type ButtonProps =
@@ -66,14 +71,19 @@ function Button({
   size,
   rounded,
   children,
+  disabled,
+  focusableWhenDisabled,
+  disabledReason,
   ...props
 }: ButtonProps) {
   const small = size === "icon-xs" || size === "icon-sm";
   const content = (state: ButtonState) =>
     typeof children === "function" ? children(state) : children;
-  return (
+  const button = (
     <ButtonPart
       className={cn(buttonVariants({ variant, size, rounded }), className)}
+      disabled={disabled || Boolean(disabledReason)}
+      focusableWhenDisabled={focusableWhenDisabled || Boolean(disabledReason)}
       {...props}
     >
       {(state) => (
@@ -95,6 +105,15 @@ function Button({
         </>
       )}
     </ButtonPart>
+  );
+  if (!disabledReason) {
+    return button;
+  }
+  return (
+    <Tooltip toggleable>
+      <TooltipTrigger render={button} />
+      <TooltipContent>{disabledReason}</TooltipContent>
+    </Tooltip>
   );
 }
 

@@ -8,10 +8,7 @@ import type * as React from "react";
 import { cn } from "../lib/cn";
 import type { WithClass } from "../lib/types";
 
-/**
- * The hint. To explain why a button is disabled, keep the Button hoverable and
- * focusable: `<TooltipTrigger render={<Button disabled focusableWhenDisabled>Publish</Button>} />`.
- */
+/** The hint. To say why a Button is disabled, give it a `disabledReason` instead. */
 function TooltipContent({
   className,
   ...props

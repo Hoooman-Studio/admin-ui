@@ -349,6 +349,8 @@ type IconSize = Extract<ButtonSize, `icon${string}`>;
 type BaseProps = Omit<React.ComponentProps<typeof Button$1>, "className"> &
   Omit<ButtonVariants, "size"> & {
     className?: string;
+    /** Disables the button, keeps it focusable and shows this in a tooltip. */
+    disabledReason?: string;
   };
 /** Icon-only buttons have no text, so the type requires an `aria-label`. */
 type ButtonProps =
@@ -369,6 +371,9 @@ declare function Button({
   size,
   rounded,
   children,
+  disabled,
+  focusableWhenDisabled,
+  disabledReason,
   ...props
 }: ButtonProps): React.JSX.Element;
 declare const variants: {
@@ -893,11 +898,18 @@ declare function MenuContent({
   sideOffset,
   ...props
 }: WithClass<React.ComponentProps<typeof MenuContent$1>>): React.JSX.Element;
+type MenuItemProps = WithClass<React.ComponentProps<typeof MenuItem$1>> & {
+  /** Disables the item and shows this under its label. */
+  disabledReason?: string;
+};
 /** A command. Pass `destructive` for actions like Delete. */
 declare function MenuItem({
   className,
+  children,
+  disabled,
+  disabledReason,
   ...props
-}: WithClass<React.ComponentProps<typeof MenuItem$1>>): React.JSX.Element;
+}: MenuItemProps): React.JSX.Element;
 declare function MenuCheckboxItem({
   className,
   children,
@@ -1328,10 +1340,7 @@ declare function useTheme(): {
 };
 /** The theme choice as menu items. AdminShell puts it in the account menu. */
 declare function ThemeMenuItems(): React.JSX.Element;
-/**
- * The hint. To explain why a button is disabled, keep the Button hoverable and
- * focusable: `<TooltipTrigger render={<Button disabled focusableWhenDisabled>Publish</Button>} />`.
- */
+/** The hint. To say why a Button is disabled, give it a `disabledReason` instead. */
 declare function TooltipContent({
   className,
   ...props
