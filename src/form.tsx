@@ -49,7 +49,7 @@ import {
 import { SwitchField } from "./components/switch";
 import { TagInput } from "./components/tag-input";
 import { Textarea } from "./components/textarea";
-import { toast } from "./components/toast";
+import { toastDone } from "./components/toast";
 import { cn } from "./lib/cn";
 import { errorText, formErrorText, hiddenFieldError } from "./lib/form-errors";
 import { type FormResult, failedMessage } from "./lib/form-result";
@@ -830,9 +830,7 @@ function useAdminForm<
           refuse(formApi, result);
           return;
         }
-        if (result.message) {
-          toast.success(result.message);
-        }
+        toastDone(result);
         overlay?.close();
       } catch (error) {
         console.error(error);

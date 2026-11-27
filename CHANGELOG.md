@@ -5,6 +5,8 @@
 ### New
 
 - `confirm()` takes an `action`. The dialog stays open with the button pending while it runs; return `{ ok: false, message }` to show the message in the dialog, or `{ ok: true, message }` to close it with a toast. `confirm()` still resolves `true` or `false`.
+- `FormResult`'s `ok: true` takes a `warning`, for an action that worked but had a side effect fail ("Saved, but the welcome email failed."). It shows as a warning toast that stays until dismissed, next to `message`'s success toast, from `useAdminForm`, `FormDialog`, `FormDrawer` and `confirm({ action })`.
+- Toasts show their `cancel` button, like `toast("…", { cancel: { label: "Dismiss" } })`.
 - A pending `Button` looks disabled and shows the loader in place of its content, at the same size. This includes `DialogClose` and `AlertDialogClose` rendered as a Button.
 
 ### Fixed

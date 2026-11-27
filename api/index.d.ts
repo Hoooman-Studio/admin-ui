@@ -158,12 +158,15 @@ declare function AdminProvider({
  * shows above the submit button and `fieldErrors` under their fields. Without
  * a `message`, an error for a field the form doesn't render shows above the
  * submit button instead.
- * `ok: true` shows `message` as a toast and closes a FormDialog.
+ * `ok: true` shows `message` as a toast and closes a FormDialog. Its
+ * `warning`, for a side effect that failed, shows as a toast that stays until
+ * dismissed.
  */
 type FormResult =
   | {
       ok: true;
       message?: string;
+      warning?: string;
     }
   | {
       ok: false;
@@ -207,8 +210,8 @@ interface ConfirmOptions {
   /**
    * Runs when the person agrees, with the dialog open and the button pending.
    * `ok: false` keeps it open with `message` above the buttons; `ok: true`
-   * closes it and shows `message` as a toast. A thrown error is logged and
-   * shown as a generic message.
+   * closes it and shows `message` and `warning` as toasts. A thrown error is
+   * logged and shown as a generic message.
    */
   action?: () => FormResult | void | Promise<FormResult | void>;
   cancelLabel?: string;
