@@ -915,9 +915,10 @@ function AdminForm({
   const overlay = React.use(FormOverlayContext);
   React.useLayoutEffect(() => {
     if (overlay) {
-      overlay.form.current = form;
+      overlay.hasChanges.current = () =>
+        uploads > 0 || !form.state.isDefaultValue;
     }
-  }, [overlay, form]);
+  }, [overlay, form, uploads]);
   // In a FormDialog or FormDrawer the form holds a scrolling body and a footer, which bring their own spacing; in a drawer it fills the height.
   const inOverlay = overlay !== null;
   return (
@@ -986,8 +987,8 @@ function FormError({ className }: { className?: string }) {
 const FormOverlayContext = React.createContext<{
   /** Closes the FormDialog or FormDrawer, but only for the opening its form belongs to. */
   close: () => void;
-  /** The form inside, whose unsaved changes closing asks about. */
-  form: React.RefObject<AnyFormApi | null>;
+  /** Whether the form inside has unsaved changes, which closing asks about. Set by its AdminForm. */
+  hasChanges: React.RefObject<(() => boolean) | null>;
 } | null>(null);
 
 /** Either a `trigger` that opens it, or `open` and `onOpenChange` from your own state, like the URL. */
@@ -1033,7 +1034,7 @@ function useFormOverlay(props: FormOverlayProps) {
           live.current.onOpenChange(false);
         }
       },
-      form: React.createRef<AnyFormApi>(),
+      hasChanges: React.createRef<() => boolean>(),
     }),
     [opening]
   );
@@ -1042,7 +1043,7 @@ function useFormOverlay(props: FormOverlayProps) {
     next: boolean,
     details: { cancel: () => void }
   ) => {
-    if (next || (context.form.current?.state.isDefaultValue ?? true)) {
+    if (next || !context.hasChanges.current?.()) {
       onOpenChange(next);
       return;
     }

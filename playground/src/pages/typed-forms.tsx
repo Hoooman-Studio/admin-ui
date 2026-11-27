@@ -337,6 +337,18 @@ function NewListingForm() {
         <form.Field name="availableFrom">
           {(field) => <DateField field={field} label="Available from" />}
         </form.Field>
+        <form.Field name="coverId">
+          {(field) => (
+            <FileField
+              accept="image/*"
+              field={field}
+              label="Cover photo"
+              preview={(id) => <StoredFile id={id} kind="image" />}
+              removable
+              upload={fakeUpload}
+            />
+          )}
+        </form.Field>
         <FormError />
       </DialogBody>
       <DialogFooter>
