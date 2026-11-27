@@ -55,17 +55,20 @@ type ClickHandler = NonNullable<
 function withResult(onClick: ClickHandler): ClickHandler {
   return (event, details) => {
     const button = event.currentTarget;
+    const name = button.getAttribute("aria-label") ?? button.textContent.trim();
     const show = (value: unknown) => {
       if (isFormResult(value)) {
-        showResult(
-          button.getAttribute("aria-label") ?? button.textContent.trim(),
-          value
-        );
+        showResult(name, value);
       }
-      return value;
     };
     const returned = onClick(event, details);
-    return returned instanceof Promise ? returned.then(show) : show(returned);
+    if (returned instanceof Promise) {
+      // The Button handles a rejection; this only watches for a result.
+      returned.then(show, () => undefined);
+    } else {
+      show(returned);
+    }
+    return returned;
   };
 }
 
