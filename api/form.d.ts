@@ -398,7 +398,8 @@ interface AdminFormOptions<
 /**
  * TanStack Form's `useForm`, with our submit handling. `onSubmit` receives
  * the parsed output of the `validators.onSubmit` schema and may return a
- * FormResult. A thrown error is logged and shown as a generic form error.
+ * FormResult. A thrown error is logged and shown as a generic form error, or
+ * a session one (see AdminProvider).
  * Inside a FormDialog or FormDrawer, `ok: true` closes it. The onSubmit schema runs
  * twice per submit (TanStack's check, then the parse), so keep slow async
  * checks, like a uniqueness lookup, in the save itself.

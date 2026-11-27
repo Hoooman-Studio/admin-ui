@@ -38,6 +38,7 @@ import { LoginPage } from "./pages/login";
 import { OverlaysPage } from "./pages/overlays";
 import { SitePage } from "./pages/site";
 import { TypedFormsPage } from "./pages/typed-forms";
+import { isSessionError } from "./session";
 
 /** One list for the nav and the command palette. */
 const pages = {
@@ -92,7 +93,7 @@ function App() {
     return <SitePage />;
   }
   return (
-    <AdminProvider accent="hsl(20 100% 50%)">
+    <AdminProvider accent="hsl(20 100% 50%)" isSessionError={isSessionError}>
       {page === "login" ? <LoginPage /> : <Shell page={page} />}
     </AdminProvider>
   );

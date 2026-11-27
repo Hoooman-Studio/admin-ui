@@ -90,7 +90,7 @@ interface ConfirmOptions {
    * Runs when the person agrees, with the dialog open and the button pending.
    * `ok: false` keeps it open with `message` above the buttons; `ok: true`
    * closes it and shows `message` and `warning` as toasts. A thrown error is
-   * logged and shown as a generic message.
+   * logged and shown as a generic message, or a session one (see AdminProvider).
    */
   // biome-ignore lint/suspicious/noConfusingVoidType: an action may return nothing.
   action?: () => FormResult | void | Promise<FormResult | void>;
@@ -117,8 +117,12 @@ function confirm(options: ConfirmOptions): Promise<boolean> {
   return ask(options);
 }
 
-/** Shows the questions `confirm()` asks. AdminProvider mounts it. */
-function ConfirmDialog() {
+/** Shows the questions `confirm()` asks. AdminProvider mounts it, with what to show for a thrown error. */
+function ConfirmDialog({
+  failureText,
+}: {
+  failureText: (error: unknown) => string;
+}) {
   const [refusal, setRefusal] = React.useState<string | null>(null);
   const clearRefusal = React.useCallback(() => setRefusal(null), []);
 
@@ -129,7 +133,7 @@ function ConfirmDialog() {
       result = (await action()) ?? undefined;
     } catch (error) {
       console.error(error);
-      result = { ok: false };
+      result = { ok: false, message: failureText(error) };
     }
     if (result?.ok === false) {
       const message = result.message || failedMessage;

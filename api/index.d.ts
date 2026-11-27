@@ -139,6 +139,13 @@ interface AdminProviderProps {
   children: React.ReactNode;
   /** Spacing and layout for the admin's box on a site page, like `mt-8`. */
   className?: string;
+  /**
+   * Whether a thrown error means the person's session expired, like
+   * `(error) => error instanceof ConvexError && error.data === "Unauthenticated"`.
+   * Forms, uploads and `confirm()` actions then ask them to sign in again
+   * instead of showing a generic error. Applies to every provider it's nested with.
+   */
+  isSessionError?: (error: unknown) => boolean;
 }
 /**
  * Sets up the admin. Put it in the admin's layout route, around every admin
@@ -152,6 +159,7 @@ declare function AdminProvider({
   accent,
   children,
   className,
+  isSessionError,
 }: AdminProviderProps): React.JSX.Element;
 /**
  * What a form submit returns. `ok: false` keeps the form as typed: `message`
@@ -211,7 +219,7 @@ interface ConfirmOptions {
    * Runs when the person agrees, with the dialog open and the button pending.
    * `ok: false` keeps it open with `message` above the buttons; `ok: true`
    * closes it and shows `message` and `warning` as toasts. A thrown error is
-   * logged and shown as a generic message.
+   * logged and shown as a generic message, or a session one (see AdminProvider).
    */
   action?: () => FormResult | void | Promise<FormResult | void>;
   cancelLabel?: string;
